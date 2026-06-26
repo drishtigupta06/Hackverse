@@ -619,6 +619,6 @@ ACUNETIX_API_KEY=
 
 ---
 
-# ❤️ HACKNOVA Hackathon
+# ❤️ HACKVERSE Hackathon
 
 CyberGuard demonstrates how Artificial Intelligence, Graph Databases, Threat Intelligence, Infrastructure Security, Android Security, and Offensive Security can be unified into one intelligent cybersecurity platform capable of identifying, correlating, prioritizing, and explaining security risks in real time.
