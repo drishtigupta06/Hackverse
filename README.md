@@ -2,7 +2,7 @@
 
 > **AI-Powered Cybersecurity Orchestration Platform**
 
-CyberGuard is a next-generation AI-driven cybersecurity platform developed for the **HACKNOVA Hackathon**. It unifies offensive security tools, threat intelligence, attack surface management, infrastructure security, Android application security, and Large Language Models (LLMs) into one intelligent cybersecurity ecosystem.
+CyberGuard is a next-generation AI-driven cybersecurity platform developed for the **HACKVERSE Hackathon**. It unifies offensive security tools, threat intelligence, attack surface management, infrastructure security, Android application security, and Large Language Models (LLMs) into one intelligent cybersecurity ecosystem.
 
 Unlike traditional scanners, CyberGuard doesn't simply identify vulnerabilities—it correlates findings, builds attack paths, prioritizes risks, generates exploitability analysis, and provides AI-assisted remediation.
 
@@ -12,7 +12,7 @@ Unlike traditional scanners, CyberGuard doesn't simply identify vulnerabilities�
 
 ## 📊 Centralized Security Dashboard
 
-A modern SOC dashboard providing complete visibility into the organization's security posture.
+A modern Pentration Testing Engine with dashboard providing complete visibility into the organization's security posture.
 
 ### Features
 
@@ -562,7 +562,7 @@ Nmap          Acunetix          Mobile Scanner
 ## Clone Repository
 
 ```bash
-git clone https://github.com/anshu787/hacknova_ps.git
+git clone https://github.com/drishtigupta06/Hackverse.git
 
 cd hacknova_ps
 ```
@@ -596,8 +596,7 @@ NEO4J_URI=
 OLLAMA_HOST=
 OPENAI_API_KEY=
 NVD_API_KEY=
-ACUNETIX_URL=
-ACUNETIX_API_KEY=
+
 ```
 
 ---
