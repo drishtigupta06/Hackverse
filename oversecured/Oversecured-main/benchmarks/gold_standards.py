@@ -1,0 +1,212 @@
+GOLD_STANDARDS = {
+    "diva": {
+        "name": "Damn Insecure and Vulnerable App (DIVA)",
+        "version": "1.0",
+        "source": "https://github.com/payatu/diva-android",
+        "package": "jakhar.aseem.diva",
+        "challenges": [
+            {"num": 1,  "name": "Insecure Logging",           "detectable": True,  "id": "SRC-017", "severity": "HIGH",    "class": "LogActivity"},
+            {"num": 2,  "name": "Hardcoded API Key",           "detectable": True,  "id": "SRC-001", "severity": "HIGH",    "class": "HardcodeActivity"},
+            {"num": 3,  "name": "Insecure SharedPrefs",        "detectable": True,  "id": "SRC-013", "severity": "HIGH",    "class": "InsecureDataStorage1Activity"},
+            {"num": 4,  "name": "Insecure SQLite Storage",     "detectable": True,  "id": "SRC-013", "severity": "HIGH",    "class": "InsecureDataStorage2Activity"},
+            {"num": 5,  "name": "Insecure External Storage",   "detectable": True,  "id": "SRC-015", "severity": "MEDIUM",  "class": "InsecureDataStorage3Activity"},
+            {"num": 6,  "name": "World-Readable File Storage", "detectable": True,  "id": "SRC-015", "severity": "HIGH",    "class": "InsecureDataStorage4Activity"},
+            {"num": 7,  "name": "SQL Injection",               "detectable": True,  "id": "SRC-058", "severity": "CRITICAL","class": "SQLInjectionActivity"},
+            {"num": 8,  "name": "WebView XSS/RCE",             "detectable": True,  "id": "SRC-031", "severity": "CRITICAL","class": "InputValidation2URISchemeActivity"},
+            {"num": 9,  "name": "Exported Activity (no perm)",  "detectable": True,  "id": "MF-007",  "severity": "HIGH",    "class": "AccessControl1Activity"},
+            {"num": 10, "name": "Exported Activity (key)",      "detectable": True,  "id": "MF-007",  "severity": "HIGH",    "class": "AccessControl2Activity"},
+            {"num": 11, "name": "Exported ContentProvider",     "detectable": True,  "id": "MF-010",  "severity": "CRITICAL","class": "NotesProvider"},
+            {"num": 12, "name": "Hardcoded JNI Key",           "detectable": False, "id": "SRC-001", "severity": "HIGH",    "class": "DivaJni"},
+            {"num": 13, "name": "Native Buffer Overflow",      "detectable": False, "id": None,      "severity": "CRITICAL","class": "DivaJni"},
+        ],
+        "all_vulns": [
+            {"id": "SRC-001", "name": "Hardcoded API Key (Java)",         "severity": "HIGH",    "category": "secret",  "challenge": 2},
+            {"id": "SRC-013", "name": "Insecure SharedPreferences",       "severity": "HIGH",    "category": "storage", "challenge": 3},
+            {"id": "SRC-013", "name": "Insecure SQLite Storage",          "severity": "HIGH",    "category": "storage", "challenge": 4},
+            {"id": "SRC-015", "name": "External Storage",                  "severity": "MEDIUM",  "category": "storage", "challenge": 5},
+            {"id": "SRC-015", "name": "World Readable File",               "severity": "HIGH",    "category": "storage", "challenge": 6},
+            {"id": "SRC-017", "name": "Sensitive Data Logged",            "severity": "HIGH",    "category": "logging", "challenge": 1},
+            {"id": "SRC-031", "name": "WebView XSS/RCE",                  "severity": "CRITICAL","category": "webview", "challenge": 8},
+            {"id": "SRC-058", "name": "SQL Injection",                    "severity": "CRITICAL","category": "sqli",    "challenge": 7},
+            {"id": "ADV-001", "name": "Intent Redirection",               "severity": "HIGH",    "category": "intent",  "challenge": 9},
+            {"id": "SRC-090", "name": "Intent Sniffing",                  "severity": "MEDIUM",  "category": "intent",  "challenge": 10},
+            {"id": "SRC-009", "name": "Hardcoded Encryption Key",         "severity": "HIGH",    "category": "crypto",  "challenge": 12},
+        ],
+        "manifest_vulns": [
+            {"id": "MF-001", "name": "Debuggable",                  "severity": "HIGH",    "category": "debuggable"},
+            {"id": "MF-004", "name": "Backup Enabled",             "severity": "MEDIUM",  "category": "backup"},
+            {"id": "MF-007", "name": "Exported Activity (no perm)", "severity": "HIGH",    "category": "component", "component": "AccessControl1Activity"},
+            {"id": "MF-007", "name": "Exported Activity (w/ key)",  "severity": "HIGH",    "category": "component", "component": "AccessControl2Activity"},
+            {"id": "MF-010", "name": "Exported ContentProvider",    "severity": "CRITICAL","category": "component", "component": "NotesProvider"},
+        ],
+        "expected_min_manifest": 4,
+        "expected_max_manifest": 7,
+        "expected_min_all": 11,
+        "expected_max_all": 16,
+        "chains": ["CHAIN-001", "CHAIN-002", "CHAIN-006"],
+        "static_only_challenges": 10,
+        "total_challenges": 13,
+    },
+
+    "insecurebank": {
+        "name": "InsecureBankv2",
+        "version": "2.0",
+        "source": "https://github.com/dineshshetty/InsecureBankv2",
+        "all_vulns": [
+            {"id": "SRC-001", "name": "Hardcoded Credentials", "severity": "CRITICAL", "category": "secret"},
+            {"id": "SRC-022", "name": "SSL Pinning Bypass", "severity": "HIGH", "category": "network"},
+            {"id": "SRC-031", "name": "WebView XSS", "severity": "CRITICAL", "category": "webview"},
+            {"id": "SRC-078", "name": "Root Detection", "severity": "MEDIUM", "category": "root"},
+            {"id": "SRC-058", "name": "SQL Injection", "severity": "CRITICAL", "category": "sqli"},
+            {"id": "SRC-051", "name": "PendingIntent", "severity": "HIGH", "category": "intent"},
+            {"id": "SRC-090", "name": "Intent Sniffing", "severity": "MEDIUM", "category": "intent"},
+            {"id": "SRC-013", "name": "SharedPrefs - PIN/Password", "severity": "HIGH", "category": "storage"},
+            {"id": "SRC-015", "name": "World Readable Files", "severity": "MEDIUM", "category": "storage"},
+            {"id": "ADV-*", "name": "Weak Crypto", "severity": "HIGH", "category": "crypto"},
+            {"id": "ADV-012", "name": "Activity Injection", "severity": "HIGH", "category": "intent"},
+            {"id": "SRC-071", "name": "Command Injection", "severity": "CRITICAL", "category": "cmd_injection"},
+        ],
+        "manifest_vulns": [
+            {"id": "MF-001", "name": "Debuggable", "severity": "HIGH", "category": "debuggable"},
+            {"id": "MF-004", "name": "Backup Enabled", "severity": "MEDIUM", "category": "backup"},
+            {"id": "MF-007", "name": "Exported Activities", "severity": "HIGH", "category": "component"},
+            {"id": "MF-009", "name": "Exported Broadcast Receiver", "severity": "HIGH", "category": "component"},
+            {"id": "MF-010", "name": "Exported Provider", "severity": "CRITICAL", "category": "component"},
+        ],
+        "expected_min_manifest": 4,
+        "expected_max_manifest": 7,
+        "expected_min_all": 15,
+        "expected_max_all": 22,
+        "chains": ["CHAIN-001", "CHAIN-002", "CHAIN-010"],
+    },
+
+    "goatdroid": {
+        "name": "GoatDroid",
+        "version": "1.0",
+        "source": "https://github.com/dan7800/VulnerableAndroidApp",
+        "all_vulns": [
+            {"id": "SRC-001", "name": "Hardcoded API Keys", "severity": "HIGH", "category": "secret"},
+            {"id": "SRC-013", "name": "Insecure Storage", "severity": "MEDIUM", "category": "storage"},
+            {"id": "SRC-078", "name": "Root Detection", "severity": "MEDIUM", "category": "root"},
+            {"id": "SRC-090", "name": "Intent Sniffing", "severity": "MEDIUM", "category": "intent"},
+            {"id": "ADV-001", "name": "Intent Redirection", "severity": "HIGH", "category": "intent"},
+        ],
+        "manifest_vulns": [
+            {"id": "MF-001", "name": "Debuggable", "severity": "HIGH", "category": "debuggable"},
+            {"id": "MF-007", "name": "Exported Activities", "severity": "HIGH", "category": "component"},
+            {"id": "MF-008", "name": "Exported Services", "severity": "HIGH", "category": "component"},
+            {"id": "MF-009", "name": "Exported Receivers", "severity": "HIGH", "category": "component"},
+        ],
+        "expected_min_manifest": 3,
+        "expected_max_manifest": 6,
+        "expected_min_all": 9,
+        "expected_max_all": 14,
+        "chains": ["CHAIN-002", "CHAIN-008"],
+    },
+
+    "mstg_crackme": {
+        "name": "OWASP MSTG Crackme",
+        "version": "1.0",
+        "source": "https://github.com/OWASP/owasp-mstg",
+        "all_vulns": [
+            {"id": "SRC-078", "name": "Root Detection", "severity": "HIGH", "category": "root"},
+            {"id": "SRC-001", "name": "Hardcoded Secrets", "severity": "HIGH", "category": "secret"},
+        ],
+        "manifest_vulns": [
+            {"id": "MF-004", "name": "Backup Enabled", "severity": "MEDIUM", "category": "backup"},
+            {"id": "MF-007", "name": "Exported Activity", "severity": "HIGH", "category": "component"},
+        ],
+        "expected_min_manifest": 1,
+        "expected_max_manifest": 4,
+        "expected_min_all": 4,
+        "expected_max_all": 8,
+        "chains": [],
+    },
+
+    "oversecured": {
+        "name": "Oversecured Vulnerable App (OVAA)",
+        "version": "2.0",
+        "source": "https://github.com/oversecured/ovaa",
+        "all_vulns": [
+            # Detected via source rules (JADX + regex)
+            {"id": "SRC-031", "name": "WebView XSS", "severity": "CRITICAL", "category": "webview"},
+            {"id": "SRC-033", "name": "WebView File Access", "severity": "HIGH", "category": "webview"},
+            {"id": "SRC-083", "name": "Parcelable Without Type Check", "severity": "HIGH", "category": "deserialization"},
+            {"id": "SRC-090", "name": "Sensitive Data in Intent Extras", "severity": "HIGH", "category": "ipc"},
+            {"id": "SRC-095", "name": "Deep Link Without Validation", "severity": "HIGH", "category": "component"},
+            {"id": "SRC-151", "name": "Deep Link Host Verification Weak", "severity": "MEDIUM", "category": "deeplink"},
+            {"id": "SRC-022", "name": "HTTP URL Used", "severity": "MEDIUM", "category": "network"},
+            {"id": "SRC-013", "name": "Sensitive Data in SharedPrefs", "severity": "HIGH", "category": "storage"},
+            {"id": "SRC-001", "name": "Hardcoded Secrets", "severity": "CRITICAL", "category": "secret"},
+            {"id": "SRC-009", "name": "Hardcoded Encryption Key", "severity": "HIGH", "category": "crypto"},
+            {"id": "SRC-017", "name": "Sensitive Data Logged", "severity": "HIGH", "category": "logging"},
+            {"id": "SRC-061", "name": "Path Traversal", "severity": "CRITICAL", "category": "path_traversal"},
+            {"id": "SRC-057", "name": "Insecure Serialization", "severity": "HIGH", "category": "serialization"},
+            {"id": "SRC-069", "name": "Dynamic Class Loading", "severity": "HIGH", "category": "code_injection"},
+            {"id": "SRC-167", "name": "Runtime.exec Used", "severity": "INFO", "category": "code_execution"},
+            {"id": "SRC-074", "name": "Debug Log in Production", "severity": "LOW", "category": "logging"},
+            {"id": "SRC-002", "name": "Hardcoded AWS Key", "severity": "HIGH", "category": "secret"},
+            # Require Phase 2 (CFG analysis) -- ADV-* detection not yet available
+            {"id": "ADV-001", "name": "Intent Redirection", "severity": "HIGH", "category": "intent", "phase2": True},
+            {"id": "ADV-012", "name": "Activity Injection", "severity": "HIGH", "category": "intent", "phase2": True},
+            {"id": "ADV-008", "name": "Broadcast Injection", "severity": "HIGH", "category": "broadcast", "phase2": True},
+        ],
+        "manifest_vulns": [
+            {"id": "MF-001", "name": "Debuggable", "severity": "HIGH", "category": "debuggable"},
+            {"id": "MF-004", "name": "Backup Enabled", "severity": "MEDIUM", "category": "backup"},
+            {"id": "MF-007", "name": "Exported Activities", "severity": "HIGH", "category": "component"},
+            {"id": "MF-008", "name": "Exported Service", "severity": "HIGH", "category": "component"},
+            {"id": "MF-010", "name": "Exported Provider", "severity": "CRITICAL", "category": "component"},
+            {"id": "MF-011", "name": "Provider URI Permissions", "severity": "MEDIUM", "category": "provider"},
+            {"id": "MF-073", "name": "FileProvider", "severity": "MEDIUM", "category": "provider"},
+        ],
+        "expected_min_manifest": 6,
+        "expected_max_manifest": 10,
+        "expected_min_all": 25,
+        "expected_max_all": 35,
+        "chains": ["CHAIN-001", "CHAIN-002", "CHAIN-005", "CHAIN-009", "CHAIN-010"],
+    },
+
+    "vulnlab": {
+        "name": "Android Vuln Lab",
+        "version": "1.0",
+        "source": "https://github.com/rewanthtammana/Vulnerable-Android-App",
+        "all_vulns": [
+            {"id": "SRC-031", "name": "WebView XSS", "severity": "HIGH", "category": "webview"},
+            {"id": "SRC-032", "name": "WebView RCE", "severity": "CRITICAL", "category": "webview"},
+            {"id": "SRC-013", "name": "Insecure Storage", "severity": "MEDIUM", "category": "storage"},
+            {"id": "SRC-001", "name": "Hardcoded Secrets", "severity": "HIGH", "category": "secret"},
+            {"id": "SRC-022", "name": "SSL Issues", "severity": "MEDIUM", "category": "network"},
+            {"id": "SRC-071", "name": "Command Injection", "severity": "CRITICAL", "category": "cmd_injection"},
+        ],
+        "manifest_vulns": [
+            {"id": "MF-003", "name": "Cleartext Traffic", "severity": "HIGH", "category": "network"},
+            {"id": "MF-004", "name": "Backup Enabled", "severity": "MEDIUM", "category": "backup"},
+            {"id": "MF-007", "name": "Exported Activities", "severity": "HIGH", "category": "component"},
+        ],
+        "expected_min_manifest": 2,
+        "expected_max_manifest": 5,
+        "expected_min_all": 10,
+        "expected_max_all": 16,
+        "chains": ["CHAIN-002"],
+    },
+}
+
+
+def get_gold_standard(apk_name):
+    name_lower = apk_name.lower().replace("-", "").replace("_", "").replace(".", "")
+    aliases = {
+        "diva": "diva", "diva.apk": "diva",
+        "insecurebank": "insecurebank", "insecurebankv2": "insecurebank",
+        "goatdroid": "goatdroid",
+        "mstg": "mstg_crackme", "uncrackable": "mstg_crackme", "uncrackablelevel1": "mstg_crackme",
+        "ovaa": "oversecured", "oversecured": "oversecured",
+        "vulnlab": "vulnlab", "dvba": "vulnlab",
+    }
+    for alias, key in aliases.items():
+        if alias in name_lower:
+            return GOLD_STANDARDS.get(key)
+    for key, gs in GOLD_STANDARDS.items():
+        if key in name_lower or gs["name"].lower()[:8] in name_lower:
+            return gs
+    return None

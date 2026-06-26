@@ -1,0 +1,1995 @@
+rules:
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 1: Hardcoded Secrets & Credentials
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-001"
+    name: "Hardcoded Password or Secret"
+    description: "A password, secret, or API key appears to be hardcoded directly in source code."
+    severity: "HIGH"
+    category: "Hardcoded Secrets"
+    language: ["java", "kotlin"]
+    regex: "(?i)((password|passwd|secret|api_key|apikey|api_secret|token|auth_token|access_token|refresh_token|private_key|pwd|credential|auth|secret_key|consumer_key|consumer_secret)\\s*[=:]\\s*['\"]([^'\"]{4,})['\"]|set(Password|Secret|ApiKey|Token|Auth).*\\(\\s*['\"]([^'\"]{4,})['\"](\\s*\\)|\\s*,)|String\\s+(password|secret|token|apiKey|authToken)\\s*[=:]\\s*['\"]([^'\"]{4,})['\"]|\"(password|secret|token|key|credential|pwd|auth|pin)\"[\\s\\S]{0,200}\"([^\"\\n]{4,})\"|putString\\(\\s*\"(password|secret|token|key|credential|pwd|auth|pin)\"|correct\\s+secret|key\\s*=\\s*['\"][a-fA-F0-9]{32,}['\"])"
+    recommendation: "Move all secrets to a secure backend, Android Keystore, or environment-specific configuration. Never hardcode credentials."
+
+  - id: "SRC-002"
+    name: "Hardcoded AWS Access Key"
+    description: "An AWS Access Key ID is hardcoded in the source code."
+    severity: "CRITICAL"
+    category: "Hardcoded Secrets"
+    language: ["java", "kotlin", "xml", "properties"]
+    regex: "(?<![A-Z0-9])[A-Z0-9]{20}(?![A-Z0-9])"
+    recommendation: "Rotate the exposed key immediately. Use IAM roles and retrieve credentials securely at runtime from a backend service."
+
+  - id: "SRC-003"
+    name: "Hardcoded AWS Secret Access Key"
+    description: "An AWS Secret Access Key pattern is detected in source code."
+    severity: "CRITICAL"
+    category: "Hardcoded Secrets"
+    language: ["java", "kotlin", "xml", "properties"]
+    regex: "(?i)aws.{0,20}secret.{0,20}['\"][0-9a-zA-Z/+]{40}['\"]"
+    recommendation: "Revoke and rotate the key immediately. Use AWS SDK with IAM instance profiles or Secrets Manager."
+
+  - id: "SRC-004"
+    name: "Hardcoded Google API Key"
+    description: "A Google API key is hardcoded in the source code."
+    severity: "HIGH"
+    category: "Hardcoded Secrets"
+    language: ["java", "kotlin", "xml"]
+    regex: "AIza[0-9A-Za-z\\-_]{35}"
+    recommendation: "Restrict the API key in Google Cloud Console to specific Android apps (SHA-1 + package name). Store keys in google-services.json only and restrict their scope."
+
+  - id: "SRC-005"
+    name: "Hardcoded Firebase URL"
+    description: "A Firebase project URL or database URL is hardcoded in source code."
+    severity: "MEDIUM"
+    category: "Hardcoded Secrets"
+    language: ["java", "kotlin"]
+    regex: "https://[a-z0-9-]+\\.firebaseio\\.com"
+    recommendation: "Use google-services.json for Firebase configuration. Enforce Firebase security rules so unauthenticated access is denied."
+
+  - id: "SRC-006"
+    name: "Hardcoded Private Key Block"
+    description: "A PEM-encoded private key is embedded in the source code."
+    severity: "CRITICAL"
+    category: "Hardcoded Secrets"
+    language: ["java", "kotlin"]
+    regex: "-----BEGIN (RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----"
+    recommendation: "Remove the private key from source immediately. Store private keys in Android Keystore or retrieve from a secure backend."
+
+  - id: "SRC-007"
+    name: "Hardcoded Basic Auth Credentials in URL"
+    description: "HTTP Basic Authentication credentials are embedded directly in a URL string."
+    severity: "CRITICAL"
+    category: "Hardcoded Secrets"
+    language: ["java", "kotlin"]
+    regex: "https?://[a-zA-Z0-9_-]+:[a-zA-Z0-9_@#$%-]+@"
+    recommendation: "Never embed credentials in URLs. Use Authorization headers with securely retrieved credentials instead."
+
+  - id: "SRC-008"
+    name: "Hardcoded JWT Token"
+    description: "A hardcoded JSON Web Token (JWT) is detected in source code."
+    severity: "HIGH"
+    category: "Hardcoded Secrets"
+    language: ["java", "kotlin"]
+    regex: "eyJ[A-Za-z0-9-_]+\\.eyJ[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+"
+    recommendation: "JWTs expire but must never be hardcoded. Obtain tokens dynamically via authentication flows."
+
+  - id: "SRC-009"
+    name: "Hardcoded Encryption Key"
+    description: "A cryptographic key or IV is hardcoded as a byte array or string literal."
+    severity: "HIGH"
+    category: "Hardcoded Secrets"
+    language: ["java", "kotlin"]
+    regex: "(?i)(aes|des|hmac|cipher).{0,40}(key|iv|salt).{0,10}[=\\{]\\s*[\\{\"'][0-9a-fA-F,\\s]+"
+    recommendation: "Generate or derive cryptographic keys at runtime using Android Keystore or PBKDF2 with a random salt."
+
+  - id: "SRC-010"
+    name: "Hardcoded Slack Webhook URL"
+    description: "A Slack incoming webhook URL is hardcoded, which can be abused to send messages to private channels."
+    severity: "HIGH"
+    category: "Hardcoded Secrets"
+    language: ["java", "kotlin"]
+    regex: "https://hooks\\.slack\\.com/services/T[a-zA-Z0-9]+/B[a-zA-Z0-9]+/[a-zA-Z0-9]+"
+    recommendation: "Revoke the webhook and store it server-side. Proxy Slack notifications through your backend."
+
+  - id: "SRC-011"
+    name: "Hardcoded Stripe Secret Key"
+    description: "A Stripe secret API key is embedded in source code."
+    severity: "CRITICAL"
+    category: "Hardcoded Secrets"
+    language: ["java", "kotlin"]
+    regex: "sk_live_[0-9a-zA-Z]{24}"
+    recommendation: "Revoke the key immediately in the Stripe dashboard. All Stripe secret key operations must happen server-side only."
+
+  - id: "SRC-012"
+    name: "Hardcoded GitHub / GitLab Personal Access Token"
+    description: "A GitHub or GitLab personal access token is hardcoded."
+    severity: "CRITICAL"
+    category: "Hardcoded Secrets"
+    language: ["java", "kotlin", "properties"]
+    regex: "(ghp_[A-Za-z0-9]{36}|glpat-[A-Za-z0-9\\-_]{20})"
+    recommendation: "Revoke the token immediately. Use short-lived tokens retrieved from a secure backend."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 2: Insecure Data Storage
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-013"
+    name: "Sensitive Data Written to SharedPreferences in Plaintext"
+    description: "Sensitive values such as passwords or tokens are written to SharedPreferences without encryption."
+    severity: "HIGH"
+    category: "Insecure Data Storage"
+    language: ["java", "kotlin"]
+    regex: "(?i)((get)?[Ss]haredPreferences.{0,100}(password|token|secret|key|credential|auth|pin)|putString.{0,50}(password|token|secret|credential|pin|user|email)|edit\\(\\)\\.putString.{0,100}(password|token|secret))"
+    recommendation: "Use EncryptedSharedPreferences from the Jetpack Security library to store sensitive values."
+
+  - id: "SRC-014"
+    name: "Sensitive Data Written to External Storage"
+    description: "The app writes files to external/sdcard storage where other apps may read them."
+    severity: "HIGH"
+    category: "Insecure Data Storage"
+    language: ["java", "kotlin"]
+    regex: "(?i)(getExternalStorageDirectory|getExternalFilesDir|Environment\\.getExternalStorage)"
+    recommendation: "Store sensitive data in internal storage only (Context.getFilesDir()). Avoid writing sensitive files to external storage."
+
+  - id: "SRC-015"
+    name: "World-Readable or World-Writable File Mode"
+    description: "Files are created with MODE_WORLD_READABLE, MODE_WORLD_WRITEABLE, setReadable(true), or setWritable(true), making them accessible to any app."
+    severity: "CRITICAL"
+    category: "Insecure Data Storage"
+    language: ["java", "kotlin"]
+    regex: "MODE_WORLD_READABLE|MODE_WORLD_WRITEABLE|openOrCreateDatabase\\s*\\([^,]+,\\s*[24]\\s*,|getSharedPreferences\\s*\\([^,]+,\\s*[24]\\s*\\)|setReadable\\s*\\(\\s*true|setWritable\\s*\\(\\s*true"
+    recommendation: "Use MODE_PRIVATE exclusively. These modes are deprecated since API 17 and cause SecurityException on API 24+."
+
+  - id: "SRC-016"
+    name: "SQLite Database Storing Sensitive Data in Plaintext"
+    description: "SQLite operations contain sensitive column names or queries without encryption."
+    severity: "MEDIUM"
+    category: "Insecure Data Storage"
+    language: ["java", "kotlin"]
+    regex: "(?i)(execSQL|rawQuery|query).{0,100}(password|token|credit_card|ssn|cvv|secret)"
+    recommendation: "Use SQLCipher to encrypt the entire SQLite database, or encrypt sensitive columns individually before storing."
+
+  - id: "SRC-017"
+    name: "Sensitive Data Logged via Log.d / Log.v"
+    description: "Sensitive information may be written to Android logcat, readable by other apps with READ_LOGS permission."
+    severity: "HIGH"
+    category: "Insecure Data Storage"
+    language: ["java", "kotlin"]
+    regex: "(?i)Log\\.(d|v|i|e|w)\\s*\\([^)]*?(password|token|key|secret|credential|auth|email|ssn)[^)]*\\)"
+    recommendation: "Never log sensitive data. Use ProGuard to strip debug logs in production builds. Implement a logging utility that suppresses logs in release builds."
+
+  - id: "SRC-018"
+    name: "Sensitive Data Written to System Log via println or System.out"
+    description: "System.out.println or printStackTrace may expose sensitive data in logs on rooted or debuggable devices."
+    severity: "MEDIUM"
+    category: "Insecure Data Storage"
+    language: ["java", "kotlin"]
+    regex: "(System\\.out\\.print|System\\.err\\.print|e\\.printStackTrace)"
+    recommendation: "Remove all System.out and printStackTrace calls from production code. Use a structured logger with log level controls."
+
+  - id: "SRC-019"
+    name: "Clipboard Used to Store Sensitive Data"
+    description: "Sensitive data is copied to the system clipboard which is accessible by all apps in the background."
+    severity: "MEDIUM"
+    category: "Insecure Data Storage"
+    language: ["java", "kotlin"]
+    regex: "(?i)(ClipboardManager|setPrimaryClip|ClipData\\.newPlainText).{0,200}(password|token|key|secret|card)"
+    recommendation: "Avoid copying sensitive data to clipboard. If necessary, clear the clipboard after use using ClipboardManager.clearPrimaryClip()."
+
+  - id: "SRC-020"
+    name: "Cached HTTP Response Contains Sensitive Data"
+    description: "HTTP response caching is enabled which may persist sensitive API responses to disk."
+    severity: "MEDIUM"
+    category: "Insecure Data Storage"
+    language: ["java", "kotlin"]
+    regex: "(?i)(Cache-Control|OkHttpClient|HttpResponseCache).{0,100}(cache|max-age)"
+    recommendation: "Set Cache-Control: no-store header for API responses containing sensitive data. Use OkHttp's cache policy to exclude sensitive endpoints."
+
+  - id: "SRC-021"
+    name: "Keystore Master Key Derived from Weak Password"
+    description: "A keystore or key derivation function appears to use a hardcoded or weak password."
+    severity: "HIGH"
+    category: "Insecure Data Storage"
+    language: ["java", "kotlin"]
+    regex: "(?i)(KeyStore|MasterKey|MasterKeys).{0,100}(password|getOrCreate).{0,50}['\"][a-zA-Z0-9]{1,8}['\"]"
+    recommendation: "Use MasterKey.Builder with hardware-backed keys from the Android Keystore. Never derive keys from hardcoded passwords."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 3: Insecure Network Communication
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-022"
+    name: "HTTP URL Used Instead of HTTPS"
+    description: "An HTTP (non-TLS) URL is used for network communication, exposing data to interception."
+    severity: "HIGH"
+    category: "Insecure Networking"
+    language: ["java", "kotlin"]
+    regex: "\"http://[a-zA-Z0-9]|\"http://\\d+\\.\\d+"
+    recommendation: "Replace all HTTP URLs with HTTPS. Enforce TLS by setting usesCleartextTraffic='false' in the manifest."
+
+  - id: "SRC-023"
+    name: "TrustAllCerts / Insecure TrustManager Implementation"
+    description: "A custom TrustManager accepts all certificates, completely disabling TLS certificate validation and enabling MiTM attacks."
+    severity: "CRITICAL"
+    category: "Insecure Networking"
+    language: ["java", "kotlin"]
+    regex: "(?i)(TrustAllCert|X509TrustManager|checkServerTrusted|checkClientTrusted).{0,200}(\\{\\s*\\}|pass|return|//)"
+    recommendation: "Remove all custom TrustManagers. Use the system TrustManager and implement certificate pinning for sensitive endpoints."
+
+  - id: "SRC-024"
+    name: "HostnameVerifier Disabled or Accepting All Hostnames"
+    description: "The HostnameVerifier always returns true or is set to ALLOW_ALL_HOSTNAME_VERIFIER, bypassing hostname verification."
+    severity: "CRITICAL"
+    category: "Insecure Networking"
+    language: ["java", "kotlin"]
+    regex: "(?i)(ALLOW_ALL_HOSTNAME_VERIFIER|verify\\s*\\([^)]*\\)\\s*\\{\\s*return true|setHostnameVerifier\\s*\\(.*allHosts)"
+    recommendation: "Use the default HostnameVerifier provided by the Android framework. Never return true unconditionally from a HostnameVerifier."
+
+  - id: "SRC-025"
+    name: "SSLContext Initialized with Null TrustManager"
+    description: "SSLContext is initialized with a null or empty TrustManager array, which trusts all certificates on some platforms."
+    severity: "CRITICAL"
+    category: "Insecure Networking"
+    language: ["java", "kotlin"]
+    regex: "SSLContext\\.(getInstance|getDefault).{0,200}\\.init\\s*\\([^,]+,\\s*null"
+    recommendation: "Always initialize SSLContext with a proper TrustManagerFactory loaded from the system or a pinned certificate store."
+
+  - id: "SRC-026"
+    name: "Outdated TLS Version Forced"
+    description: "The application explicitly uses an outdated TLS/SSL version (SSLv3, TLSv1.0, TLSv1.1) which have known vulnerabilities."
+    severity: "HIGH"
+    category: "Insecure Networking"
+    language: ["java", "kotlin"]
+    regex: "(?i)(SSLv3|TLSv1\\.0|TLSv1\\.1|TLSv1\"|SSLv2)"
+    recommendation: "Enforce TLSv1.2 or TLSv1.3 only. Use SSLSocket.setEnabledProtocols() to remove deprecated protocols."
+
+  - id: "SRC-027"
+    name: "Certificate Pinning Bypassed or Disabled"
+    description: "Certificate pinning is explicitly disabled or bypassed in the network client."
+    severity: "CRITICAL"
+    category: "Insecure Networking"
+    language: ["java", "kotlin"]
+    regex: "(?i)(certificatePinner|pinCertificate|sslPinning).{0,100}(disable|bypass|remove|clear|null|false)"
+    recommendation: "Never disable certificate pinning in production builds. Use OkHttp CertificatePinner or Network Security Config for pinning."
+
+  - id: "SRC-028"
+    name: "Unvalidated URL Redirect"
+    description: "User-supplied input is used to construct a URL or Intent without validation, enabling open redirect attacks."
+    severity: "HIGH"
+    category: "Insecure Networking"
+    language: ["java", "kotlin"]
+    regex: "(?i)(loadUrl|startActivity|Intent).{0,100}(getIntent|getStringExtra|getQueryParam|request\\.get).{0,100}(url|redirect|link|next)"
+    recommendation: "Validate and allowlist all redirect URLs. Never use untrusted input directly in loadUrl() or Intent URIs."
+
+  - id: "SRC-029"
+    name: "WebView loadUrl with Non-HTTPS URL"
+    description: "WebView.loadUrl() is called with an HTTP URL or a dynamically constructed URL that may allow MiTM."
+    severity: "HIGH"
+    category: "Insecure Networking"
+    language: ["java", "kotlin"]
+    regex: "\\.loadUrl\\s*\\(\\s*\"http://"
+    recommendation: "Only load HTTPS URLs in WebViews. Implement shouldInterceptRequest() to block HTTP navigation."
+
+  - id: "SRC-030"
+    name: "Raw Socket Connection Without TLS"
+    description: "The application opens a raw Socket connection instead of an SSLSocket, transmitting data in plaintext."
+    severity: "HIGH"
+    category: "Insecure Networking"
+    language: ["java", "kotlin"]
+    regex: "new\\s+Socket\\s*\\("
+    recommendation: "Replace Socket with SSLSocketFactory.getDefault().createSocket() to ensure encrypted connections."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 4: Insecure WebView
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-031"
+    name: "JavaScript Enabled in WebView"
+    description: "JavaScript is enabled in a WebView which can introduce XSS vulnerabilities if untrusted content is loaded."
+    severity: "HIGH"
+    category: "WebView Security"
+    language: ["java", "kotlin"]
+    regex: "setJavaScriptEnabled\\s*\\(\\s*true\\s*\\)"
+    recommendation: "Disable JavaScript unless absolutely required. If enabled, load only trusted, controlled content and never load user-supplied URLs."
+
+  - id: "SRC-032"
+    name: "addJavascriptInterface Used in WebView"
+    description: "addJavascriptInterface() exposes Java/Kotlin objects to JavaScript, which can lead to Remote Code Execution on Android < 4.2."
+    severity: "CRITICAL"
+    category: "WebView Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)(?:addJavascriptInterface\\s*\\(|(?=[^;]*setJavaScriptEnabled\\s*\\())[\\s\\S]*loadUrl\\s*\\([^)]*\\)"
+    recommendation: "Never expose JS interfaces or load user-supplied URLs in a WebView with JavaScript enabled."
+
+  - id: "SRC-033"
+    name: "WebView File Access Enabled"
+    description: "File system access is enabled in WebView, allowing JavaScript to read local files via file:// URIs."
+    severity: "HIGH"
+    category: "WebView Security"
+    language: ["java", "kotlin"]
+    regex: "setAllowFileAccess\\s*\\(\\s*true\\s*\\)|setAllowFileAccessFromFileURLs\\s*\\(\\s*true\\s*\\)|setAllowUniversalAccessFromFileURLs\\s*\\(\\s*true\\s*\\)"
+    recommendation: "Set setAllowFileAccess(false), setAllowFileAccessFromFileURLs(false), and setAllowUniversalAccessFromFileURLs(false)."
+
+  - id: "SRC-034"
+    name: "WebView Universal Access From File URLs Enabled"
+    description: "Universal access from file URLs is enabled, allowing cross-origin data theft via file:// scheme."
+    severity: "CRITICAL"
+    category: "WebView Security"
+    language: ["java", "kotlin"]
+    regex: "setAllowUniversalAccessFromFileURLs\\s*\\(\\s*true\\s*\\)"
+    recommendation: "Always set setAllowUniversalAccessFromFileURLs(false). This is the default in API 16+ but may be overridden."
+
+  - id: "SRC-035"
+    name: "WebView Content Access Enabled"
+    description: "WebView content provider access is enabled, potentially exposing content:// URIs to JavaScript."
+    severity: "MEDIUM"
+    category: "WebView Security"
+    language: ["java", "kotlin"]
+    regex: "setAllowContentAccess\\s*\\(\\s*true\\s*\\)"
+    recommendation: "Set setAllowContentAccess(false) unless your WebView specifically needs to access content providers."
+
+  - id: "SRC-036"
+    name: "WebView DOM Storage Enabled"
+    description: "DOM Storage (localStorage) is enabled in WebView. Sensitive data stored here can be accessed by any page loaded in the WebView."
+    severity: "MEDIUM"
+    category: "WebView Security"
+    language: ["java", "kotlin"]
+    regex: "setDomStorageEnabled\\s*\\(\\s*true\\s*\\)"
+    recommendation: "Enable DOM storage only if required. Ensure the WebView only loads trusted content and clears storage on session end."
+
+  - id: "SRC-037"
+    name: "WebView Geolocation Enabled"
+    description: "Geolocation is enabled in WebView, potentially allowing web content to access precise user location."
+    severity: "MEDIUM"
+    category: "WebView Security"
+    language: ["java", "kotlin"]
+    regex: "setGeolocationEnabled\\s*\\(\\s*true\\s*\\)"
+    recommendation: "Disable WebView geolocation unless it is a core feature. Implement onGeolocationPermissionsShowPrompt() to request explicit user consent."
+
+  - id: "SRC-038"
+    name: "WebView onReceivedSslError Overridden to Proceed"
+    description: "The onReceivedSslError() callback calls handler.proceed(), ignoring all SSL certificate errors and enabling MiTM attacks."
+    severity: "CRITICAL"
+    category: "WebView Security"
+    language: ["java", "kotlin"]
+    regex: "onReceivedSslError.{0,200}handler\\.proceed"
+    recommendation: "Call handler.cancel() on SSL errors. Display an error page rather than proceeding with an invalid certificate."
+
+  - id: "SRC-039"
+    name: "WebView Caches Sensitive Data to Disk"
+    description: "WebView disk cache is not disabled, potentially caching sensitive authenticated responses to disk."
+    severity: "MEDIUM"
+    category: "WebView Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)(setCacheMode|LOAD_DEFAULT|LOAD_CACHE_ELSE_NETWORK)"
+    recommendation: "Set setCacheMode(WebSettings.LOAD_NO_CACHE) and call clearCache(true) when handling sensitive sessions."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 5: Cryptography
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-040"
+    name: "Weak Cipher Algorithm: DES or 3DES Used"
+    description: "DES and 3DES are considered cryptographically broken and should not be used."
+    severity: "HIGH"
+    category: "Cryptography"
+    language: ["java", "kotlin"]
+    regex: "(?i)Cipher\\.getInstance\\s*\\(\\s*['\"](?:DES|DESede)(?:/[\\w\\-]+)*['\"]"
+    recommendation: "Replace DES/3DES with AES-256-GCM. Use Cipher.getInstance(\"AES/GCM/NoPadding\")."
+
+  - id: "SRC-041"
+    name: "Weak Cipher Algorithm: RC4 Used"
+    description: "RC4 (ARCFOUR) is a broken stream cipher and must not be used in any security context."
+    severity: "HIGH"
+    category: "Cryptography"
+    language: ["java", "kotlin"]
+    regex: "(?i)Cipher\\.getInstance\\s*\\(\\s*['\"](?:RC4|ARCFOUR)['\"]"
+    recommendation: "Replace RC4 with AES-256-GCM or ChaCha20-Poly1305."
+
+  - id: "SRC-042"
+    name: "ECB Mode Used in AES Cipher"
+    description: "AES/ECB mode is used, which does not use an IV and produces identical ciphertext for identical plaintext blocks, leaking patterns."
+    severity: "HIGH"
+    category: "Cryptography"
+    language: ["java", "kotlin"]
+    regex: "(?i)Cipher\\.getInstance\\s*\\(\\s*['\"]AES/ECB"
+    recommendation: "Use AES/GCM/NoPadding with a random IV for authenticated encryption. Never use ECB mode."
+
+  - id: "SRC-043"
+    name: "AES/CBC Without Integrity Check"
+    description: "AES/CBC mode is used without a MAC or AEAD mode. CBC without authentication is vulnerable to padding oracle attacks."
+    severity: "MEDIUM"
+    category: "Cryptography"
+    language: ["java", "kotlin"]
+    regex: "(?i)Cipher\\.getInstance\\s*\\(\\s*['\"]AES/CBC"
+    recommendation: "Replace AES/CBC with AES/GCM/NoPadding (authenticated encryption). If CBC must be used, add HMAC-SHA256 over the ciphertext."
+
+  - id: "SRC-044"
+    name: "Weak Hash Algorithm: MD5 Used for Security Purpose"
+    description: "MD5 is a broken hash algorithm that is vulnerable to collision attacks and should not be used for security-sensitive operations."
+    severity: "HIGH"
+    category: "Cryptography"
+    language: ["java", "kotlin"]
+    regex: "(?i)MessageDigest\\.getInstance\\s*\\(\\s*['\"]MD5['\"]"
+    recommendation: "Replace MD5 with SHA-256 or SHA-3 for security purposes. Note: MD5 may still be used for checksums if collision resistance is not required."
+
+  - id: "SRC-045"
+    name: "Weak Hash Algorithm: SHA-1 Used for Security Purpose"
+    description: "SHA-1 is considered cryptographically weak and is vulnerable to collision attacks."
+    severity: "MEDIUM"
+    category: "Cryptography"
+    language: ["java", "kotlin"]
+    regex: "(?i)MessageDigest\\.getInstance\\s*\\(\\s*['\"]SHA-?1['\"]"
+    recommendation: "Replace SHA-1 with SHA-256 or SHA-3 for all security-sensitive hashing."
+
+  - id: "SRC-046"
+    name: "Insecure Random Number Generator Used"
+    description: "java.util.Random is used for security-sensitive operations. It is not cryptographically secure."
+    severity: "HIGH"
+    category: "Cryptography"
+    language: ["java", "kotlin"]
+    regex: "(?i)new\\s+Random\\s*\\(|Math\\.random\\s*\\("
+    recommendation: "Replace java.util.Random with java.security.SecureRandom for all security-sensitive operations."
+
+  - id: "SRC-047"
+    name: "Static IV Used in Symmetric Encryption"
+    description: "A static or hardcoded Initialization Vector (IV) is used with a symmetric cipher, making ciphertext predictable."
+    severity: "HIGH"
+    category: "Cryptography"
+    language: ["java", "kotlin"]
+    regex: "(?i)(?:IvParameterSpec|GCMParameterSpec).{0,100}new byte\\s*\\[|IvParameterSpec\\s*\\(new byte\\["
+    recommendation: "Generate a fresh random IV for each encryption operation using SecureRandom. Prepend the IV to the ciphertext for use during decryption."
+
+  - id: "SRC-048"
+    name: "Weak Key Size for RSA"
+    description: "RSA keys smaller than 2048 bits are used, which are vulnerable to factoring attacks."
+    severity: "HIGH"
+    category: "Cryptography"
+    language: ["java", "kotlin"]
+    regex: "(?i)KeyPairGenerator.{0,100}initialize\\s*\\(\\s*(512|768|1024)\\s*\\)"
+    recommendation: "Use RSA keys of at least 2048 bits (preferably 4096 bits) or switch to elliptic curve cryptography (EC) with P-256 or higher."
+
+  - id: "SRC-049"
+    name: "PBE with Weak Iteration Count"
+    description: "Password-Based Encryption (PBE) is used with a very low iteration count, making brute-force attacks feasible."
+    severity: "MEDIUM"
+    category: "Cryptography"
+    language: ["java", "kotlin"]
+    regex: "(?i)(PBEKeySpec|PBKDF2WithHmac).{0,200}(\\d{1,4})\\s*[,\\)]"
+    recommendation: "Use at least 100,000 iterations with PBKDF2WithHmacSHA256. Higher is better; re-evaluate periodically as hardware improves."
+
+  - id: "SRC-050"
+    name: "Hardcoded Salt in Key Derivation"
+    description: "A static or hardcoded salt is used in a key derivation function, weakening the derived key against precomputed attacks."
+    severity: "HIGH"
+    category: "Cryptography"
+    language: ["java", "kotlin"]
+    regex: "(?i)(PBEKeySpec|PBEParameterSpec).{0,100}['\"][a-zA-Z0-9]{4,}['\"]"
+    recommendation: "Generate a cryptographically random salt of at least 16 bytes per key derivation operation. Store the salt alongside the ciphertext."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 6: Intent & IPC Security
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-051"
+    name: "Implicit PendingIntent Vulnerability"
+    description: "PendingIntent is created without FLAG_IMMUTABLE, allowing other apps to modify the intent on Android 12+."
+    severity: "HIGH"
+    category: "Intent Security"
+    language: ["java", "kotlin"]
+    regex: "PendingIntent\\.(getActivity|getBroadcast|getService|getForegroundService)\\s*\\([^)]*0\\s*[,\\)]"
+    recommendation: "Use PendingIntent.FLAG_IMMUTABLE for all PendingIntents unless mutability is explicitly required."
+
+  - id: "SRC-052"
+    name: "Unprotected Implicit Broadcast Intent"
+    description: "A broadcast is sent as an implicit intent, which can be received by any app on the device."
+    severity: "MEDIUM"
+    category: "Intent Security"
+    language: ["java", "kotlin"]
+    regex: "sendBroadcast\\s*\\(\\s*new\\s+Intent\\s*\\(\\s*['\"]"
+    recommendation: "Use explicit intents with a target package, or specify a permission in sendBroadcast(intent, permission) to restrict receivers."
+
+  - id: "SRC-053"
+    name: "Intent Received from External Source Without Validation"
+    description: "Data received from an external Intent (getStringExtra, getIntExtra, etc.) is used without input validation."
+    severity: "HIGH"
+    category: "Intent Security"
+    language: ["java", "kotlin"]
+    regex: "getIntent\\s*\\(\\s*\\).{0,50}(getStringExtra|getData|getAction|getSerializableExtra|getParcelableExtra)"
+    recommendation: "Validate and sanitize all data received from external Intents before use. Check the calling package for sensitive operations."
+
+  - id: "SRC-054"
+    name: "Fragment Injection via Intent"
+    description: "PreferenceActivity or FragmentActivity loads fragments based on Intent data, enabling fragment injection attacks."
+    severity: "HIGH"
+    category: "Intent Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)(PreferenceActivity|isValidFragment).{0,300}(getIntent|getExtra|getStringExtra)"
+    recommendation: "Override isValidFragment() in PreferenceActivity to return false for all fragments, or migrate to PreferenceFragmentCompat."
+
+  - id: "SRC-055"
+    name: "Sticky Broadcast Used"
+    description: "sendStickyBroadcast() is used, which is deprecated and stores the broadcast permanently so any app can read it later."
+    severity: "MEDIUM"
+    category: "Intent Security"
+    language: ["java", "kotlin"]
+    regex: "sendStickyBroadcast\\s*\\("
+    recommendation: "Replace with sendBroadcast() or LocalBroadcastManager for local communication. Use explicit intents to restrict recipients."
+
+  - id: "SRC-056"
+    name: "Dynamic BroadcastReceiver Registered Without Permission"
+    description: "A BroadcastReceiver is registered dynamically without specifying a broadcast permission, allowing any app to send it broadcasts."
+    severity: "MEDIUM"
+    category: "Intent Security"
+    language: ["java", "kotlin"]
+    regex: "registerReceiver\\s*\\(\\s*[^,]+,\\s*new\\s+IntentFilter\\s*\\("
+    recommendation: "Pass a permission string to registerReceiver() to restrict who can send broadcasts to this receiver."
+
+  - id: "SRC-057"
+    name: "Insecure Serialization via Parcel or Serializable"
+    description: "Custom Parcelable or Serializable objects are deserialized from untrusted sources, which can lead to object injection attacks."
+    severity: "HIGH"
+    category: "Intent Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)(getParcelableExtra|getSerializableExtra|readParcelable|readSerializable)"
+    recommendation: "Validate the type of deserialized objects before casting. Prefer safer alternatives like Protobuf or explicit JSON parsing."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 7: SQL Injection
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-058"
+    name: "Raw SQL Query with String Concatenation"
+    description: "Raw SQL queries are constructed by concatenating user-supplied strings, enabling SQL injection attacks."
+    severity: "CRITICAL"
+    category: "SQL Injection"
+    language: ["java", "kotlin"]
+    regex: "(?i)((rawQuery|execSQL)\\s*\\([^)]*(\\+|getString|String\\.format|format|toString)\\s*|(rawQuery|execSQL)\\s*\\(\\s*[^)]*(getString|getText|toString|getIntent))"
+    recommendation: "Use parameterized queries with ? placeholders and pass arguments as a String array. Never concatenate user input into SQL strings."
+
+  - id: "SRC-059"
+    name: "ContentResolver Query with Unparameterized Selection"
+    description: "A ContentResolver query uses string concatenation in the selection argument, potentially enabling SQL injection via content URIs."
+    severity: "HIGH"
+    category: "SQL Injection"
+    language: ["java", "kotlin"]
+    regex: "(?i)(contentResolver|resolver)\\.query.{0,200}\\+[^)]*\\)"
+    recommendation: "Always use selection arguments (selectionArgs String[]) instead of embedding values directly in the selection string."
+
+  - id: "SRC-060"
+    name: "Room Database Query with Unsanitized Input"
+    description: "A Room @RawQuery annotation is used with unsanitized user input, bypassing Room's built-in injection protection."
+    severity: "HIGH"
+    category: "SQL Injection"
+    language: ["java", "kotlin"]
+    regex: "@RawQuery"
+    recommendation: "Avoid @RawQuery. If required, validate and sanitize input thoroughly and use SupportSQLiteQuery with bound arguments."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 8: Path Traversal & File Inclusion
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-061"
+    name: "Path Traversal via User-Supplied File Path"
+    description: "User-supplied input is used to construct a file path without canonicalization, enabling path traversal attacks (../../)."
+    severity: "HIGH"
+    category: "Path Traversal"
+    language: ["java", "kotlin"]
+    regex: "(?i)new\\s+(File|FileInputStream|FileOutputStream)\\s*\\([^)]*\\+[^)]*\\)"
+    recommendation: "Canonicalize file paths using File.getCanonicalPath() and verify the result starts with the expected base directory."
+
+  - id: "SRC-062"
+    name: "Zip Slip Vulnerability"
+    description: "Zip file entries are extracted without path validation, allowing files to be written outside the target directory."
+    severity: "CRITICAL"
+    category: "Path Traversal"
+    language: ["java", "kotlin"]
+    regex: "(?i)(ZipInputStream|ZipFile|ZipEntry).{0,300}(getName|getPath).{0,100}(FileOutputStream|new File)"
+    recommendation: "Validate each ZipEntry name using File.getCanonicalPath() and ensure it starts with the target extraction directory before writing."
+
+  - id: "SRC-063"
+    name: "File Delete with User-Supplied Input"
+    description: "File.delete() or Files.delete() is called with a path derived from user input, potentially deleting arbitrary files."
+    severity: "HIGH"
+    category: "Path Traversal"
+    language: ["java", "kotlin"]
+    regex: "(?i)(file|f)\\.delete\\s*\\(|Files\\.delete\\s*\\("
+    recommendation: "Validate and canonicalize file paths before deletion. Verify the file is within the expected application directory."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 9: Authentication & Authorization
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-064"
+    name: "Biometric Authentication Result Not Verified"
+    description: "Biometric authentication success is checked via boolean result without cryptographic confirmation, enabling bypass attacks."
+    severity: "HIGH"
+    category: "Authentication"
+    language: ["java", "kotlin"]
+    regex: "(?i)(BiometricPrompt|FingerprintManager).{0,300}(onAuthenticationSucceeded).{0,100}(?!CryptoObject)"
+    recommendation: "Always use BiometricPrompt with a CryptoObject backed by an Android Keystore key to cryptographically confirm authentication."
+
+  - id: "SRC-065"
+    name: "Weak Password Validation (Min Length < 8)"
+    description: "Password validation accepts passwords shorter than 8 characters, weakening account security."
+    severity: "MEDIUM"
+    category: "Authentication"
+    language: ["java", "kotlin"]
+    regex: "(?i)(password|passwd).length\\s*[<>]=?\\s*[1-7](?![0-9])"
+    recommendation: "Enforce a minimum password length of 12+ characters, combined with complexity requirements."
+
+  - id: "SRC-066"
+    name: "Hardcoded Admin or Debug Backdoor"
+    description: "A hardcoded username, admin code, or debug condition bypasses normal authentication."
+    severity: "CRITICAL"
+    category: "Authentication"
+    language: ["java", "kotlin"]
+    regex: "(?i)(admin|administrator|root|debug|test).{0,20}equals\\s*\\(\\s*['\"][^'\"]{1,20}['\"]\\s*\\)"
+    recommendation: "Remove all hardcoded backdoors and debug credentials before release. Use feature flags backed by remote configuration."
+
+  - id: "SRC-067"
+    name: "Insecure Token Comparison (Non-Constant-Time)"
+    description: "Security tokens or passwords are compared using String.equals(), which is vulnerable to timing attacks."
+    severity: "MEDIUM"
+    category: "Authentication"
+    language: ["java", "kotlin"]
+    regex: "(?i)(token|secret|password|key|hash).{0,30}\\.equals\\s*\\("
+    recommendation: "Use MessageDigest.isEqual() or a constant-time comparison function to compare secrets, preventing timing-based side-channel attacks."
+
+  - id: "SRC-068"
+    name: "OAuth Token Stored in Plaintext"
+    description: "OAuth access or refresh tokens are stored in SharedPreferences or a file without encryption."
+    severity: "HIGH"
+    category: "Authentication"
+    language: ["java", "kotlin"]
+    regex: "(?i)(putString|putValue|writeUTF).{0,100}(access_token|refresh_token|oauth_token|bearer)"
+    recommendation: "Store tokens in EncryptedSharedPreferences or the Android Keystore. Never store raw tokens in plaintext storage."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 10: Code Injection & Dynamic Execution
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-069"
+    name: "Dynamic Class Loading from External Path"
+    description: "Classes are loaded from an external or user-supplied path using DexClassLoader, enabling code injection."
+    severity: "CRITICAL"
+    category: "Code Injection"
+    language: ["java", "kotlin"]
+    regex: "(?i)DexClassLoader\\s*\\("
+    recommendation: "Avoid DexClassLoader from external storage. If necessary, cryptographically verify the DEX file signature before loading."
+
+  - id: "SRC-070"
+    name: "JavaScript Injection via evaluateJavascript"
+    description: "evaluateJavascript() or loadUrl(\"javascript:\") is called with unvalidated user input, enabling JavaScript injection."
+    severity: "CRITICAL"
+    category: "Code Injection"
+    language: ["java", "kotlin"]
+    regex: "(?i)(evaluateJavascript|loadUrl\\s*\\(\\s*['\"]javascript:).{0,100}(getStringExtra|getUserInput|request|param|query)"
+    recommendation: "Never pass user input directly to evaluateJavascript() or javascript: URLs. Sanitize and encode all dynamic JS content."
+
+  - id: "SRC-071"
+    name: "Runtime.exec() with User-Controlled Input"
+    description: "Runtime.exec() or ProcessBuilder is invoked with user-supplied parameters, enabling command injection."
+    severity: "CRITICAL"
+    category: "Code Injection"
+    language: ["java", "kotlin"]
+    regex: "(?i)((Runtime\\.getRuntime\\(\\)\\.exec|ProcessBuilder|\\.exec\\s*\\()|(Runtime\\.getRuntime|ProcessBuilder)\\s*\\(\\s*new\\s*String\\[\\])"
+    recommendation: "Never pass user input to shell commands. Avoid Runtime.exec() entirely; use Android APIs to achieve the same functionality safely."
+
+  - id: "SRC-072"
+    name: "Reflection Used with External Input"
+    description: "Java reflection is used with a class name or method name derived from external input, enabling class injection."
+    severity: "HIGH"
+    category: "Code Injection"
+    language: ["java", "kotlin"]
+    regex: "(?i)(Class\\.forName|Method\\.invoke|getDeclaredMethod).{0,200}(getStringExtra|getUserInput|intent|request|param)"
+    recommendation: "Never use reflection with user-controlled class or method names. Use polymorphism or a controlled switch/factory pattern instead."
+
+  - id: "SRC-073"
+    name: "Groovy or Script Engine Execution"
+    description: "A script engine or dynamic script execution is invoked, potentially executing attacker-controlled code."
+    severity: "HIGH"
+    category: "Code Injection"
+    language: ["java", "kotlin"]
+    regex: "(?i)(ScriptEngine|ScriptEngineManager|GroovyShell|GroovyClassLoader)"
+    recommendation: "Avoid executing scripts dynamically on Android. If required, run in a fully sandboxed environment with no access to sensitive APIs."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 11: Logging & Debugging in Production
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-074"
+    name: "Debug Log Left in Production Code"
+    description: "Debug-level logs (Log.d, Log.v) may expose sensitive runtime information in production builds."
+    severity: "MEDIUM"
+    category: "Logging"
+    language: ["java", "kotlin"]
+    regex: "Log\\.(d|v)\\s*\\("
+    recommendation: "Remove or gate debug/verbose logs behind BuildConfig.DEBUG. Use ProGuard to strip Log.d and Log.v from release builds."
+
+  - id: "SRC-075"
+    name: "Stack Trace Printed to Log"
+    description: "Exception stack traces are printed to the log which may expose internal class names, library versions, and logic paths."
+    severity: "MEDIUM"
+    category: "Logging"
+    language: ["java", "kotlin"]
+    regex: "\\.printStackTrace\\s*\\("
+    recommendation: "Use a structured logging framework and send errors to a secure crash reporting service. Never print stack traces in production."
+
+  - id: "SRC-076"
+    name: "Log Contains Sensitive User Data"
+    description: "A logging statement contains references to PII or sensitive fields such as email, phone number, or location."
+    severity: "HIGH"
+    category: "Logging"
+    language: ["java", "kotlin"]
+    regex: "(?i)Log\\.[dvwei]\\s*\\([^)]*?(email|phone|location|latitude|longitude|address|ssn|dob|birth)[^)]*\\)"
+    recommendation: "Redact or remove all PII from log statements. Implement a log sanitizer that strips sensitive fields before writing."
+
+  - id: "SRC-077"
+    name: "Timber or Third-Party Logger with DEBUG Level in Release"
+    description: "Timber or similar loggers are planted with a DebugTree or verbose configuration that may run in production."
+    severity: "MEDIUM"
+    category: "Logging"
+    language: ["java", "kotlin"]
+    regex: "Timber\\.plant\\s*\\(\\s*new\\s+Timber\\.DebugTree"
+    recommendation: "Plant DebugTree only inside BuildConfig.DEBUG checks. Use a CrashReportingTree for production logging."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 12: Root Detection & Emulator Detection
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-078"
+    name: "No Root Detection Implemented"
+    description: "The application does not appear to check for device root status, which may allow attackers to extract secrets or bypass controls on rooted devices."
+    severity: "MEDIUM"
+    category: "Runtime Protection"
+    language: ["java", "kotlin"]
+    regex: "(?i)(RootBeer|isRooted|isDeviceRooted|RootDetect|checkRoot)"
+    recommendation: "Implement root detection using Play Integrity API or a library like RootBeer. Warn or restrict sensitive functionality on rooted devices."
+    inverted: true
+
+  - id: "SRC-079"
+    name: "Emulator Detection Check Absent"
+    description: "The application does not check for emulator/simulator environment, which attackers use for automated analysis and bypassing runtime controls."
+    severity: "LOW"
+    category: "Runtime Protection"
+    language: ["java", "kotlin"]
+    regex: "(?i)(Build\\.FINGERPRINT|Build\\.MODEL|isEmulator|EmulatorDetect)"
+    recommendation: "Check Build.FINGERPRINT, Build.MODEL, and Build.MANUFACTURER for known emulator values, or use Play Integrity API for stronger attestation."
+    inverted: true
+
+  - id: "SRC-080"
+    name: "Debugger Detection Check Absent"
+    description: "No debugger detection code is present. Attackers can attach a debugger to inspect memory and bypass logic at runtime."
+    severity: "MEDIUM"
+    category: "Runtime Protection"
+    language: ["java", "kotlin"]
+    regex: "(?i)(Debug\\.isDebuggerConnected|isDebuggerAttached)"
+    recommendation: "Check Debug.isDebuggerConnected() at sensitive points and handle accordingly. Combine with anti-tamper measures."
+    inverted: true
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 13: Insecure Deserialization
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-081"
+    name: "ObjectInputStream Deserializes Untrusted Data"
+    description: "ObjectInputStream.readObject() is called on data from an untrusted source, enabling remote code execution via deserialization gadgets."
+    severity: "CRITICAL"
+    category: "Insecure Deserialization"
+    language: ["java", "kotlin"]
+    regex: "ObjectInputStream.{0,100}readObject\\s*\\("
+    recommendation: "Never deserialize untrusted data with Java native serialization. Use Protobuf, JSON (Gson/Moshi), or a safe serialization library instead."
+
+  - id: "SRC-082"
+    name: "Gson fromJson with Untyped Input"
+    description: "Gson.fromJson() is called with a raw Map or Object type on untrusted input, potentially allowing type confusion attacks."
+    severity: "MEDIUM"
+    category: "Insecure Deserialization"
+    language: ["java", "kotlin"]
+    regex: "(?i)fromJson\\s*\\([^,]+,\\s*(Object|Map|HashMap)\\.class"
+    recommendation: "Always specify a concrete, expected type in Gson.fromJson(). Validate the resulting object's fields before use."
+
+  - id: "SRC-083"
+    name: "Bundle getParcelable Without Type Verification"
+    description: "Bundle.getParcelable() is called without verifying the returned object type, which can lead to type confusion attacks on Android 13 and below."
+    severity: "MEDIUM"
+    category: "Insecure Deserialization"
+    language: ["java", "kotlin"]
+    regex: "getParcelable\\s*\\(\\s*['\"][^'\"]+['\"]\\s*\\)"
+    recommendation: "On API 33+, use the new getParcelable(String, Class) method with an explicit type. On earlier APIs, verify the type with instanceof before casting."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 14: Memory & Native Code Security
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-084"
+    name: "JNI Native Method with Unvalidated String Input"
+    description: "A JNI native method receives a Java String or byte array without explicit validation, which may enable buffer overflows in native code."
+    severity: "HIGH"
+    category: "Native Code"
+    language: ["java", "kotlin"]
+    regex: "(?i)native\\s+(public|private|protected|static).{0,100}(String|byte\\[\\])"
+    recommendation: "Validate and bound-check all strings/arrays before passing to native code. Enable SafeStack and Control Flow Integrity in NDK builds."
+
+  - id: "SRC-085"
+    name: "Use of Unsafe Native Library Load Path"
+    description: "A native library is loaded from an external or user-writable path using System.load(), enabling library injection attacks."
+    severity: "CRITICAL"
+    category: "Native Code"
+    language: ["java", "kotlin"]
+    regex: "System\\.load\\s*\\("
+    recommendation: "Use System.loadLibrary() to load bundled native libraries from the APK. Never load native libraries from external storage."
+
+  - id: "SRC-086"
+    name: "Memory Leak via Unclosed Cursor"
+    description: "A database Cursor is opened but not closed in a finally block, causing resource leaks and potential data exposure."
+    severity: "LOW"
+    category: "Native Code"
+    language: ["java", "kotlin"]
+    regex: "(?i)(Cursor|SQLiteCursor)\\s+\\w+\\s*=.{0,200}(?!.*\\.close\\s*\\()"
+    recommendation: "Always close Cursor objects in a finally block or use try-with-resources (Kotlin's use extension) to ensure proper cleanup."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 15: Firebase & Cloud Misconfigurations
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-087"
+    name: "Firebase Realtime Database Reference Without Auth Check"
+    description: "A Firebase database reference is accessed without checking FirebaseAuth.getCurrentUser(), potentially reading/writing as unauthenticated user."
+    severity: "HIGH"
+    category: "Cloud Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)(FirebaseDatabase\\.getInstance|DatabaseReference).{0,300}(setValue|updateChildren|push|removeValue)"
+    recommendation: "Enforce Firebase Authentication before any database read or write. Combine with server-side Security Rules that require auth != null."
+
+  - id: "SRC-088"
+    name: "Firebase Storage Reference Without Auth Check"
+    description: "Firebase Storage is accessed without authentication checks, potentially exposing stored files."
+    severity: "HIGH"
+    category: "Cloud Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)(FirebaseStorage\\.getInstance|StorageReference).{0,300}(putFile|putBytes|putStream|getDownloadUrl)"
+    recommendation: "Require Firebase Authentication for all Storage operations. Configure Storage Security Rules to allow access only to authenticated users."
+
+  - id: "SRC-089"
+    name: "Google Cloud or AWS Credentials in BuildConfig"
+    description: "Cloud credentials or configuration keys appear to be accessed from BuildConfig, which may embed them in the APK."
+    severity: "HIGH"
+    category: "Cloud Security"
+    language: ["java", "kotlin"]
+    regex: "BuildConfig\\.(API_KEY|SECRET|TOKEN|ACCESS_KEY|CLIENT_SECRET|GCP_KEY|AWS)"
+    recommendation: "Do not embed cloud credentials in BuildConfig. Retrieve credentials at runtime from a secure backend or use restricted API keys scoped to the app's SHA-1."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 16: Broadcast & IPC Sniffing
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-090"
+    name: "Sensitive Data Passed in Intent Extras in Plaintext"
+    description: "Sensitive values such as passwords or tokens are passed as plaintext Intent extras, readable by intent inspection tools on rooted devices."
+    severity: "HIGH"
+    category: "IPC Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)(putExtra|putString).{0,100}(password|token|secret|key|credential|pin|otp)"
+    recommendation: "Avoid passing sensitive data via Intent extras. Use local authentication or pass a reference (e.g., session ID) and retrieve the sensitive data from secure storage."
+
+  - id: "SRC-091"
+    name: "Insecure LocalBroadcastManager Use for Sensitive Signals"
+    description: "LocalBroadcastManager is used to transmit sensitive signals such as login events or payment results."
+    severity: "LOW"
+    category: "IPC Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)(LocalBroadcastManager|localBroadcast).{0,200}(login|auth|token|payment|secret)"
+    recommendation: "Use LiveData, Flow, EventBus with access controls, or a ViewModel to communicate login/auth state instead of LocalBroadcastManager."
+
+  - id: "SRC-092"
+    name: "AIDL Interface Exposed Without Permission Check"
+    description: "An AIDL-based service interface does not appear to check the caller's identity or permissions, allowing any app to invoke it."
+    severity: "HIGH"
+    category: "IPC Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)(Binder\\.getCallingUid|checkCallingPermission|enforceCallingPermission)"
+    recommendation: "Always validate the calling UID/permission in AIDL service implementations using Binder.getCallingUid() and checkCallingPermission()."
+    inverted: true
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 17: Coroutine & Thread Safety
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-093"
+    name: "Network Request on Main Thread"
+    description: "A network operation is performed on the main (UI) thread, which can also expose ANR errors and is a common indicator of poor security practices."
+    severity: "LOW"
+    category: "Thread Safety"
+    language: ["java", "kotlin"]
+    regex: "(?i)(HttpURLConnection|OkHttpClient|Retrofit).{0,300}\\.execute\\s*\\("
+    recommendation: "Move all network operations to background threads using Kotlin Coroutines (Dispatchers.IO), RxJava, or AsyncTask alternatives."
+
+  - id: "SRC-094"
+    name: "Unsynchronized Singleton Holding Credentials"
+    description: "A singleton class appears to hold credentials or session tokens without synchronization, risking race conditions and data leaks."
+    severity: "MEDIUM"
+    category: "Thread Safety"
+    language: ["java", "kotlin"]
+    regex: "(?i)(getInstance|INSTANCE|companion object).{0,200}(token|credential|session|password|secret)"
+    recommendation: "Protect shared mutable credential state with @Synchronized or Kotlin's by lazy with synchronization. Prefer EncryptedSharedPreferences."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 18: Exported Components via Code
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-095"
+    name: "Activity Launched via Deep Link Without Input Validation"
+    description: "An Activity processes deep link URI data without validating the scheme, host, or path, enabling injection via crafted links."
+    severity: "HIGH"
+    category: "Component Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)(getData|getScheme|getHost|getPath|getQueryParameter).{0,200}(?!equalsIgnoreCase|equals|matches|startsWith)"
+    recommendation: "Validate the scheme, host, and path of incoming URIs against an explicit allowlist before processing them."
+
+  - id: "SRC-096"
+    name: "Unprotected Content Provider Query"
+    description: "A ContentProvider query method does not verify the caller's identity, allowing unauthorized data access."
+    severity: "HIGH"
+    category: "Component Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)override fun query\\(|@Override.{0,10}public Cursor query\\("
+    recommendation: "Check the caller's UID or permissions at the start of each ContentProvider method using getCallingUid() or enforceCallingPermission()."
+
+  - id: "SRC-097"
+    name: "Service onBind Returns IBinder Without Caller Verification"
+    description: "Service.onBind() returns an IBinder without checking the binding app's identity, allowing unauthorized binding."
+    severity: "MEDIUM"
+    category: "Component Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)override fun onBind|@Override.{0,10}public IBinder onBind"
+    recommendation: "In onBind(), verify the caller using getCallingUid() and cross-check against the expected package name before returning the binder."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 19: Insecure File Handling
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-098"
+    name: "Temp File Created in World-Accessible Directory"
+    description: "Temporary files are created in the system temp directory or external storage where they may be readable by other apps."
+    severity: "MEDIUM"
+    category: "File Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)(File\\.createTempFile|getTempDir|System\\.getProperty\\(['\"]java\\.io\\.tmpdir['\"]\\))"
+    recommendation: "Create temporary files in the app's internal cache directory using Context.getCacheDir(). Set restrictive permissions and delete files when done."
+
+  - id: "SRC-099"
+    name: "Sensitive File Not Deleted After Use"
+    description: "A temporary or sensitive file is created but not explicitly deleted after use, risking data exposure on shared devices."
+    severity: "MEDIUM"
+    category: "File Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)(FileOutputStream|FileWriter|PrintWriter).{0,300}(password|token|key|credential|secret)"
+    recommendation: "Always delete sensitive temporary files immediately after use. Overwrite file contents before deletion if the storage medium may be forensically analyzed."
+
+  - id: "SRC-100"
+    name: "FileProvider Paths Not Restricted"
+    description: "A FileProvider is used to share files but the shared path may be broader than necessary, exposing unintended files."
+    severity: "MEDIUM"
+    category: "File Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)FileProvider\\.getUriForFile\\s*\\("
+    recommendation: "Ensure FileProvider paths.xml restricts sharing to specific subdirectories. Audit all FileProvider.getUriForFile() calls to confirm only intended files are shared."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 20: Third-Party & Supply Chain
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-101"
+    name: "Unverified Third-Party Library SDK Init"
+    description: "A third-party SDK is initialized without a version check or integrity validation, risking supply chain compromise."
+    severity: "INFO"
+    category: "Supply Chain"
+    language: ["java", "kotlin"]
+    regex: "(?i)(Adjust|AppsFlyer|MoPub|Braze|OneSignal|Bugsnag)\\.init\\s*\\("
+    recommendation: "Pin third-party SDK versions in build.gradle. Enable Gradle dependency verification and monitor for known vulnerabilities via Dependabot or OWASP Dependency-Check."
+
+  - id: "SRC-102"
+    name: "HTTP Library Trusts All Certificates (OkHttp)"
+    description: "OkHttpClient is built with a custom SSLSocketFactory or TrustManager that trusts all certificates."
+    severity: "CRITICAL"
+    category: "Supply Chain"
+    language: ["java", "kotlin"]
+    regex: "OkHttpClient\\.Builder\\s*\\(\\s*\\).{0,500}(sslSocketFactory|hostnameVerifier)"
+    recommendation: "Remove custom SSLSocketFactory and HostnameVerifier from OkHttpClient. Use the system trust store and implement certificate pinning via CertificatePinner."
+
+  - id: "SRC-103"
+    name: "Retrofit with No TLS Configuration"
+    description: "Retrofit is configured with a base URL that uses HTTP instead of HTTPS, transmitting API data in plaintext."
+    severity: "HIGH"
+    category: "Supply Chain"
+    language: ["java", "kotlin"]
+    regex: "(?i)Retrofit\\.Builder\\s*\\(\\s*\\).{0,300}baseUrl\\s*\\(\\s*['\"]http://"
+    recommendation: "Use HTTPS base URLs in Retrofit. Add a CertificatePinner to the underlying OkHttpClient for extra protection."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 21: Permissions Requested at Runtime
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-104"
+    name: "Sensitive Permission Requested Without Rationale"
+    description: "A dangerous permission is requested via requestPermissions() without first showing a rationale to the user."
+    severity: "LOW"
+    category: "Runtime Permissions"
+    language: ["java", "kotlin"]
+    regex: "requestPermissions\\s*\\([^)]*\\)"
+    recommendation: "Check shouldShowRequestPermissionRationale() and display a clear explanation before requesting dangerous permissions."
+
+  - id: "SRC-105"
+    name: "Permission Result Not Verified Before Sensitive Operation"
+    description: "A sensitive operation is performed without checking whether the required permission was actually granted."
+    severity: "MEDIUM"
+    category: "Runtime Permissions"
+    language: ["java", "kotlin"]
+    regex: "(?i)(requestPermissions|ActivityCompat\\.requestPermissions).{0,500}(?!checkSelfPermission|PERMISSION_GRANTED)"
+    recommendation: "Always verify the grant result in onRequestPermissionsResult() before performing the protected operation."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 22: Sensitive Data in Memory
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-106"
+    name: "Password Stored as String Instead of char[]"
+    description: "Passwords are stored as String objects, which are immutable and remain in memory until GC, exposing them to memory dump attacks."
+    severity: "MEDIUM"
+    category: "Memory Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)String\\s+(password|passwd|pin|secret)\\s*="
+    recommendation: "Use char[] for passwords and zero out the array immediately after use. This limits the exposure window in memory."
+
+  - id: "SRC-107"
+    name: "Sensitive Data in Bundle Passed Between Activities"
+    description: "Sensitive information is placed in a Bundle for activity-to-activity communication, which can be inspected on rooted devices."
+    severity: "MEDIUM"
+    category: "Memory Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)(bundle|intent)\\.putString\\s*\\([^,]+,\\s*[^)]*?(password|token|secret|key|credential|pin)"
+    recommendation: "Pass only session references or non-sensitive identifiers between activities. Retrieve sensitive data from secure storage within each activity."
+
+  - id: "SRC-108"
+    name: "Sensitive Data in toString() Method"
+    description: "A model or entity class overrides toString() in a way that includes sensitive fields, risking exposure via logging or error messages."
+    severity: "LOW"
+    category: "Memory Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)override fun toString|@Override.{0,10}public String toString.{0,300}(password|token|secret|key|card|ssn)"
+    recommendation: "Exclude all sensitive fields from toString(). Mark sensitive fields with @Exclude annotations for JSON serializers."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 23: Accessibility & Overlay Abuse
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-109"
+    name: "AccessibilityService Reads Password Fields"
+    description: "An AccessibilityService subscribes to events that include password fields, potentially capturing user credentials."
+    severity: "CRITICAL"
+    category: "Accessibility"
+    language: ["java", "kotlin"]
+    regex: "(?i)(AccessibilityEvent|AccessibilityNodeInfo).{0,300}(getText|isPassword|ACTION_ARGUMENT_TEXT)"
+    recommendation: "AccessibilityServices must not read or transmit password field content. Clearly document all data accessed and comply with Play Store policy for accessibility services."
+
+  - id: "SRC-110"
+    name: "Overlay (TYPE_SYSTEM_OVERLAY or TYPE_APPLICATION_OVERLAY) Used Without FLAG_NOT_TOUCHABLE"
+    description: "A system overlay window is drawn without FLAG_NOT_TOUCHABLE, potentially enabling clickjacking attacks over other apps."
+    severity: "HIGH"
+    category: "Accessibility"
+    language: ["java", "kotlin"]
+    regex: "(?i)(TYPE_SYSTEM_OVERLAY|TYPE_APPLICATION_OVERLAY|LayoutParams\\.TYPE_SYSTEM_ALERT)"
+    recommendation: "Add FLAG_NOT_TOUCHABLE and FLAG_NOT_FOCUSABLE to overlays that are purely informational. Minimize overlay usage and disclose it in the privacy policy."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 24: Backup & App Data Exposure
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-111"
+    name: "SharedPreferences File Not Excluded from Backup"
+    description: "Sensitive SharedPreferences files are not excluded from Auto Backup or adb backup, potentially exposing them."
+    severity: "MEDIUM"
+    category: "Backup Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)getSharedPreferences\\s*\\(['\"]([^'\"]+)['\"]"
+    recommendation: "Exclude sensitive SharedPreferences XML files from backup in fullBackupContent or dataExtractionRules XML."
+
+  - id: "SRC-112"
+    name: "Database File Not Excluded from Backup"
+    description: "SQLite database files are not excluded from backup, potentially leaking all stored user data."
+    severity: "MEDIUM"
+    category: "Backup Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)(openOrCreateDatabase|Room\\.databaseBuilder).{0,100}['\"][^'\"]+\\.db['\"]"
+    recommendation: "Add your .db files to the backup exclusion list in fullBackupContent or dataExtractionRules."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 25: Miscellaneous & Best Practices
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-113"
+    name: "StrictMode Enabled in Release Build"
+    description: "StrictMode is enabled without a BuildConfig.DEBUG guard, which may log sensitive violation details in production."
+    severity: "LOW"
+    category: "Miscellaneous"
+    language: ["java", "kotlin"]
+    regex: "(?i)StrictMode\\.(setThreadPolicy|setVmPolicy)"
+    recommendation: "Wrap all StrictMode calls inside if (BuildConfig.DEBUG) to ensure they only run in debug builds."
+
+  - id: "SRC-114"
+    name: "Insecure Random Seed Using System Time"
+    description: "A Random object is seeded with System.currentTimeMillis() or System.nanoTime(), making the sequence predictable."
+    severity: "HIGH"
+    category: "Miscellaneous"
+    language: ["java", "kotlin"]
+    regex: "new\\s+Random\\s*\\(\\s*(System\\.currentTimeMillis|System\\.nanoTime)"
+    recommendation: "Use SecureRandom which is seeded from the OS entropy source. Never use time-based seeds for security-relevant random values."
+
+  - id: "SRC-115"
+    name: "Exception Caught and Silently Ignored"
+    description: "An exception is caught with an empty catch block, silently swallowing errors that may indicate security failures."
+    severity: "LOW"
+    category: "Miscellaneous"
+    language: ["java", "kotlin"]
+    regex: "catch\\s*\\([^)]+\\)\\s*\\{\\s*\\}"
+    recommendation: "Never silently ignore exceptions. At minimum, log the error. For security-critical exceptions (CryptoException, SecurityException), fail securely."
+
+  - id: "SRC-116"
+    name: "FLAG_SECURE Not Set on Sensitive Activity Window"
+    description: "A sensitive activity (login, payment, OTP) does not set FLAG_SECURE, allowing screenshots and screen recordings."
+    severity: "MEDIUM"
+    category: "Miscellaneous"
+    language: ["java", "kotlin"]
+    regex: "(?i)(LoginActivity|PaymentActivity|OtpActivity|CheckoutActivity|PinActivity).{0,500}(?!FLAG_SECURE)"
+    recommendation: "Call getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE) in onCreate() of sensitive activities."
+
+  - id: "SRC-117"
+    name: "Insecure Use of Android Clipboard for Copy-Password Feature"
+    description: "A password or PIN is explicitly copied to the clipboard, exposing it to background apps that monitor clipboard events."
+    severity: "HIGH"
+    category: "Miscellaneous"
+    language: ["java", "kotlin"]
+    regex: "(?i)(copyToClipboard|ClipData\\.newPlainText).{0,200}(password|pin|secret|token)"
+    recommendation: "Avoid providing copy-to-clipboard for passwords. If necessary, automatically clear the clipboard after 30 seconds."
+
+  - id: "SRC-118"
+    name: "UUID.randomUUID() Used as Security Token"
+    description: "UUID.randomUUID() may rely on a non-cryptographically-secure RNG on some platforms, making session tokens predictable."
+    severity: "MEDIUM"
+    category: "Miscellaneous"
+    language: ["java", "kotlin"]
+    regex: "UUID\\.randomUUID\\s*\\(\\s*\\)"
+    recommendation: "Generate security tokens using SecureRandom and encode with Base64. UUID.randomUUID() is not guaranteed to use a CSPRNG on all devices."
+
+  - id: "SRC-119"
+    name: "Deprecated PasswordAuthentication Class Used"
+    description: "The deprecated java.net.PasswordAuthentication is used to handle credentials, which stores the password as a char array that may be swapped to disk."
+    severity: "MEDIUM"
+    category: "Miscellaneous"
+    language: ["java", "kotlin"]
+    regex: "PasswordAuthentication\\s*\\("
+    recommendation: "Replace with secure credential management using the Android Keystore or CredentialManager API."
+
+  - id: "SRC-120"
+    name: "Kotlin Coroutine GlobalScope Leaking Sensitive Context"
+    description: "GlobalScope coroutines are not tied to any lifecycle and can outlive the activity, potentially leaking sensitive context or credentials."
+    severity: "LOW"
+    category: "Miscellaneous"
+    language: ["kotlin"]
+    regex: "GlobalScope\\.(launch|async)\\s*\\{"
+    recommendation: "Use viewModelScope, lifecycleScope, or a custom CoroutineScope tied to the component lifecycle. Avoid GlobalScope in production code."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 26: WebView Security Deep-Dive
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-121"
+    name: "WebViewClient.shouldOverrideUrlLoading Not Overridden"
+    description: "A WebViewClient is used without overriding shouldOverrideUrlLoading(), allowing any URL loaded in the WebView to open in the browser or inside the WebView without validation."
+    severity: "HIGH"
+    category: "WebView Security"
+    language: ["java", "kotlin"]
+    regex: "WebViewClient\\(\\)|new WebViewClient\\(\\)|object\\s*:\\s*WebViewClient\\(\\)"
+    recommendation: "Override shouldOverrideUrlLoading() to validate URLs against an allowlist before allowing navigation. Block unknown schemes (e.g., tel://, intent://) unless explicitly needed."
+
+  - id: "SRC-122"
+    name: "JavaScriptInterface Without @JavascriptInterface Annotation"
+    description: "A method exposed via addJavascriptInterface() is missing the @JavascriptInterface annotation. On API 17+, only annotated methods are callable from JavaScript."
+    severity: "MEDIUM"
+    category: "WebView Security"
+    language: ["java", "kotlin"]
+    regex: "addJavascriptInterface\\s*\\([^)]*\\)\\s*[^@]"
+    recommendation: "Add @JavascriptInterface annotation to all methods exposed via addJavascriptInterface(). This is required on API 17+ and prevents arbitrary method invocation from JavaScript."
+
+  - id: "SRC-123"
+    name: "WebView ShouldInterceptRequest Not Overridden"
+    description: "A WebViewClient is used without overriding shouldInterceptRequest(), missing the opportunity to block or inspect network requests made from the WebView."
+    severity: "MEDIUM"
+    category: "WebView Security"
+    language: ["java", "kotlin"]
+    regex: "WebViewClient\\(\\)|object\\s*:\\s*WebViewClient\\(\\)"
+    recommendation: "Override shouldInterceptRequest() to monitor and restrict network requests from WebViews. Block requests to known malicious domains or non-HTTPS URLs."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 27: Component Injection
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-124"
+    name: "PreferenceActivity Fragment Injection"
+    description: "PreferenceActivity loads fragment class names from Intent extras without proper validation, enabling fragment injection attacks that can execute arbitrary code in the context of the PreferenceActivity."
+    severity: "HIGH"
+    category: "Component Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)PreferenceActivity.{0,200}(getIntent|getStringExtra|getExtra).{0,200}(fragment|preference)"
+    recommendation: "Override isValidFragment() to return false or validate the fragment name against a whitelist. Migrate to PreferenceFragmentCompat which does not expose dynamic fragment loading."
+
+  - id: "SRC-125"
+    name: "Navigation Component Deep Link Without Argument Validation"
+    description: "The Navigation Component is used with deep links but the navigation arguments are not validated before use, allowing injection via crafted deep links."
+    severity: "HIGH"
+    category: "Component Security"
+    language: ["java", "kotlin"]
+    regex: "NavDeepLink|findNavController\\(\\)\\.navigate\\s*\\("
+    recommendation: "Validate all navigation arguments before invoking navigate(). Use Safe Args and verify that arguments match expected patterns (string length, format, range)."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 28: Insecure Data Handling
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-126"
+    name: "ANDROID_ID Used as Unique Identifier for Security"
+    description: "Settings.Secure.ANDROID_ID is used as a unique device identifier for security-sensitive operations (auth tokens, session binding). ANDROID_ID can change on factory reset and is not cryptographically secure."
+    severity: "HIGH"
+    category: "Insecure Data Storage"
+    language: ["java", "kotlin"]
+    regex: "Settings\\.Secure\\.ANDROID_ID|Secure\\.ANDROID_ID|getString\\(.*ANDROID_ID\\)"
+    recommendation: "Use a randomly generated UUID stored in EncryptedSharedPreferences or the Android Keystore for identifying installations. ANDROID_ID should only be used for analytics, not for security binding."
+
+  - id: "SRC-127"
+    name: "Sensitive Data in Fragment Arguments"
+    description: "Sensitive data (passwords, tokens, PII) is passed as Fragment arguments, which survive Activity recreation and are persisted to disk on process death."
+    severity: "HIGH"
+    category: "Memory Security"
+    language: ["java", "kotlin"]
+    regex: "setArguments\\s*\\([^)]*\\b(password|token|secret|key|credential|pin|otp|ssn|card)\\b"
+    recommendation: "Pass only non-sensitive identifiers (e.g., user ID, session reference) as Fragment arguments. Retrieve sensitive data from secure storage within the Fragment."
+
+  - id: "SRC-128"
+    name: "Custom Parcelable Class Exposes Sensitive Fields"
+    description: "A custom Parcelable implementation includes sensitive fields that are serialized into a Bundle, potentially exposing them to other apps via Intent extras or persisting to disk."
+    severity: "MEDIUM"
+    category: "Memory Security"
+    language: ["java", "kotlin"]
+    regex: "writeToParcel\\([^)]+\\)\\s*\\{[^}]*\\b(password|token|secret|key|credential|pin|otp)\\b"
+    recommendation: "Exclude sensitive fields from Parcelable serialization. Use transient keyword or wrap in a separate non-Parcelable holder. Consider using a secure reference pattern instead."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 29: Authentication & Token Handling
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-129"
+    name: "Token Stored in Plaintext SharedPreferences"
+    description: "Authentication tokens, OAuth credentials, or session tokens are stored in regular SharedPreferences without encryption, making them accessible on rooted devices or via ADB backup."
+    severity: "CRITICAL"
+    category: "Authentication"
+    language: ["java", "kotlin"]
+    regex: "getSharedPreferences.{0,200}(putString|edit\\(\\)\\.putString).{0,200}(token|access_token|refresh_token|auth|bearer|jwt|session)"
+    recommendation: "Store tokens in EncryptedSharedPreferences from the Jetpack Security library or in the Android Keystore. Never persist tokens in plaintext SharedPreferences or files."
+
+  - id: "SRC-130"
+    name: "Biometric Authentication Without CryptoObject"
+    description: "BiometricPrompt is used without a CryptoObject, meaning the authentication callback does not provide cryptographic confirmation of the biometric event."
+    severity: "HIGH"
+    category: "Authentication"
+    language: ["java", "kotlin"]
+    regex: "BiometricPrompt\\([^)]*\\)\\s*\\{[^}]*onAuthenticationSucceeded\\s*\\("
+    recommendation: "Create a CryptoObject backed by an Android Keystore key and pass it to BiometricPrompt.authenticate(). This cryptographically confirms that biometric authentication actually occurred."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 30: Network & API Security
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-131"
+    name: "OkHttpClient with No Timeout Configuration"
+    description: "An OkHttpClient is created without setting connect/read/write timeouts, leaving the app vulnerable to slowloris attacks or connections that hang indefinitely."
+    severity: "MEDIUM"
+    category: "Insecure Networking"
+    language: ["java", "kotlin"]
+    regex: "new\\s+OkHttpClient\\.Builder\\s*\\(\\s*\\)\\s*\\.(?!connectTimeout|readTimeout|writeTimeout)"
+    recommendation: "Set explicit timeouts: connectTimeout(10, TimeUnit.SECONDS), readTimeout(30, TimeUnit.SECONDS), writeTimeout(30, TimeUnit.SECONDS). Adjust values based on your use case."
+
+  - id: "SRC-132"
+    name: "Unsafe Notification of PendingIntent Without FLAG_IMMUTABLE (API 23+)"
+    description: "Notification actions use PendingIntent.getActivity() or PendingIntent.getBroadcast() without FLAG_IMMUTABLE, allowing other apps to intercept the Intent on Android 12+."
+    severity: "HIGH"
+    category: "Intent Security"
+    language: ["java", "kotlin"]
+    regex: "PendingIntent\\.(getActivity|getBroadcast|getService|getForegroundService)\\s*\\([^)]{10,150}0\\s*\\)"
+    recommendation: "Add PendingIntent.FLAG_IMMUTABLE (or FLAG_MUTABLE when explicitly required) to all PendingIntents. On API 31+, Mutable PendingIntents require a rationale in the Play Console."
+
+  - id: "SRC-133"
+    name: "Firebase Remote Config Used for Feature Toggling"
+    description: "Firebase Remote Config is used as a dynamic feature toggle mechanism. While legitimate, it can also be abused by attackers who gain Firebase console access to remotely enable malicious behavior."
+    severity: "LOW"
+    category: "Cloud Security"
+    language: ["java", "kotlin"]
+    regex: "FirebaseRemoteConfig|remoteConfig\\.get(\\w+)"
+    recommendation: "Validate Remote Config values before use. Use Remote Config only for non-security feature flags. For security-sensitive toggles, use server-side controls with code-level integrity checks."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 31: WebView Security (Extended)
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-134"
+    name: "WebView setWebContentsDebuggingEnabled in Release Build"
+    description: "WebView remote debugging is enabled, allowing any developer machine on the same network to inspect and control WebView content."
+    severity: "HIGH"
+    category: "WebView Security"
+    language: ["java", "kotlin"]
+    regex: "setWebContentsDebuggingEnabled\\s*\\(\\s*true\\s*\\)"
+    recommendation: "Wrap setWebContentsDebuggingEnabled in a BuildConfig.DEBUG check. Never enable WebView debugging in production builds."
+
+  - id: "SRC-135"
+    name: "WebView Loads Untrusted Content (Non-HTTPS)"
+    description: "A WebView is directed to load content via HTTP or from content/file schemes, bypassing TLS and allowing network-level manipulation of content."
+    severity: "HIGH"
+    category: "WebView Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)loadUrl\\s*\\(\\s*['\"](http://|file:///|content://)"
+    recommendation: "Use HTTPS URLs exclusively in WebViews. Avoid loading file:// or content:// URLs from untrusted sources."
+
+  - id: "SRC-136"
+    name: "WebView setMixedContentMode Allows Mixed Content"
+    description: "WebView is configured to allow mixed content (HTTP content loaded on HTTPS pages), bypassing mixed content blocking and enabling network-level attacks."
+    severity: "HIGH"
+    category: "WebView Security"
+    language: ["java", "kotlin"]
+    regex: "setMixedContentMode\\(WebSettings\\.MIXED_CONTENT_ALWAYS_ALLOW\\)"
+    recommendation: "Use MIXED_CONTENT_NEVER_ALLOW to block all mixed content. Only use MIXED_CONTENT_COMPATIBILITY_MODE if absolutely necessary."
+
+  - id: "SRC-137"
+    name: "WebView setJavaScriptCanOpenWindowsAutomatically Enabled"
+    description: "WebView JavaScript can open windows automatically via window.open(), which can be abused for unwanted popups and phishing."
+    severity: "MEDIUM"
+    category: "WebView Security"
+    language: ["java", "kotlin"]
+    regex: "setJavaScriptCanOpenWindowsAutomatically\\s*\\(\\s*true\\s*\\)"
+    recommendation: "Disable setJavaScriptCanOpenWindowsAutomatically(false) unless popups are required. If needed, override onCreateWindow() to control popup behavior."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 32: Cryptographic Misuse
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-138"
+    name: "AES in ECB Mode (Deterministic Encryption)"
+    description: "AES is used in ECB mode, which is deterministic and reveals patterns in encrypted data. Identical plaintext blocks produce identical ciphertext blocks."
+    severity: "CRITICAL"
+    category: "Cryptography"
+    language: ["java", "kotlin"]
+    regex: "(?i)(AES/ECB|DES/ECB|Blowfish/ECB)"
+    recommendation: "Replace ECB mode with GCM (AES/GCM/NoPadding) for authenticated encryption or CBC with HMAC for integrity. GCM provides both confidentiality and integrity."
+
+  - id: "SRC-139"
+    name: "RSA with No OAEP Padding (PKCS1Padding)"
+    description: "RSA encryption uses PKCS1Padding instead of OAEP, which is vulnerable to Bleichenbacher-style padding oracle attacks."
+    severity: "HIGH"
+    category: "Cryptography"
+    language: ["java", "kotlin"]
+    regex: "(?i)RSA/ECB/PKCS1Padding"
+    recommendation: "Use RSA/ECB/OAEPWithSHA-256AndMGF1Padding instead. OAEP provides provable security against padding oracle attacks."
+
+  - id: "SRC-140"
+    name: "DES or RC4 Algorithm Used (Broken Cipher)"
+    description: "DES or RC4 encryption algorithms are used. Both are considered broken and can be cracked with consumer hardware in minutes."
+    severity: "CRITICAL"
+    category: "Cryptography"
+    language: ["java", "kotlin"]
+    regex: "(?i)(Cipher\\.getInstance|KeyGenerator\\.getInstance)\\(['\"](DES|RC4|RC2|ARC4)"
+    recommendation: "Replace with AES-256-GCM for symmetric encryption. DES has a 56-bit key (brute-forceable) and RC4 has known biases in its output."
+
+  - id: "SRC-141"
+    name: "MD5 or SHA-1 Used for Cryptographic Hashing"
+    description: "MD5 or SHA-1 is used for security-relevant hashing. Both have known collision attacks and are considered cryptographically broken."
+    severity: "HIGH"
+    category: "Cryptography"
+    language: ["java", "kotlin"]
+    regex: "(?i)(MessageDigest\\.getInstance\\(['\"]MD5|MessageDigest\\.getInstance\\(['\"]SHA-1)"
+    recommendation: "Use SHA-256 or SHA-512 for hashing. For password hashing, use bcrypt, scrypt, or Argon2. Use HMAC-SHA256 for integrity verification."
+
+  - id: "SRC-142"
+    name: "Static IV/Nonce Used for Encryption"
+    description: "A static initialization vector (IV) or nonce is used for encryption. Static IVs in CBC/GCM mode completely break the security guarantees."
+    severity: "CRITICAL"
+    category: "Cryptography"
+    language: ["java", "kotlin"]
+    regex: "(?i)(IvParameterSpec\\s*\\(\\s*new\\s*byte\\s*\\[\\s*\\d+\\s*\\]|GCMParameterSpec\\s*\\(\\s*\\d+\\s*,\\s*new\\s*byte\\s*\\[)"
+    recommendation: "Generate a random IV for each encryption operation using SecureRandom. For AES-GCM, the recommended nonce length is 12 bytes."
+
+  - id: "SRC-143"
+    name: "Insecure SecureRandom Instance (SHA1PRNG)"
+    description: "SecureRandom is explicitly instantiated with the 'SHA1PRNG' algorithm, which may have weaker entropy on some implementations."
+    severity: "MEDIUM"
+    category: "Cryptography"
+    language: ["java", "kotlin"]
+    regex: "SecureRandom\\.getInstance\\(['\"]SHA1PRNG['\"]\\)"
+    recommendation: "Use SecureRandom.getInstanceStrong() or the default SecureRandom() constructor. Avoid specifying a particular algorithm unless required."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 33: Intent & PendingIntent Redesign
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-144"
+    name: "Intent Created with ACTION_PICK or ACTION_GET_CONTENT (Insecure)"
+    description: "ACTION_PICK or ACTION_GET_CONTENT is used to select files, which can return content from any source including malicious apps on older Android."
+    severity: "LOW"
+    category: "Intent Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)Intent\\(\\s*Intent\\.(ACTION_PICK|ACTION_GET_CONTENT|ACTION_OPEN_DOCUMENT)"
+    recommendation: "Use ACTION_OPEN_DOCUMENT with MIME type restrictions. Validate the returned URI and its content before processing."
+
+  - id: "SRC-145"
+    name: "FLAG_GRANT_READ_URI_PERMISSION Used Without FLAG_IMMUTABLE"
+    description: "URI permissions are granted via Intent flag without setting FLAG_IMMUTABLE, making the permission grant mutable and potentially resettable."
+    severity: "HIGH"
+    category: "Intent Security"
+    language: ["java", "kotlin"]
+    regex: "FLAG_GRANT_READ_URI_PERMISSION|FLAG_GRANT_WRITE_URI_PERMISSION"
+    recommendation: "Always add FLAG_IMMUTABLE (or FLAG_MUTABLE when needed) when granting URI permissions via Intent flags. Review each grant to ensure it is scoped correctly."
+
+  - id: "SRC-146"
+    name: "Intent Chooser Used Unnecessarily"
+    description: "Intent.createChooser() is used which displays a disambiguation dialog. For sensitive actions, this allows interception by any app listed in the chooser."
+    severity: "MEDIUM"
+    category: "Intent Security"
+    language: ["java", "kotlin"]
+    regex: "Intent\\.createChooser\\s*\\("
+    recommendation: "Use explicit intents (setPackage()) for sensitive operations like sending data or files. Intent choosers allow all compatible apps to see the Intent data."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 34: Logging & Debug Leakage
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-147"
+    name: "Logging Sensitive Data via Log.d or Log.v"
+    description: "Sensitive data (tokens, passwords, PII) is logged via Log.d() or Log.v(), making it accessible to any app with READ_LOGS permission on older Android or via ADB."
+    severity: "MEDIUM"
+    category: "Logging"
+    language: ["java", "kotlin"]
+    regex: "(?i)(Log\\.(d|v|i|w|e)).{0,200}(password|token|secret|key|credential|pin|otp|ssn|jwt|bearer|auth)"
+    recommendation: "Strip logs in release builds using ProGuard (assumenosideeffects). Never log credentials, tokens, or PII. Use Timber for structured logging with build-type awareness."
+
+  - id: "SRC-148"
+    name: "System.out/printStackTrace Used for Logging"
+    description: "System.out.println or printStackTrace() is used for logging, which is a debugging practice that should not appear in production code."
+    severity: "LOW"
+    category: "Logging"
+    language: ["java", "kotlin"]
+    regex: "System\\.(out|err)\\.(print|println)|printStackTrace\\(\\)"
+    recommendation: "Remove all System.out.println and printStackTrace() calls. Use a proper logging framework (Timber, Logcat) that can be disabled in release builds."
+
+  - id: "SRC-149"
+    name: "Error Response Contains Sensitive Details"
+    description: "Server error responses including stack traces, SQL queries, or internal paths are displayed to the user, leaking implementation details."
+    severity: "MEDIUM"
+    category: "Logging"
+    language: ["java", "kotlin"]
+    regex: "(?i)(getMessage|printStackTrace|toString).{0,200}(e\\.|throwable|exception)"
+    recommendation: "Mask error messages in production. Log the full error server-side and show a generic message to the user. Never expose stack traces or SQL in error responses."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 35: Deeplink & URL Handling Security
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-150"
+    name: "Deeplink URL Opened Without Validation"
+    description: "A deeplink URL is opened directly in a browser or WebView without verifying the scheme, host, or path against an allowlist."
+    severity: "HIGH"
+    category: "Deep Link Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)(openUrl|launchUrl|navigateToUrl|browseUrl|openInBrowser).{0,100}(uri|url|link|deepLink)"
+    recommendation: "Validate URL scheme (must be https://), host (must match allowlist), and path before opening. Reject all unrecognized schemes."
+
+  - id: "SRC-151"
+    name: "Deep Link Host Verification Weak or Missing"
+    description: "Deep linking is implemented without verifying the host or path of the incoming URI, allowing any app with a matching scheme to send crafted intents."
+    severity: "HIGH"
+    category: "Deep Link Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)(getData|getIntent\\(\\)\\.getData).{0,500}(?!equalsIgnoreCase|equals|matches|startsWith|host)"
+    recommendation: "Verify the URI host and path against an allowlist before processing. Use autoVerify=true for Android App Links and validate all parameters from the URI."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 36: Notification & System UI Security
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-152"
+    name: "Notification Shows Sensitive Content on Lock Screen"
+    description: "A notification displays sensitive data (OTP, password reset, financial info) without restricting lock screen visibility."
+    severity: "MEDIUM"
+    category: "Notification Security"
+    language: ["java", "kotlin"]
+    regex: "Notification\\.Builder.{0,200}(setContentText|setContentTitle).{0,200}(otp|pin|password|token|code|balance|amount|payment)"
+    recommendation: "Set setVisibility(NotificationCompat.VISIBILITY_PRIVATE) on notification channels that display sensitive content. Redact sensitive details from the notification body."
+
+  - id: "SRC-153"
+    name: "Full-Screen Intent Notification Without User Control"
+    description: "A notification uses fullScreenIntent to launch an activity in the foreground, which can be abused for UI spoofing and clickjacking."
+    severity: "HIGH"
+    category: "Notification Security"
+    language: ["java", "kotlin"]
+    regex: "setFullScreenIntent\\s*\\("
+    recommendation: "Use fullScreenIntent sparingly and only for time-critical events (incoming calls, alarms). On Android 14+, the user must grant permission for full-screen intents."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 37: Broadcast & IPC Misuse
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-154"
+    name: "sendBroadcast with Dangerous Extra Data"
+    description: "A broadcast is sent with potentially dangerous data in the extras (tokens, credentials) without restricting the receiver."
+    severity: "HIGH"
+    category: "Broadcast Security"
+    language: ["java", "kotlin"]
+    regex: "sendBroadcast\\s*\\([^)]*(token|password|secret|key|credential|auth)"
+    recommendation: "Never pass sensitive data in broadcast extras. Use explicit broadcasts with setPackage() to restrict receivers. For local communication, use LocalBroadcastManager."
+
+  - id: "SRC-155"
+    name: "Ordered Broadcast Sent Without Result Receiver Validation"
+    description: "An ordered broadcast is sent and the result is processed without verifying the sender of the result."
+    severity: "MEDIUM"
+    category: "Broadcast Security"
+    language: ["java", "kotlin"]
+    regex: "sendOrderedBroadcast\\s*\\("
+    recommendation: "Validate the result receiver's package name in the broadcast result callback. Malicious apps with higher priority can intercept and modify ordered broadcast results."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 38: Credential Manager & Biometrics
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-156"
+    name: "CredentialManager API Not Used (Android 14+ Legacy Auth)"
+    description: "The app uses legacy account authentication patterns instead of the new CredentialManager API, missing out on passkey support and phishing-resistant authentication."
+    severity: "INFO"
+    category: "Authentication"
+    language: ["java", "kotlin"]
+    regex: "(?i)(AccountManager|getPassword|getUserData).{0,200}(authenticate|login|signIn)"
+    recommendation: "Migrate to the Credential Manager API (androidx.credentials) for passkey, password, and federation support. This provides phishing-resistant authentication and a consistent UX."
+
+  - id: "SRC-157"
+    name: "BiometricPrompt Without Authentication Validity Window"
+    description: "Biometric authentication is not re-prompted for sensitive operations after a period of inactivity, allowing session reuse."
+    severity: "MEDIUM"
+    category: "Authentication"
+    language: ["java", "kotlin"]
+    regex: "BiometricPrompt\\.authenticate\\s*\\("
+    recommendation: "Implement a timeout mechanism that invalidates biometric authentication after a period of inactivity (typically 30 seconds). Re-authenticate for high-value operations."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 39: File & Data Storage Security
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-158"
+    name: "KeyStore Private Key Exported or Shared"
+    description: "A private key is exported from the Android Keystore as a KeyStore.PrivateKeyEntry, making the key material accessible in Java memory."
+    severity: "CRITICAL"
+    category: "Cryptography"
+    language: ["java", "kotlin"]
+    regex: "(?i)KeyStore\\.PrivateKeyEntry.{0,200}(getPrivateKey|getCertificateChain)"
+    recommendation: "Use the KeyStore key reference rather than extracting the key material. Use KeyStore.getEntry() with a PasswordProtection callback. On supported devices, use hardware-backed Keystore keys that cannot be extracted."
+
+  - id: "SRC-159"
+    name: "Sensitive Data Saved to External Storage"
+    description: "Files containing sensitive data are written to external storage, where they can be read by any app with READ_EXTERNAL_STORAGE permission."
+    severity: "CRITICAL"
+    category: "File Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)getExternalFilesDir|getExternalStorageDirectory|getExternalCacheDir"
+    recommendation: "Store sensitive data in internal storage (getFilesDir(), getCacheDir()) or EncryptedSharedPreferences. If external storage must be used, encrypt the data before writing."
+
+  - id: "SRC-160"
+    name: "Cache Files May Contain Sensitive Data"
+    description: "Sensitive data may be written to the app cache directory, which can be cleared by the user or system, leading to data loss."
+    severity: "INFO"
+    category: "File Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)(getCacheDir\\(\\)|getExternalCacheDir\\(\\)).{0,300}(password|token|secret)"
+    recommendation: "Avoid caching sensitive data. If caching is necessary, use EncryptedSharedPreferences and set a TTL for cached credential data."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 40: Code Quality & Miscellaneous
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-161"
+    name: "Zero-Length or Null Security Check Bypass"
+    description: "A security check compares input to null or empty string without length or content validation, which can be bypassed with crafted inputs."
+    severity: "MEDIUM"
+    category: "Miscellaneous"
+    language: ["java", "kotlin"]
+    regex: "(?i)(if\\s*\\(\\s*(input|data|value|param|arg)\\s*!=\\s*null\\s*\\)\\s*\\{)"
+    recommendation: "In addition to null checks, validate input length, format, and content. Use isEmpty() or isNullOrBlank() checks before processing strings."
+
+  - id: "SRC-162"
+    name: "Trust All HostnameVerifier Implementation"
+    description: "A custom HostnameVerifier that returns true for all hostnames is implemented, completely bypassing TLS hostname verification."
+    severity: "CRITICAL"
+    category: "Insecure Networking"
+    language: ["java", "kotlin"]
+    regex: "(?i)HostnameVerifier.{0,200}verify\\([^)]*\\)\\s*\\{[^}]*true"
+    recommendation: "Never implement HostnameVerifier that accepts all hostnames. Use the default verifier or implement proper hostname matching against a known allowlist."
+
+  - id: "SRC-163"
+    name: "Readable Writable External Storage Detection"
+    description: "The app checks external storage state via Environment.getExternalStorageState() which indicates media sharing, but provides no security context."
+    severity: "INFO"
+    category: "Miscellaneous"
+    language: ["java", "kotlin"]
+    regex: "getExternalStorageState|MEDIA_MOUNTED|MEDIA_SHARED"
+    recommendation: "Assume external storage is always accessible to other apps. Never store sensitive data on external storage. Consider using scoped storage (API 30+)."
+
+  - id: "SRC-164"
+    name: "Obsolete Android Architecture (AsyncTask)"
+    description: "The app uses AsyncTask, which is deprecated in Android 11+ and has known issues with Activity lifecycle, memory leaks, and background execution limits."
+    severity: "LOW"
+    category: "Miscellaneous"
+    language: ["java", "kotlin"]
+    regex: "AsyncTask<|extends\\s+AsyncTask"
+    recommendation: "Replace AsyncTask with Kotlin coroutines (viewModelScope.launch), RxJava, or the new Java ExecutorService patterns. AsyncTask does not handle configuration changes or process death."
+
+  - id: "SRC-165"
+    name: "Thread.sleep() Used in Main Thread"
+    description: "Thread.sleep() is called which may be on the main thread, causing ANRs and a poor user experience. Security implications include timing side-channel risks."
+    severity: "LOW"
+    category: "Miscellaneous"
+    language: ["java", "kotlin"]
+    regex: "Thread\\.sleep\\s*\\("
+    recommendation: "Avoid Thread.sleep() in Android applications. Use Handler.postDelayed(), coroutine delay(), or WorkManager for scheduling deferred work."
+
+  - id: "SRC-166"
+    name: "Decode/Deserialize Without Validation"
+    description: "Base64 decoded data or deserialized objects are used without validation, creating potential for deserialization attacks."
+    severity: "MEDIUM"
+    category: "Miscellaneous"
+    language: ["java", "kotlin"]
+    regex: "(?i)(Base64\\.decode|ObjectInputStream\\.readObject|Kryo\\.readObject|SerializationUtils\\.deserialize)"
+    recommendation: "Validate all decoded/deserialized data before use. For deserialization, implement a whitelist of allowed classes using ObjectInputFilter (Java 9+) or a custom validation layer."
+
+  - id: "SRC-167"
+    name: "ProcessBuilder or Runtime.exec Used"
+    description: "ProcessBuilder or Runtime.exec() is used to execute shell commands, which can be dangerous if arguments include user-controlled input (command injection)."
+    severity: "HIGH"
+    category: "Miscellaneous"
+    language: ["java", "kotlin"]
+    regex: "Runtime\\.getRuntime\\(\\)\\.exec|ProcessBuilder\\s*\\("
+    recommendation: "Avoid shell execution in Android apps. If absolutely necessary, pass arguments as separate array elements (not a single string) and validate all input against a strict allowlist."
+
+  - id: "SRC-168"
+    name: "Android Googles APIs Key Exposure Risk"
+    description: "APIs key patterns for various cloud services (Azure, GCP, Heroku, Stripe, Twilio, Slack) detected in source code."
+    severity: "CRITICAL"
+    category: "Hardcoded Secrets"
+    language: ["java", "kotlin", "xml", "properties"]
+    regex: "(?i)(sk_live_|pk_live_|SG\\.[a-zA-Z0-9]+|xox[abp]\\-|ghp_|gho_|ghu_|ghs_|ghr_)[a-zA-Z0-9]{20,}"
+    recommendation: "Rotate exposed keys immediately. Use a secrets management service (AWS Secrets Manager, GCP Secret Manager, Azure Key Vault) and never embed secrets in the APK."
+
+  - id: "SRC-169"
+    name: "Gradle API Key in Build Script"
+    description: "API keys or secrets appear in Gradle build files (build.gradle), which are included in version control and accessible to anyone with APK access via buildConfigField or resValue."
+    severity: "HIGH"
+    category: "Hardcoded Secrets"
+    language: ["groovy", "kotlin"]
+    regex: "(?i)(buildConfigField|resValue).{0,200}(api_key|apikey|secret|password|token)"
+    recommendation: "Move build secrets to local.properties (excluded from VCS) or a secure CI/CD secrets store. Never store production secrets in buildConfigField as they are visible in the APK."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 41: Provider & Content URI Security
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-170"
+    name: "Content Provider URL May Cause Path Traversal"
+    description: "Content provider methods using data derived from URIs without path validation may be vulnerable to directory traversal."
+    severity: "MEDIUM"
+    category: "Component Security"
+    language: ["java", "kotlin"]
+    regex: '(?i)(getContext\(\)\.getContentResolver|ContentUris|UriMatcher).{0,300}(openFile|openInputStream|openOutputStream)'
+    recommendation: "Validate all URI path segments to prevent traversal attacks. Compare against canonical paths and reject any with '..' or leading slashes."
+
+  - id: "SRC-171"
+    name: "ContentProvider Batch Operations Without Permission Check"
+    description: "ContentProvider applyBatch() or bulkInsert() methods are implemented without per-operation permission checks, potentially allowing data corruption."
+    severity: "MEDIUM"
+    category: "Component Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)(applyBatch|bulkInsert).{0,300}(ContentValues|ContentProviderOperation)"
+    recommendation: "Check permissions for each operation in applyBatch() individually. Validate all ContentValues before insertion."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 42: Jetpack Security Library Usage
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-172"
+    name: "EncryptedSharedPreferences Not Used"
+    description: "SharedPreferences are used for storing potentially sensitive data but EncryptedSharedPreferences from Jetpack Security is not imported."
+    severity: "MEDIUM"
+    category: "Insecure Data Storage"
+    language: ["java", "kotlin"]
+    regex: "(?i)(getSharedPreferences|PreferenceManager\\.getDefaultSharedPreferences)"
+    recommendation: "Use EncryptedSharedPreferences from the Jetpack Security library (androidx.security:security-crypto) for storing any user data, tokens, or preferences. It encrypts data with AES-256 GCM."
+
+  - id: "SRC-173"
+    name: "Jetpack Security Library Not Used for File Encryption"
+    description: "File encryption is performed manually instead of using EncryptedFile from Jetpack Security, which provides a secure, well-tested implementation."
+    severity: "MEDIUM"
+    category: "Cryptography"
+    language: ["java", "kotlin"]
+    regex: "(?i)(CipherOutputStream|CipherInputStream|Cipher\\.(ENCRYPT|DECRYPT)_MODE)"
+    recommendation: "Consider using EncryptedFile from Androidx Security library for file encryption. It handles IV generation, key wrapping, and authentication automatically."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 43: Third-Party SDK Deep Security
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-174"
+    name: "Facebook SDK Initialized With Auto Logging"
+    description: "Facebook SDK is initialized which may auto-log app events and user data by default."
+    severity: "INFO"
+    category: "Supply Chain"
+    language: ["java", "kotlin"]
+    regex: "(?i)FacebookSdk\\.sdkInitialize|FacebookSdk\\.setAutoLogAppEventsEnabled"
+    recommendation: "Disable auto-logging of app events if not required. Ensure Facebook SDK data sharing complies with privacy regulations (GDPR, CCPA)."
+
+  - id: "SRC-175"
+    name: "Google Analytics / Firebase Analytics Enabled Without Consent"
+    description: "Google Analytics or Firebase Analytics is initialized without first obtaining user consent, which may violate privacy regulations."
+    severity: "LOW"
+    category: "Supply Chain"
+    language: ["java", "kotlin"]
+    regex: "(?i)(FirebaseAnalytics|GoogleAnalytics|AnalyticsTracker).{0,100}(getInstance|createTracker)"
+    recommendation: "Implement a consent management platform (CMP) and delay analytics initialization until user consent is obtained. Use Google's Consent Management SDK."
+
+  - id: "SRC-176"
+    name: "Mixpanel/Amplitude/Adjust SDK Tracking Enabled"
+    description: "Third-party analytics/tracking SDKs are initialized. User tracking data may be sent to external servers."
+    severity: "INFO"
+    category: "Supply Chain"
+    language: ["java", "kotlin"]
+    regex: "(?i)(MixpanelAPI|Amplitude|Adjust|AppsFlyer|Branch\\.io)\\.(getInstance|init|start)"
+    recommendation: "Ensure all analytics/tracking SDKs respect user privacy choices. Implement consent-based opt-out for all tracking. Audit data sharing with third parties."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 44: Activity & Fragment Lifecycle
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-177"
+    name: "Activity State Restored Without Validation (onRestoreInstanceState)"
+    description: "Activity state is restored from a saved instance state bundle without validating the contents, potentially restoring tampered data."
+    severity: "MEDIUM"
+    category: "Component Security"
+    language: ["java", "kotlin"]
+    regex: "onRestoreInstanceState\\s*\\([^)]*Bundle"
+    recommendation: "Validate all values in the saved instance state Bundle before processing them. Treat restored state as potentially untrusted."
+
+  - id: "SRC-178"
+    name: "Fragment State Saved Containing Sensitive Data"
+    description: "Fragment.onSaveInstanceState() is called which may automatically save form fields including password fields."
+    severity: "MEDIUM"
+    category: "Component Security"
+    language: ["java", "kotlin"]
+    regex: "onSaveInstanceState\\s*\\([^)]*Bundle"
+    recommendation: "Avoid saving sensitive fields in the instance state Bundle. Call super.onSaveInstanceState() and remove sensitive entries from the Bundle afterwards."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 45: Dependency Injection & Reflection Issues
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-179"
+    name: "Dependency Injection Framework Used (Potential Injection)"
+    description: "A dependency injection framework (Dagger, Hilt, Koin) is used which may instantiate classes dynamically."
+    severity: "INFO"
+    category: "Miscellaneous"
+    language: ["java", "kotlin"]
+    regex: "(?i)(@Module|@Component|@Inject|startKoin|KoinComponent|@HiltAndroidApp)"
+    recommendation: "Ensure DI components do not expose sensitive dependencies. Modules should not provide credentials or tokens directly. Use @ActivityScoped / @ViewModelScoped appropriately."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 46: App Links & Associated Domains
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-180"
+    name: "Android App Links Without autoVerify"
+    description: "Deep link intent-filters are defined without android:autoVerify=\"true\", meaning the app does not verify domain ownership."
+    severity: "MEDIUM"
+    category: "Deep Link Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)(intent-filter|deepLink|appLink).{0,500}(?!autoVerify)"
+    recommendation: "Add android:autoVerify=\"true\" to all deep link intent-filters and host a Digital Asset Links JSON file at https://domain.name/.well-known/assetlinks.json."
+
+  - id: "SRC-181"
+    name: "Associated Domains File Not Verified"
+    description: "The app uses associated domains (universal links) but the server-side verification file may not be properly configured."
+    severity: "INFO"
+    category: "Deep Link Security"
+    language: ["java", "kotlin"]
+    regex: "apple-app-site-association|assetlinks\\.json|digital_asset_links"
+    recommendation: "Verify that your Digital Asset Links file is accessible and correctly configured. Use the Statement List Tester in the Play Console to verify."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 46b: Input Method & Keyboard Security
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-182"
+    name: "Custom InputMethodService (Custom Keyboard) — Keylogging Risk"
+    description: "The app implements a custom InputMethodService, acting as a system keyboard. Malicious/compromised keyboards can log every keystroke across all apps, including passwords and OTPs."
+    severity: "CRITICAL"
+    category: "Input Method Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)extends\\s+InputMethodService"
+    recommendation: "IME services require explicit user consent to enable and switch to. Ensure the IME purpose is clearly communicated. Audit all keystroke handling code — never transmit keystrokes off-device."
+
+  - id: "SRC-183"
+    name: "ClipboardManager Read (getPrimaryClip) May Leak User Data"
+    description: "The app reads the system clipboard via getPrimaryClip(). In the background or at inopportune moments, this leaks any text the user has copied — passwords, OTPs, crypto addresses."
+    severity: "MEDIUM"
+    category: "Clipboard Security"
+    language: ["java", "kotlin"]
+    regex: "(?i)getPrimaryClip\\s*\\("
+    recommendation: "Avoid reading clipboard unless absolutely necessary. On Android 12+, clipboard reads trigger a toast notification. Never read clipboard in background services. Use ClipData.Item.coerceToText() safely."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 47: Account Takeover & Token Handling
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-ATO-001"
+    name: "Access Token in URL / Query Parameter"
+    description: "Auth tokens are passed in URL query parameters. Tokens in URLs are leaked via referrer headers, server logs, and browser history."
+    severity: "CRITICAL"
+    category: "Account Takeover & Token Handling"
+    condition: "code"
+    pattern: '(Uri\.parse|getQueryParameter|appendQueryParameter).*(token|access_token|auth_token|jwt|bearer|apikey|api_key)'
+    recommendation: "Use Authorization header instead of URL parameters. Implement PKCE flow."
+
+  - id: "SRC-ATO-002"
+    name: "OAuth Implicit Grant Flow (response_type=token)"
+    description: "OAuth implicit flow returns access_token in URL fragment (#). This is deprecated in OAuth 2.1 and vulnerable to interception by other apps."
+    severity: "CRITICAL"
+    category: "Account Takeover & Token Handling"
+    condition: "code"
+    pattern: '(response_type\s*=\s*["'']token|implicit.*grant|#access_token|#token)'
+    recommendation: "Migrate to authorization code flow with PKCE. The implicit flow is deprecated."
+
+  - id: "SRC-ATO-003"
+    name: "Magic Link / Passwordless Login Without Device Binding"
+    description: "Magic link authentication detected. If magic links do not bind to the device, they can be replayed from any device."
+    severity: "HIGH"
+    category: "Account Takeover & Token Handling"
+    condition: "code"
+    pattern: '(magic.*link|magiclink|passwordless.*(link|login)|email.*link.*(auth|login|sign))'
+    recommendation: "Bind magic link tokens to the requesting device. Use universal links with associated domains."
+
+  - id: "SRC-ATO-004"
+    name: "Password Reset Token in Email Link"
+    description: "Password reset tokens are sent via email links. If the token is in the URL, it can be leaked via referrer headers."
+    severity: "HIGH"
+    category: "Account Takeover & Token Handling"
+    condition: "code"
+    pattern: '(resetPassword|forgotPassword|sendPasswordReset).*(email|link|url)'
+    recommendation: "Send reset tokens via out-of-band channels. Use short expiration. Bind to device."
+
+  - id: "SRC-ATO-005"
+    name: "CookieManager Used for Auth Tokens"
+    description: "WebView CookieManager.getCookie/setCookie is used which stores session tokens in cookies accessible to JavaScript."
+    severity: "CRITICAL"
+    category: "Account Takeover & Token Handling"
+    condition: "code"
+    pattern: '(CookieManager\.(getCookie|setCookie)|CookieSyncManager)'
+    recommendation: "Use Authorization headers instead of cookies. Disable JavaScript in WebView when using cookies."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 48: Hardcoded Production Secrets
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-HS-001"
+    name: "Hardcoded JWT / RSA Private Key"
+    description: "A private key (BEGIN RSA PRIVATE KEY / BEGIN PRIVATE KEY) is embedded in source code. This allows forging authentication tokens."
+    severity: "CRITICAL"
+    category: "Hardcoded Production Secrets"
+    condition: "code"
+    pattern: 'BEGIN\s+(RSA|EC|DSA|PRIVATE)\s+KEY'
+    recommendation: "Never embed private keys in APK. Use server-side signing with secure key storage."
+
+  - id: "SRC-HS-002"
+    name: "Hardcoded AWS/GCP/Azure Access Key"
+    description: "Cloud provider access keys detected in source code. These keys can be extracted from the APK."
+    severity: "CRITICAL"
+    category: "Hardcoded Production Secrets"
+    condition: "code"
+    pattern: '(AKIA[0-9A-Z]{16}|aws(.{0,5})key|google.*credentials.*json|azure.*connection.*string)'
+    recommendation: "Use cloud provider's IAM roles and temporary credentials. Never embed cloud keys in mobile apps."
+
+  - id: "SRC-HS-003"
+    name: "Hardcoded Firebase/API Secret"
+    description: "Firebase or other API secrets hardcoded in source. These can be extracted via decompilation."
+    severity: "HIGH"
+    category: "Hardcoded Production Secrets"
+    condition: "code"
+    pattern: '(google-services\.json|firebase.*secret|api[_-]?key\s*[=:]\s*[''"][A-Za-z0-9_\-]{16,})'
+    recommendation: "Use Firebase App Check and server-side validation. Fetch secrets from server at runtime."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 49: Sensitive PII Exposure
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-PII-001"
+    name: "Aadhaar Number Processing"
+    description: "Code references Aadhaar numbers (12-digit Indian ID). Aadhaar is sensitive PII under Indian law."
+    severity: "CRITICAL"
+    category: "Sensitive PII Exposure"
+    condition: "code"
+    pattern: '(aadhaar|Aadhaar|AADHAAR|\d{4}\s*\d{4}\s*\d{4})'
+    recommendation: "Encrypt Aadhaar at rest and in transit. Mask all but last 4 digits in logs and UI."
+
+  - id: "SRC-PII-002"
+    name: "PAN Card Number Processing"
+    description: "Code references PAN card numbers (Indian tax ID). PAN is sensitive financial PII."
+    severity: "CRITICAL"
+    category: "Sensitive PII Exposure"
+    condition: "code"
+    pattern: '[A-Z]{5}[0-9]{4}[A-Z]'
+    recommendation: "Encrypt PAN data at rest. Never display full PAN number in UI or logs."
+
+  - id: "SRC-PII-003"
+    name: "SSN / Social Security Number Reference"
+    description: "Code references SSN patterns. Social Security Numbers are highly sensitive PII."
+    severity: "CRITICAL"
+    category: "Sensitive PII Exposure"
+    condition: "code"
+    pattern: '(ssn|SSN|social.?security|ss[_-]?number|ssn[_-]?number)'
+    recommendation: "Avoid storing SSN on device. Use server-side tokenization."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 50: System / Privileged App Issues
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-SYS-001"
+    name: "System UID / Shared UID Operations"
+    description: "Code references system-level UIDs. Apps running as system UID have elevated privileges."
+    severity: "CRITICAL"
+    category: "System / Privileged App Issues"
+    condition: "code"
+    pattern: '(android\.uid\.(system|shared|phone|bluetooth|shell)|Process\.SYSTEM_UID)'
+    recommendation: "Avoid sharedUserId with system UID. Minimize exported components in system apps."
+
+  - id: "SRC-SYS-002"
+    name: "Signature Permission Enforcement"
+    description: "Signature-level permissions are used. Apps signed with the same platform key can access these components."
+    severity: "HIGH"
+    category: "System / Privileged App Issues"
+    condition: "code"
+    pattern: '(signatureOrSystem|signature.*permission|enforceCallingOrSelfPermission)'
+    recommendation: "Use 'signature' not 'signatureOrSystem'. Review which apps share the platform signature."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 51: Unsafe IPC & Binder
+  # ──────────────────────────────────────────────
+
+  - id: "SRC-IPC-001"
+    name: "Binder Transact Without Calling UID Check"
+    description: "IBinder.transact() is called without verifying getCallingUid(). This allows any client to invoke the service method."
+    severity: "CRITICAL"
+    category: "Unsafe IPC & Binder"
+    condition: "code"
+    pattern: 'transact.*getCallingUid|IBinder\.transact'
+    recommendation: "Always call getCallingUid() at the start of onTransact(). Enforce caller identity."
+
+  - id: "SRC-IPC-002"
+    name: "AIDL Interface Exposed Without Permission"
+    description: "AIDL interface methods may be exposed without permission checks. Any app with a matching interface can invoke them."
+    severity: "HIGH"
+    category: "Unsafe IPC & Binder"
+    condition: "code"
+    pattern: 'IInterface|Stub\.asInterface|Stub\.onTransact'
+    recommendation: "Protect AIDL interfaces with permissions. Validate caller identity in all AIDL methods."

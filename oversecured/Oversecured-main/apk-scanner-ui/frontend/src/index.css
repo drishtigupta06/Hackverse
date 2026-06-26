@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #2a2d36 transparent;
+  }
+
+  body {
+    @apply bg-surface text-text-primary;
+    font-size: 14px;
+  }
+
+  input, select, textarea {
+    @apply bg-surface-secondary border border-border rounded px-3 py-2 text-text-primary
+      focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/30;
+  }
+
+  button {
+    @apply transition-colors duration-150;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-accent hover:bg-accent-hover text-white px-4 py-2 rounded font-medium
+      disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply bg-surface-secondary border border-border hover:border-border-hover text-text-primary
+      px-4 py-2 rounded font-medium disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-danger {
+    @apply bg-severity-critical-bg border border-severity-critical-border text-severity-critical-text
+      px-4 py-2 rounded font-medium hover:bg-opacity-80;
+  }
+
+  .card {
+    @apply bg-surface-card border border-border rounded-lg;
+  }
+
+  .badge {
+    @apply px-2 py-0.5 rounded text-xs font-medium;
+  }
+}

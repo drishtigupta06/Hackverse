@@ -1,0 +1,7 @@
+# .dockerignore for Oversecured
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/

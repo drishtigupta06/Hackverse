@@ -1,0 +1,14 @@
+{
+  "name": "merged_project",
+  "description": "Combined Oversecured and Hacknova PHP project",
+  "require": {
+    "php": "^8.0",
+    "ext-pdo": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Oversecured\\": "oversecured/application/",
+      "Hacknova\\": "hacknova/application/"
+    }
+  }
+}

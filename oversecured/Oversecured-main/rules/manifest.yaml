@@ -1,0 +1,2060 @@
+rules:
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 1: Debugging & Build Configuration
+  # ──────────────────────────────────────────────
+
+  - id: "MF-001"
+    name: "Debuggable Application"
+    description: "The application is marked as debuggable, which allows attackers to read its memory and attach a debugger easily."
+    severity: "HIGH"
+    category: "Build Configuration"
+    xpath: "//application[@android:debuggable='true']"
+    recommendation: "Set android:debuggable='false' in AndroidManifest.xml before production release."
+
+  - id: "MF-002"
+    name: "Test-Only Application"
+    description: "The application has android:testOnly='true', which means it cannot be installed through normal means and may have relaxed security checks."
+    severity: "MEDIUM"
+    category: "Build Configuration"
+    xpath: "//application[@android:testOnly='true']"
+    recommendation: "Remove android:testOnly='true' before publishing to production."
+
+  - id: "MF-003"
+    name: "Application Uses Cleartext Traffic"
+    description: "The application explicitly permits cleartext (HTTP) network traffic, exposing data to interception."
+    severity: "HIGH"
+    category: "Build Configuration"
+    xpath: "//application[@android:usesCleartextTraffic='true']"
+    recommendation: "Set android:usesCleartextTraffic='false' and use HTTPS for all network communication."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 2: Backup & Data Exposure
+  # ──────────────────────────────────────────────
+
+  - id: "MF-004"
+    name: "Application Data Backup Allowed"
+    description: "The application allows activity data backup which might lead to data leakage or manipulation via ADB or cloud backup."
+    severity: "MEDIUM"
+    category: "Data Exposure"
+    xpath: "//application[@android:allowBackup='true']"
+    recommendation: "Set android:allowBackup='false' if backup functionality is not explicitly required."
+
+  - id: "MF-005"
+    name: "Full Backup Content Not Restricted"
+    description: "The application does not define a fullBackupContent rule, potentially backing up sensitive files and databases."
+    severity: "MEDIUM"
+    category: "Data Exposure"
+    xpath: "//application[@android:allowBackup='true' and not(@android:fullBackupContent)]"
+    recommendation: "Define android:fullBackupContent to explicitly exclude sensitive files from backup."
+
+  - id: "MF-006"
+    name: "Auto Backup Enabled (Android 6+)"
+    description: "Auto Backup is enabled by default on Android 6.0+ and can back up sensitive app data to Google Drive without user awareness."
+    severity: "LOW"
+    category: "Data Exposure"
+    xpath: "//application[not(@android:allowBackup='false')]"
+    recommendation: "Explicitly set android:allowBackup='false' or define a backup rules file to control what is backed up."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 3: Exported Components
+  # ──────────────────────────────────────────────
+
+  - id: "MF-007"
+    name: "Exported Activity without Permission"
+    description: "An Activity is exported without any permission protection, allowing any app to launch it."
+    severity: "HIGH"
+    category: "Component Exposure"
+    xpath: "//activity[(@android:exported='true' or (not(@android:exported) and intent-filter)) and not(@android:permission)]"
+    recommendation: "Add a custom permission to the activity or set android:exported='false' if external access is not needed."
+
+  - id: "MF-008"
+    name: "Exported Service without Permission"
+    description: "A Service is exported without any permission protection, allowing any app to bind to or start it."
+    severity: "HIGH"
+    category: "Component Exposure"
+    xpath: "//service[(@android:exported='true' or (not(@android:exported) and intent-filter)) and not(@android:permission)]"
+    recommendation: "Add android:permission to the service or set android:exported='false'."
+
+  - id: "MF-009"
+    name: "Exported Broadcast Receiver without Permission"
+    description: "A BroadcastReceiver is exported without any permission, allowing any app to send broadcasts to it."
+    severity: "HIGH"
+    category: "Component Exposure"
+    xpath: "//receiver[(@android:exported='true' or (not(@android:exported) and intent-filter)) and not(@android:permission)]"
+    recommendation: "Protect the receiver with a signature-level permission or set android:exported='false'."
+
+  - id: "MF-010"
+    name: "Exported Content Provider without Permission"
+    description: "A ContentProvider is exported without read/write permission protection, potentially exposing app data."
+    severity: "CRITICAL"
+    category: "Component Exposure"
+    xpath: "//provider[@android:exported='true' and not(@android:readPermission) and not(@android:writePermission) and not(@android:permission)]"
+    recommendation: "Define android:readPermission and android:writePermission on the provider, or set android:exported='false'."
+
+  - id: "MF-011"
+    name: "Content Provider Grants URI Permissions Broadly"
+    description: "The Content Provider allows URI permission grants without restrictions, enabling unintended data access."
+    severity: "MEDIUM"
+    category: "Component Exposure"
+    xpath: "//provider[@android:grantUriPermissions='true']"
+    recommendation: "Restrict URI permission grants using <grant-uri-permission> elements and avoid blanket grantUriPermissions."
+
+  - id: "MF-012"
+    name: "Implicit Intent Receiver (No Explicit Package)"
+    description: "The application registers a receiver for implicit system broadcasts which could be intercepted or spoofed."
+    severity: "LOW"
+    category: "Component Exposure"
+    xpath: "//receiver/intent-filter"
+    recommendation: "Use explicit intents where possible and add android:exported='false' for internal receivers."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 4: Dangerous & Sensitive Permissions
+  # ──────────────────────────────────────────────
+
+  - id: "MF-013"
+    name: "READ_SMS Permission Requested"
+    description: "The application requests permission to read SMS messages, which can expose sensitive OTPs and personal messages."
+    severity: "HIGH"
+    category: "Dangerous Permissions"
+    xpath: "//uses-permission[@android:name='android.permission.READ_SMS']"
+    recommendation: "Remove this permission unless SMS reading is a core, documented feature. Use the SMS Retriever API for OTP use-cases."
+
+  - id: "MF-014"
+    name: "SEND_SMS Permission Requested"
+    description: "The application can send SMS messages, which can incur charges and be abused for spam or phishing."
+    severity: "HIGH"
+    category: "Dangerous Permissions"
+    xpath: "//uses-permission[@android:name='android.permission.SEND_SMS']"
+    recommendation: "Remove SEND_SMS unless required. Consider using messaging APIs that require user interaction."
+
+  - id: "MF-015"
+    name: "READ_CONTACTS Permission Requested"
+    description: "The application can read the user's contact list, exposing personal information."
+    severity: "MEDIUM"
+    category: "Dangerous Permissions"
+    xpath: "//uses-permission[@android:name='android.permission.READ_CONTACTS']"
+    recommendation: "Justify the business need. Request only at runtime when absolutely required."
+
+  - id: "MF-016"
+    name: "WRITE_CONTACTS Permission Requested"
+    description: "The application can write or modify contacts, which can cause data corruption or privacy violations."
+    severity: "MEDIUM"
+    category: "Dangerous Permissions"
+    xpath: "//uses-permission[@android:name='android.permission.WRITE_CONTACTS']"
+    recommendation: "Request WRITE_CONTACTS only if the app is a dedicated contacts manager. Justify in privacy policy."
+
+  - id: "MF-017"
+    name: "RECORD_AUDIO Permission Requested"
+    description: "The application can access the device microphone, creating a risk of unauthorized audio recording."
+    severity: "HIGH"
+    category: "Dangerous Permissions"
+    xpath: "//uses-permission[@android:name='android.permission.RECORD_AUDIO']"
+    recommendation: "Ensure recording is only triggered by explicit user action with visible UI indicators."
+
+  - id: "MF-018"
+    name: "CAMERA Permission Requested"
+    description: "The application can access the device camera, creating a risk of unauthorized image capture."
+    severity: "MEDIUM"
+    category: "Dangerous Permissions"
+    xpath: "//uses-permission[@android:name='android.permission.CAMERA']"
+    recommendation: "Ensure camera access is only triggered by explicit user action with visible UI indicators."
+
+  - id: "MF-019"
+    name: "ACCESS_FINE_LOCATION Permission Requested"
+    description: "The application requests precise GPS location, which can be used for persistent user tracking."
+    severity: "HIGH"
+    category: "Dangerous Permissions"
+    xpath: "//uses-permission[@android:name='android.permission.ACCESS_FINE_LOCATION']"
+    recommendation: "Use ACCESS_COARSE_LOCATION if precision is not critical. Never collect location data in the background without explicit user consent."
+
+  - id: "MF-020"
+    name: "ACCESS_BACKGROUND_LOCATION Permission Requested"
+    description: "The application requests location access even when running in the background, enabling persistent tracking."
+    severity: "CRITICAL"
+    category: "Dangerous Permissions"
+    xpath: "//uses-permission[@android:name='android.permission.ACCESS_BACKGROUND_LOCATION']"
+    recommendation: "This requires separate user consent. Remove unless the app provides a location-based service that genuinely requires background access (e.g., navigation, geofencing)."
+
+  - id: "MF-021"
+    name: "READ_CALL_LOG Permission Requested"
+    description: "The application can read the user's call history, revealing communication patterns and contacts."
+    severity: "HIGH"
+    category: "Dangerous Permissions"
+    xpath: "//uses-permission[@android:name='android.permission.READ_CALL_LOG']"
+    recommendation: "Remove unless the app is a dialer or call manager. Justify clearly in the Play Store listing."
+
+  - id: "MF-022"
+    name: "PROCESS_OUTGOING_CALLS Permission Requested"
+    description: "The application can intercept and redirect outgoing phone calls."
+    severity: "HIGH"
+    category: "Dangerous Permissions"
+    xpath: "//uses-permission[@android:name='android.permission.PROCESS_OUTGOING_CALLS']"
+    recommendation: "This permission was deprecated in API 29. Remove it and migrate to the CallScreeningService API."
+
+  - id: "MF-023"
+    name: "SYSTEM_ALERT_WINDOW Permission Requested"
+    description: "The application can draw overlays over other apps, which can be used for clickjacking or phishing attacks."
+    severity: "HIGH"
+    category: "Dangerous Permissions"
+    xpath: "//uses-permission[@android:name='android.permission.SYSTEM_ALERT_WINDOW']"
+    recommendation: "Remove unless absolutely necessary. If required, ensure the overlay is clearly branded and cannot obscure sensitive UI elements."
+
+  - id: "MF-024"
+    name: "WRITE_EXTERNAL_STORAGE Permission Requested"
+    description: "The application can write to shared external storage, potentially exposing user files to other apps."
+    severity: "MEDIUM"
+    category: "Dangerous Permissions"
+    xpath: "//uses-permission[@android:name='android.permission.WRITE_EXTERNAL_STORAGE']"
+    recommendation: "Use app-specific directories (Context.getExternalFilesDir()) instead of shared storage on Android 10+."
+
+  - id: "MF-025"
+    name: "READ_EXTERNAL_STORAGE Permission Requested"
+    description: "The application can read all files from shared external storage."
+    severity: "MEDIUM"
+    category: "Dangerous Permissions"
+    xpath: "//uses-permission[@android:name='android.permission.READ_EXTERNAL_STORAGE']"
+    recommendation: "Use the MediaStore API or Storage Access Framework instead of broad storage access on Android 10+."
+
+  - id: "MF-026"
+    name: "MANAGE_EXTERNAL_STORAGE Permission Requested"
+    description: "The application requests broad access to all files on the device (All Files Access), which is highly sensitive."
+    severity: "CRITICAL"
+    category: "Dangerous Permissions"
+    xpath: "//uses-permission[@android:name='android.permission.MANAGE_EXTERNAL_STORAGE']"
+    recommendation: "This permission requires explicit Play Store approval. Use scoped storage APIs instead."
+
+  - id: "MF-027"
+    name: "GET_ACCOUNTS Permission Requested"
+    description: "The application can access the list of accounts registered on the device."
+    severity: "MEDIUM"
+    category: "Dangerous Permissions"
+    xpath: "//uses-permission[@android:name='android.permission.GET_ACCOUNTS']"
+    recommendation: "Only request account access for specific account types, not all accounts."
+
+  - id: "MF-028"
+    name: "INSTALL_PACKAGES Permission Requested"
+    description: "The application can install other APK packages, which could be used to install malware silently."
+    severity: "CRITICAL"
+    category: "Dangerous Permissions"
+    xpath: "//uses-permission[@android:name='android.permission.INSTALL_PACKAGES' or @android:name='android.permission.REQUEST_INSTALL_PACKAGES']"
+    recommendation: "Only app stores and MDM solutions should require this. Remove if your app is not a package installer."
+
+  - id: "MF-029"
+    name: "DELETE_PACKAGES Permission Requested"
+    description: "The application can uninstall other installed packages without user interaction."
+    severity: "HIGH"
+    category: "Dangerous Permissions"
+    xpath: "//uses-permission[@android:name='android.permission.DELETE_PACKAGES']"
+    recommendation: "This permission is restricted to system apps. Remove immediately from non-system applications."
+
+  - id: "MF-030"
+    name: "BLUETOOTH_ADMIN or BLUETOOTH_CONNECT Permission Requested"
+    description: "The application can scan for, connect to, or manage Bluetooth devices, potentially tracking users."
+    severity: "MEDIUM"
+    category: "Dangerous Permissions"
+    xpath: "//uses-permission[@android:name='android.permission.BLUETOOTH_ADMIN' or @android:name='android.permission.BLUETOOTH_CONNECT' or @android:name='android.permission.BLUETOOTH_SCAN']"
+    recommendation: "Request Bluetooth permissions only when required for core functionality. On Android 12+, use granular Bluetooth permissions."
+
+  - id: "MF-031"
+    name: "CHANGE_NETWORK_STATE or CHANGE_WIFI_STATE Permission Requested"
+    description: "The application can change network and Wi-Fi configurations, which may disrupt user connectivity or track location."
+    severity: "LOW"
+    category: "Dangerous Permissions"
+    xpath: "//uses-permission[@android:name='android.permission.CHANGE_NETWORK_STATE' or @android:name='android.permission.CHANGE_WIFI_STATE']"
+    recommendation: "Justify the need for network configuration changes. Avoid unless it's a VPN, network management, or tethering app."
+
+  - id: "MF-032"
+    name: "BIND_DEVICE_ADMIN Permission Requested"
+    description: "The application attempts to use device administrator capabilities, which grants broad control over the device."
+    severity: "CRITICAL"
+    category: "Dangerous Permissions"
+    xpath: "//uses-permission[@android:name='android.permission.BIND_DEVICE_ADMIN']"
+    recommendation: "Only MDM/EMM solutions should require device admin. Remove immediately from consumer apps."
+
+  - id: "MF-033"
+    name: "USE_BIOMETRIC or USE_FINGERPRINT Permission Requested"
+    description: "The application uses biometric hardware. While generally safe, misconfiguration can weaken authentication."
+    severity: "INFO"
+    category: "Dangerous Permissions"
+    xpath: "//uses-permission[@android:name='android.permission.USE_BIOMETRIC' or @android:name='android.permission.USE_FINGERPRINT']"
+    recommendation: "Ensure BiometricPrompt is used with CryptoObject for strong authentication. Do not use biometric as the sole auth factor for sensitive operations."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 5: Network Security & Traffic
+  # ──────────────────────────────────────────────
+
+  - id: "MF-034"
+    name: "No Network Security Config Defined"
+    description: "The application does not define a Network Security Configuration file, relying on default platform settings which may allow unintended cleartext traffic."
+    severity: "MEDIUM"
+    category: "Network Security"
+    xpath: "//application[not(@android:networkSecurityConfig)]"
+    recommendation: "Define a res/xml/network_security_config.xml and reference it via android:networkSecurityConfig to enforce HTTPS and pin certificates."
+
+  - id: "MF-035"
+    name: "User-Trusted CAs Permitted (Possible MiTM Risk)"
+    description: "The application may trust user-installed CA certificates, enabling man-in-the-middle attacks using a user-installed certificate."
+    severity: "MEDIUM"
+    category: "Network Security"
+    xpath: "//application[@android:networkSecurityConfig]"
+    recommendation: "In your network_security_config.xml, set <trust-anchors> to only include system CAs and disable user CAs for production builds."
+
+  - id: "MF-036"
+    name: "android:usesCleartextTraffic Not Explicitly Set to False"
+    description: "If android:usesCleartextTraffic is not explicitly set to false, cleartext HTTP traffic may be allowed on older API levels."
+    severity: "LOW"
+    category: "Network Security"
+    xpath: "//application[not(@android:usesCleartextTraffic)]"
+    recommendation: "Explicitly set android:usesCleartextTraffic='false' and enforce HTTPS via Network Security Config."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 6: Intent & Task Security
+  # ──────────────────────────────────────────────
+
+  - id: "MF-037"
+    name: "Task Affinity Set to Empty String"
+    description: "Setting taskAffinity to an empty string can cause the activity to be associated with unexpected tasks, enabling task hijacking."
+    severity: "MEDIUM"
+    category: "Intent Security"
+    xpath: "//activity[@android:taskAffinity='']"
+    recommendation: "Remove the empty taskAffinity or set it to a value unique to your application."
+
+  - id: "MF-038"
+    name: "Activity with launchMode singleTask or singleInstance"
+    description: "Activities with launchMode singleTask or singleInstance can be vulnerable to task hijacking if combined with exported=true."
+    severity: "MEDIUM"
+    category: "Intent Security"
+    xpath: "//activity[@android:launchMode='singleTask' or @android:launchMode='singleInstance']"
+    recommendation: "Combine with android:exported='false' or permission protection to prevent task hijacking."
+
+  - id: "MF-039"
+    name: "FLAG_ACTIVITY_NEW_TASK via launchMode"
+    description: "Using singleTask with exported components allows other apps to inject into the activity's task stack."
+    severity: "MEDIUM"
+    category: "Intent Security"
+    xpath: "//activity[(@android:exported='true' or (not(@android:exported) and intent-filter)) and (@android:launchMode='singleTask' or @android:launchMode='singleInstance')]"
+    recommendation: "Add a permission check or set android:exported='false' for single-task activities."
+
+  - id: "MF-040"
+    name: "Deep Link Activity Exported without Validation"
+    description: "An activity handles deep link intents (http/https schemes) and is exported, which may allow malicious apps to inject crafted intents."
+    severity: "HIGH"
+    category: "Intent Security"
+    xpath: "//activity[(@android:exported='true' or (not(@android:exported) and intent-filter))]/intent-filter/data[@android:scheme='http' or @android:scheme='https']"
+    recommendation: "Use Android App Links (Digital Asset Links) for verified deep links. Validate all incoming intent data and URLs."
+
+  - id: "MF-041"
+    name: "Custom Scheme Deep Link Registered"
+    description: "The app uses a custom URI scheme (e.g., myapp://) which can be hijacked by malicious apps registering the same scheme."
+    severity: "MEDIUM"
+    category: "Intent Security"
+    xpath: "//activity/intent-filter/data[@android:scheme and @android:scheme!='http' and @android:scheme!='https' and @android:scheme!='content' and @android:scheme!='file']"
+    recommendation: "Prefer HTTPS App Links over custom URI schemes. Always validate the intent source if custom schemes are required."
+
+  - id: "MF-042"
+    name: "Pending Intent without Immutable Flag"
+    description: "PendingIntents without FLAG_IMMUTABLE can be hijacked by malicious apps on Android 12+."
+    severity: "HIGH"
+    category: "Intent Security"
+    xpath: "//meta-data[contains(@android:name, 'PendingIntent')]"
+    recommendation: "Always use PendingIntent.FLAG_IMMUTABLE (or FLAG_MUTABLE only when required). This is enforced on API 31+."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 7: Screen & UI Security
+  # ──────────────────────────────────────────────
+
+  - id: "MF-043"
+    name: "android:screenOrientation Allows Screen Recording Rotation"
+    description: "Unrestricted screen orientation combined with no FLAG_SECURE can expose sensitive data in screenshots."
+    severity: "INFO"
+    category: "UI Security"
+    xpath: "//activity[not(@android:windowSoftInputMode)]"
+    recommendation: "Apply FLAG_SECURE to sensitive activities to prevent screenshots and screen recordings."
+
+  - id: "MF-044"
+    name: "Activity Not Excluded from Recents"
+    description: "Sensitive activities appear in the recent apps list, potentially exposing sensitive content."
+    severity: "LOW"
+    category: "UI Security"
+    xpath: "//activity[(@android:exported='true' or (not(@android:exported) and intent-filter)) and not(@android:excludeFromRecents='true')]"
+    recommendation: "Set android:excludeFromRecents='true' for activities that display sensitive data (e.g., login, payment screens)."
+
+  - id: "MF-045"
+    name: "android:noHistory Not Set for Sensitive Activities"
+    description: "Sensitive activities (e.g., login, OTP entry) may remain in the activity back stack, allowing users or malicious apps to navigate back to them."
+    severity: "LOW"
+    category: "UI Security"
+    xpath: "//activity[contains(translate(@android:name, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'login') or contains(translate(@android:name, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'otp')]"
+    recommendation: "Set android:noHistory='true' on authentication-related activities to remove them from the back stack."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 8: Custom Permissions
+  # ──────────────────────────────────────────────
+
+  - id: "MF-046"
+    name: "Custom Permission with Normal Protection Level"
+    description: "A custom permission uses protectionLevel='normal', which means any app can acquire it without user approval."
+    severity: "MEDIUM"
+    category: "Custom Permissions"
+    xpath: "//permission[@android:protectionLevel='normal']"
+    recommendation: "Use protectionLevel='signature' for permissions that should only be granted to apps signed with your certificate."
+
+  - id: "MF-047"
+    name: "Custom Permission with Dangerous Protection Level"
+    description: "A custom permission uses protectionLevel='dangerous', requiring runtime user approval. Ensure UX is clear about what is being granted."
+    severity: "LOW"
+    category: "Custom Permissions"
+    xpath: "//permission[@android:protectionLevel='dangerous']"
+    recommendation: "Provide a clear permission description and only request at the moment it is needed."
+
+  - id: "MF-048"
+    name: "No Custom Permissions Defined for IPC"
+    description: "The application exports components but does not define any custom permissions for inter-process communication control."
+    severity: "MEDIUM"
+    category: "Custom Permissions"
+    xpath: "//manifest[.//activity[@android:exported='true' or (not(@android:exported) and intent-filter)] or .//service[@android:exported='true' or (not(@android:exported) and intent-filter)]][not(//permission)]"
+    recommendation: "Define signature-level custom permissions and apply them to all exported components to restrict access to your own apps."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 9: SDK & API Level Targets
+  # ──────────────────────────────────────────────
+
+  - id: "MF-049"
+    name: "Minimum SDK Version Too Low"
+    description: "The application supports Android versions with known unpatched vulnerabilities (minSdkVersion below 21)."
+    severity: "MEDIUM"
+    category: "SDK Targeting"
+    xpath: "//uses-sdk[@android:minSdkVersion < 21]"
+    recommendation: "Set minSdkVersion to at least 21 (Android 5.0) to benefit from security improvements in Lollipop and above."
+
+  - id: "MF-050"
+    name: "Target SDK Version Is Outdated"
+    description: "The application targets an old SDK version, missing modern security behaviours (e.g., scoped storage, network security config defaults)."
+    severity: "HIGH"
+    category: "SDK Targeting"
+    xpath: "//uses-sdk[@android:targetSdkVersion < 31]"
+    recommendation: "Target the latest stable API level. Google Play requires targetSdkVersion >= 33 for new apps and updates."
+
+  - id: "MF-051"
+    name: "Max SDK Version Restriction May Block Security Updates"
+    description: "The application defines a maxSdkVersion, which will prevent it from running on newer, more secure Android versions."
+    severity: "LOW"
+    category: "SDK Targeting"
+    xpath: "//uses-sdk[@android:maxSdkVersion]"
+    recommendation: "Remove android:maxSdkVersion. Let the app run on all future Android versions and handle API changes in code."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 10: Miscellaneous & Information Leakage
+  # ──────────────────────────────────────────────
+
+  - id: "MF-052"
+    name: "Android Shared User ID Defined"
+    description: "The application uses android:sharedUserId, sharing the same Linux user ID with other apps. This is deprecated and reduces app isolation."
+    severity: "MEDIUM"
+    category: "Miscellaneous"
+    xpath: "//manifest[@android:sharedUserId]"
+    recommendation: "Remove android:sharedUserId. This attribute is deprecated in API 29 and will be removed in a future release."
+
+  - id: "MF-053"
+    name: "Application Icon Not Defined"
+    description: "The application does not define an icon, which can make it harder to identify in the device's app drawer and may indicate a malicious or test app."
+    severity: "INFO"
+    category: "Miscellaneous"
+    xpath: "//application[not(@android:icon)]"
+    recommendation: "Always define android:icon for user-facing applications."
+
+  - id: "MF-054"
+    name: "Hardcoded Application Label as String (Localisation Risk)"
+    description: "The application label is a hardcoded string rather than a resource reference, which prevents localisation and may expose internal names."
+    severity: "INFO"
+    category: "Miscellaneous"
+    xpath: "//application[@android:label and not(starts-with(@android:label, '@string/'))]"
+    recommendation: "Use a string resource reference (e.g., android:label='@string/app_name') for the application label."
+
+  - id: "MF-055"
+    name: "android:vmSafeMode Enabled"
+    description: "VM safe mode is enabled, disabling JIT compilation. This is a debug/test flag and should not be present in production builds."
+    severity: "LOW"
+    category: "Build Configuration"
+    xpath: "//application[@android:vmSafeMode='true']"
+    recommendation: "Remove android:vmSafeMode='true' from production builds."
+
+  - id: "MF-056"
+    name: "Application Defines a Device Admin Receiver"
+    description: "The app registers a DeviceAdminReceiver, granting it device administrator capabilities."
+    severity: "HIGH"
+    category: "Component Exposure"
+    xpath: "//receiver/intent-filter/action[@android:name='android.app.action.DEVICE_ADMIN_ENABLED']"
+    recommendation: "Device administrator capabilities should only be present in MDM/EMM applications. Remove if not required."
+
+  - id: "MF-057"
+    name: "Application Defines an Accessibility Service"
+    description: "The app registers an AccessibilityService. Malicious apps abuse accessibility services to read screen content, intercept inputs, and perform actions on behalf of users."
+    severity: "HIGH"
+    category: "Component Exposure"
+    xpath: "//service/intent-filter/action[@android:name='android.accessibilityservice.AccessibilityService']"
+    recommendation: "Remove unless your app is a legitimate assistive technology. Accessibility services require explicit user opt-in and are reviewed by Google Play."
+
+  - id: "MF-058"
+    name: "Application Defines a Notification Listener Service"
+    description: "The app registers a NotificationListenerService, allowing it to read all notifications including sensitive OTPs and messages from other apps."
+    severity: "HIGH"
+    category: "Component Exposure"
+    xpath: "//service/intent-filter/action[@android:name='android.service.notification.NotificationListenerService']"
+    recommendation: "Remove unless the app is a legitimate notification manager or companion app."
+
+  - id: "MF-059"
+    name: "Application Defines a VPN Service"
+    description: "The app registers a VpnService, allowing it to intercept and inspect all network traffic on the device."
+    severity: "HIGH"
+    category: "Component Exposure"
+    xpath: "//service/intent-filter/action[@android:name='android.net.VpnService']"
+    recommendation: "VPN services must be disclosed to users and only used for legitimate VPN functionality. Ensure all intercepted traffic is handled securely."
+
+  - id: "MF-060"
+    name: "Application Has Multiple Launcher Activities"
+    description: "The application defines more than one LAUNCHER intent-filter, which may cause unexpected entry points."
+    severity: "INFO"
+    category: "Miscellaneous"
+    xpath: "//activity/intent-filter/category[@android:name='android.intent.category.LAUNCHER']"
+    recommendation: "Review all launcher activities and ensure only intended entry points are exposed."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 11: Cryptography & Key Management
+  # ──────────────────────────────────────────────
+
+  - id: "MF-061"
+    name: "Android Keystore Not Referenced"
+    description: "No reference to Android Keystore system is present. The app may be storing cryptographic keys in insecure locations (SharedPreferences, files)."
+    severity: "MEDIUM"
+    category: "Cryptography"
+    xpath: "//manifest[not(//meta-data[contains(@android:name, 'keystore') or contains(@android:name, 'keychain')])]"
+    recommendation: "Use the Android Keystore System to store cryptographic keys securely, tied to hardware-backed security when available."
+
+  - id: "MF-062"
+    name: "StrongBox Keymaster Not Requested"
+    description: "The application does not explicitly request StrongBox-backed key storage, which provides the highest level of hardware security."
+    severity: "INFO"
+    category: "Cryptography"
+    xpath: "//manifest[not(//uses-feature[@android:name='android.hardware.strongbox_keystore'])]"
+    recommendation: "For highly sensitive keys, request StrongBox via KeyGenParameterSpec.Builder.setIsStrongBoxBacked(true) on supported devices."
+
+  - id: "MF-063"
+    name: "Backup Includes Cryptographic Material"
+    description: "If android:allowBackup is true and no backup exclusion rules are defined, encrypted keys or tokens stored in app files may be backed up."
+    severity: "HIGH"
+    category: "Cryptography"
+    xpath: "//application[@android:allowBackup='true' and not(@android:fullBackupContent)]"
+    recommendation: "Exclude all key material, tokens, and secrets from backup using fullBackupContent rules."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 12: WebView Security
+  # ──────────────────────────────────────────────
+
+  - id: "MF-064"
+    name: "WebView with JavaScript Bridge Activity Exported"
+    description: "An activity that likely hosts a WebView is exported without permission, potentially allowing external apps to load arbitrary URLs."
+    severity: "HIGH"
+    category: "WebView Security"
+    xpath: "//activity[(@android:exported='true' or (not(@android:exported) and intent-filter)) and (contains(translate(@android:name,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'web') or contains(translate(@android:name,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'browser'))]"
+    recommendation: "Restrict exported WebView activities. Validate all URLs loaded in WebViews and use allowlist-based navigation policies."
+
+  - id: "MF-065"
+    name: "File Scheme Access in WebView Likely Enabled"
+    description: "The app may allow WebViews to access file:// URIs, enabling cross-origin attacks that can read local files."
+    severity: "HIGH"
+    category: "WebView Security"
+    xpath: "//activity[contains(translate(@android:name,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'web')]"
+    recommendation: "Disable file access in WebViews: setAllowFileAccess(false), setAllowFileAccessFromFileURLs(false), setAllowUniversalAccessFromFileURLs(false)."
+
+  - id: "MF-066"
+    name: "android:hardwareAccelerated Enabled Globally"
+    description: "Hardware acceleration is enabled globally. This can cause visual data to be stored in GPU buffers, potentially readable by other processes on rooted devices."
+    severity: "INFO"
+    category: "WebView Security"
+    xpath: "//application[@android:hardwareAccelerated='true']"
+    recommendation: "Enable hardware acceleration only on activities that require it rather than globally, and use FLAG_SECURE for sensitive screens."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 13: Firebase & Cloud Integrations
+  # ──────────────────────────────────────────────
+
+  - id: "MF-067"
+    name: "Firebase Messaging Service Registered"
+    description: "Firebase Cloud Messaging service is registered. Push notification payloads should be treated as untrusted input."
+    severity: "INFO"
+    category: "Cloud Integrations"
+    xpath: "//service/intent-filter/action[@android:name='com.google.firebase.MESSAGING_EVENT']"
+    recommendation: "Validate and sanitize all FCM payload data. Never execute code based directly on notification payload content without verification."
+
+  - id: "MF-068"
+    name: "Google Play Services Not Declared"
+    description: "The app does not declare Google Play Services dependency. Security APIs (SafetyNet/Play Integrity) may not be available for device attestation."
+    severity: "INFO"
+    category: "Cloud Integrations"
+    xpath: "//manifest[not(//meta-data[@android:name='com.google.android.gms.version'])]"
+    recommendation: "Integrate Play Integrity API for device and app attestation in security-sensitive applications."
+
+  - id: "MF-069"
+    name: "Firebase Analytics Auto-Collection Not Disabled"
+    description: "Firebase Analytics may auto-collect user data including device IDs and usage patterns unless explicitly disabled."
+    severity: "LOW"
+    category: "Cloud Integrations"
+    xpath: "//manifest[//meta-data[@android:name='com.google.firebase.analytics.collection_enabled'] and not(//meta-data[@android:name='com.google.firebase.analytics.collection_enabled' and @android:value='false'])]"
+    recommendation: "Set firebase_analytics_collection_enabled to false and enable collection only after user consent."
+
+  - id: "MF-070"
+    name: "Firebase Performance Monitoring Auto-Collection Enabled"
+    description: "Firebase Performance Monitoring collects network request traces and device performance data by default."
+    severity: "LOW"
+    category: "Cloud Integrations"
+    xpath: "//manifest[not(//meta-data[@android:name='firebase_performance_collection_enabled' and @android:value='false'])]"
+    recommendation: "Disable auto-collection and enable only after user consent: firebase_performance_collection_enabled = false."
+
+  - id: "MF-071"
+    name: "Crashlytics Auto-Collection Not Disabled"
+    description: "Firebase Crashlytics may collect crash reports including stack traces, device info, and possibly user identifiers without explicit consent."
+    severity: "LOW"
+    category: "Cloud Integrations"
+    xpath: "//manifest[not(//meta-data[@android:name='firebase_crashlytics_collection_enabled' and @android:value='false'])]"
+    recommendation: "Disable auto-collection in GDPR-sensitive regions and enable only after user consent."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 14: Content Provider Deep-Dive
+  # ──────────────────────────────────────────────
+
+  - id: "MF-072"
+    name: "Content Provider with Broad URI Permission"
+    description: "A Content Provider grants URI permissions broadly using grantUriPermissions without path-level restrictions."
+    severity: "HIGH"
+    category: "Content Provider"
+    xpath: "//provider[@android:grantUriPermissions='true' and not(grant-uri-permission)]"
+    recommendation: "Use <grant-uri-permission> child elements to restrict which URI paths can be granted, rather than allowing all paths."
+
+  - id: "MF-073"
+    name: "FileProvider Not Configured with Restricted Paths"
+    description: "A FileProvider is defined but may expose overly broad directories if paths.xml is not properly scoped."
+    severity: "MEDIUM"
+    category: "Content Provider"
+    xpath: "//provider[contains(@android:name, 'FileProvider')]"
+    recommendation: "In the FileProvider paths.xml, use <files-path> or <cache-path> instead of <external-path> or <root-path>. Never expose the root or external storage."
+
+  - id: "MF-074"
+    name: "Content Provider Exported on API < 17"
+    description: "On Android versions below 4.2 (API 17), Content Providers were exported by default. Targeting minSdkVersion < 17 with providers is risky."
+    severity: "HIGH"
+    category: "Content Provider"
+    xpath: "//provider[not(@android:exported)] and //uses-sdk[@android:minSdkVersion < 17]"
+    recommendation: "Explicitly set android:exported='false' on all Content Providers that do not need to be accessed by other apps."
+
+  - id: "MF-075"
+    name: "Content Provider Allows Multiprocess Access"
+    description: "android:multiprocess='true' allows the provider to run in each client process, which can lead to multiple instances and inconsistent state."
+    severity: "LOW"
+    category: "Content Provider"
+    xpath: "//provider[@android:multiprocess='true']"
+    recommendation: "Remove android:multiprocess='true' unless there is a clear performance justification and the provider is stateless."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 15: Broadcast Receiver Deep-Dive
+  # ──────────────────────────────────────────────
+
+  - id: "MF-076"
+    name: "Receiver Listens for BOOT_COMPLETED"
+    description: "The application starts automatically at device boot via BOOT_COMPLETED broadcast, which can be used for persistence by malware."
+    severity: "MEDIUM"
+    category: "Broadcast Receiver"
+    xpath: "//receiver/intent-filter/action[@android:name='android.intent.action.BOOT_COMPLETED']"
+    recommendation: "Ensure auto-start is required for core functionality (e.g., alarms, sync). Disclose this behavior to users."
+
+  - id: "MF-077"
+    name: "Receiver Listens for PACKAGE_ADDED or PACKAGE_REPLACED"
+    description: "The application monitors package installation events, which could be used to react to or interfere with other app installations."
+    severity: "MEDIUM"
+    category: "Broadcast Receiver"
+    xpath: "//receiver/intent-filter/action[@android:name='android.intent.action.PACKAGE_ADDED' or @android:name='android.intent.action.PACKAGE_REPLACED']"
+    recommendation: "Remove unless the app has a legitimate reason (e.g., launcher, MDM) to monitor package installations."
+
+  - id: "MF-078"
+    name: "Receiver Listens for SMS_RECEIVED"
+    description: "The application intercepts incoming SMS messages, which can expose OTPs, personal messages, and 2FA codes."
+    severity: "HIGH"
+    category: "Broadcast Receiver"
+    xpath: "//receiver/intent-filter/action[@android:name='android.provider.Telephony.SMS_RECEIVED']"
+    recommendation: "Remove unless this is a default SMS app. Use the SMS Retriever API for OTP extraction without full SMS access."
+
+  - id: "MF-079"
+    name: "Receiver Listens for WAP_PUSH_RECEIVED"
+    description: "The application can receive WAP Push messages (MMS/carrier messages), which is a high-privilege operation."
+    severity: "HIGH"
+    category: "Broadcast Receiver"
+    xpath: "//receiver/intent-filter/action[@android:name='android.provider.Telephony.WAP_PUSH_RECEIVED']"
+    recommendation: "Remove unless this is a default messaging app. Carrier-level message access requires strong justification."
+
+  - id: "MF-080"
+    name: "Receiver Listens for NEW_OUTGOING_CALL"
+    description: "The application can intercept the phone number of every outgoing call, which is a significant privacy concern."
+    severity: "HIGH"
+    category: "Broadcast Receiver"
+    xpath: "//receiver/intent-filter/action[@android:name='android.intent.action.NEW_OUTGOING_CALL']"
+    recommendation: "This broadcast was deprecated in API 29. Remove and migrate to CallRedirectionService if call management is required."
+
+  - id: "MF-081"
+    name: "Receiver Listens for SCREEN_ON / USER_PRESENT"
+    description: "The application wakes up every time the screen is turned on or the user unlocks the device, enabling persistent monitoring."
+    severity: "LOW"
+    category: "Broadcast Receiver"
+    xpath: "//receiver/intent-filter/action[@android:name='android.intent.action.SCREEN_ON' or @android:name='android.intent.action.USER_PRESENT']"
+    recommendation: "Use WorkManager or AlarmManager for periodic tasks instead of SCREEN_ON/USER_PRESENT receivers."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 16: Service Security
+  # ──────────────────────────────────────────────
+
+  - id: "MF-082"
+    name: "Foreground Service without Required Permission (API 28+)"
+    description: "A foreground service is declared without the FOREGROUND_SERVICE permission, which is required from API 28."
+    severity: "MEDIUM"
+    category: "Service Security"
+    xpath: "//service[@android:foregroundServiceType and not(//uses-permission[@android:name='android.permission.FOREGROUND_SERVICE'])]"
+    recommendation: "Add <uses-permission android:name='android.permission.FOREGROUND_SERVICE'/> for all apps with foreground services targeting API 28+."
+
+  - id: "MF-083"
+    name: "Foreground Service Type Not Specified (API 34+)"
+    description: "From Android 14 (API 34), foreground services must declare their type. Undeclared types will cause runtime errors."
+    severity: "HIGH"
+    category: "Service Security"
+    xpath: "//service[//uses-permission[@android:name='android.permission.FOREGROUND_SERVICE'] and not(@android:foregroundServiceType)]"
+    recommendation: "Specify android:foregroundServiceType (e.g., 'location', 'mediaPlayback', 'dataSync') and request the corresponding permission."
+
+  - id: "MF-084"
+    name: "Service Runs in Separate Process"
+    description: "A service is configured to run in a separate process (android:process starts with ':' or a different package name), increasing attack surface."
+    severity: "MEDIUM"
+    category: "Service Security"
+    xpath: "//service[@android:process]"
+    recommendation: "Evaluate whether running in a separate process is necessary. If so, ensure IPC communication between processes is properly secured."
+
+  - id: "MF-085"
+    name: "Isolated Process Service"
+    description: "A service runs with android:isolatedProcess='true', providing strong sandboxing. Verify that no sensitive data is passed unsanitized to it."
+    severity: "INFO"
+    category: "Service Security"
+    xpath: "//service[@android:isolatedProcess='true']"
+    recommendation: "Good practice. Ensure all data passed to the isolated service is sanitized and the service does not receive excessive permissions."
+
+  - id: "MF-086"
+    name: "Service Exported with Sensitive Action in Intent Filter"
+    description: "An exported service declares an intent filter with an action that could be triggered by any app, bypassing access control."
+    severity: "HIGH"
+    category: "Service Security"
+    xpath: "//service[@android:exported='true']/intent-filter/action"
+    recommendation: "Remove intent filters from exported services if they are not needed for system integration, and protect them with signature-level permissions."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 17: Privacy & Data Collection
+  # ──────────────────────────────────────────────
+
+  - id: "MF-087"
+    name: "AD_ID Permission Requested"
+    description: "The application requests access to the Google Advertising ID for cross-app user tracking."
+    severity: "MEDIUM"
+    category: "Privacy"
+    xpath: "//uses-permission[@android:name='com.google.android.gms.permission.AD_ID']"
+    recommendation: "Only request AD_ID if your app uses advertising. Users can opt out via device settings. Comply with Play's User Data policy."
+
+  - id: "MF-088"
+    name: "BODY_SENSORS Permission Requested"
+    description: "The application can access health sensor data such as heart rate, which is highly sensitive personal health information."
+    severity: "HIGH"
+    category: "Privacy"
+    xpath: "//uses-permission[@android:name='android.permission.BODY_SENSORS']"
+    recommendation: "Only collect health sensor data with explicit user consent. Do not share raw sensor data with third-party SDKs without consent."
+
+  - id: "MF-089"
+    name: "ACTIVITY_RECOGNITION Permission Requested"
+    description: "The application can detect user physical activities (walking, running, driving), enabling persistent behavioral tracking."
+    severity: "MEDIUM"
+    category: "Privacy"
+    xpath: "//uses-permission[@android:name='android.permission.ACTIVITY_RECOGNITION' or @android:name='com.google.android.gms.permission.ACTIVITY_RECOGNITION']"
+    recommendation: "Request only at runtime when needed. Disclose activity recognition data collection in your privacy policy."
+
+  - id: "MF-090"
+    name: "UWB_RANGING Permission Requested"
+    description: "The application can perform ultra-wideband ranging to determine precise physical distance and location of nearby devices."
+    severity: "HIGH"
+    category: "Privacy"
+    xpath: "//uses-permission[@android:name='android.permission.UWB_RANGING']"
+    recommendation: "This permission is for specialized hardware use cases. Justify in the privacy policy and request at runtime."
+
+  - id: "MF-091"
+    name: "NEARBY_WIFI_DEVICES Permission Requested"
+    description: "On Android 13+, this permission allows scanning for nearby Wi-Fi devices and can be used for location inference without GPS."
+    severity: "MEDIUM"
+    category: "Privacy"
+    xpath: "//uses-permission[@android:name='android.permission.NEARBY_WIFI_DEVICES']"
+    recommendation: "Only request when needed for Wi-Fi Aware or Wi-Fi Direct functionality. Avoid using for location inference."
+
+  - id: "MF-092"
+    name: "READ_MEDIA_IMAGES / READ_MEDIA_VIDEO / READ_MEDIA_AUDIO Requested"
+    description: "The application requests access to media files (images, videos, audio) in shared storage."
+    severity: "MEDIUM"
+    category: "Privacy"
+    xpath: "//uses-permission[@android:name='android.permission.READ_MEDIA_IMAGES' or @android:name='android.permission.READ_MEDIA_VIDEO' or @android:name='android.permission.READ_MEDIA_AUDIO']"
+    recommendation: "Use the Photo Picker API for one-time media access without requiring persistent permission. Only request broad media permissions if the app is a media manager."
+
+  - id: "MF-093"
+    name: "SCHEDULE_EXACT_ALARM Permission Requested"
+    description: "The application can schedule exact alarms, which can be used to trigger activity at precise times and bypass battery optimization."
+    severity: "LOW"
+    category: "Privacy"
+    xpath: "//uses-permission[@android:name='android.permission.SCHEDULE_EXACT_ALARM' or @android:name='android.permission.USE_EXACT_ALARM']"
+    recommendation: "Use inexact alarms (AlarmManager.setInexactRepeating) unless exact timing is critical (e.g., calendar reminders, alarms apps)."
+
+  - id: "MF-094"
+    name: "REQUEST_OBSERVE_COMPANION_DEVICE_PRESENCE Requested"
+    description: "The application can observe the presence of companion devices, potentially tracking physical proximity."
+    severity: "LOW"
+    category: "Privacy"
+    xpath: "//uses-permission[@android:name='android.permission.REQUEST_OBSERVE_COMPANION_DEVICE_PRESENCE']"
+    recommendation: "Only request for legitimate companion device management scenarios."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 18: Telephony & Carrier Permissions
+  # ──────────────────────────────────────────────
+
+  - id: "MF-095"
+    name: "CALL_PHONE Permission Requested"
+    description: "The application can initiate phone calls without user confirmation dialog."
+    severity: "HIGH"
+    category: "Telephony"
+    xpath: "//uses-permission[@android:name='android.permission.CALL_PHONE']"
+    recommendation: "Use ACTION_DIAL intent to show the dialer with the number pre-filled, allowing the user to confirm before calling."
+
+  - id: "MF-096"
+    name: "READ_PHONE_STATE Permission Requested"
+    description: "The application can access device identifiers (IMEI, IMSI, phone number) and call state, enabling device fingerprinting."
+    severity: "HIGH"
+    category: "Telephony"
+    xpath: "//uses-permission[@android:name='android.permission.READ_PHONE_STATE']"
+    recommendation: "Avoid using hardware identifiers. Use Installation ID or Advertising ID instead. On API 29+, most identifiers are restricted."
+
+  - id: "MF-097"
+    name: "READ_PHONE_NUMBERS Permission Requested"
+    description: "The application can read the device's phone number(s), which is sensitive PII."
+    severity: "MEDIUM"
+    category: "Telephony"
+    xpath: "//uses-permission[@android:name='android.permission.READ_PHONE_NUMBERS']"
+    recommendation: "Remove unless the phone number is genuinely required. Use account-based authentication instead."
+
+  - id: "MF-098"
+    name: "MODIFY_PHONE_STATE Permission Requested"
+    description: "This is a signature/system permission that allows modification of phone state. Presence in a non-system app is suspicious."
+    severity: "CRITICAL"
+    category: "Telephony"
+    xpath: "//uses-permission[@android:name='android.permission.MODIFY_PHONE_STATE']"
+    recommendation: "Remove immediately. This permission is only granted to system apps. Its presence in a user app indicates a misconfiguration or malicious intent."
+
+  - id: "MF-099"
+    name: "ANSWER_PHONE_CALLS Permission Requested"
+    description: "The application can programmatically answer incoming phone calls."
+    severity: "HIGH"
+    category: "Telephony"
+    xpath: "//uses-permission[@android:name='android.permission.ANSWER_PHONE_CALLS']"
+    recommendation: "Only legitimate phone and VoIP apps require this. Remove unless the app is a dialer replacement."
+
+  - id: "MF-100"
+    name: "WRITE_CALL_LOG Permission Requested"
+    description: "The application can modify or delete the device's call history."
+    severity: "HIGH"
+    category: "Telephony"
+    xpath: "//uses-permission[@android:name='android.permission.WRITE_CALL_LOG']"
+    recommendation: "Only legitimate dialer apps require WRITE_CALL_LOG. Remove unless the app is a default phone app."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 19: NFC Security
+  # ──────────────────────────────────────────────
+
+  - id: "MF-101"
+    name: "NFC Permission Requested"
+    description: "The application uses NFC, allowing it to read NFC tags, communicate with payment terminals, or exchange data with other devices."
+    severity: "MEDIUM"
+    category: "NFC Security"
+    xpath: "//uses-permission[@android:name='android.permission.NFC']"
+    recommendation: "Ensure NFC data is validated before processing. Use secure channels for NFC-based authentication or payment flows."
+
+  - id: "MF-102"
+    name: "Host Card Emulation (HCE) Service Registered"
+    description: "The app registers a Host Card Emulation service, emulating NFC payment cards. This is a high-security component."
+    severity: "HIGH"
+    category: "NFC Security"
+    xpath: "//service/intent-filter/action[@android:name='android.nfc.cardemulation.action.HOST_APDU_SERVICE']"
+    recommendation: "Ensure HCE services comply with payment security standards (EMV, PCI-DSS). Protect with signature-level permissions."
+
+  - id: "MF-103"
+    name: "NFC Beam Data Sharing Enabled"
+    description: "The application participates in Android Beam (NFC data sharing), which has been removed in Android 10+ but may still be active on lower API targets."
+    severity: "LOW"
+    category: "NFC Security"
+    xpath: "//uses-feature[@android:name='android.hardware.nfc.beam']"
+    recommendation: "Remove NFC Beam support as the feature is deprecated. Use Bluetooth or Wi-Fi Direct for nearby data sharing."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 20: Hardware Feature Declarations
+  # ──────────────────────────────────────────────
+
+  - id: "MF-104"
+    name: "android.hardware.camera.autofocus Required"
+    description: "The application requires a camera with autofocus. If combined with CAMERA permission, this is a high-capability hardware feature."
+    severity: "INFO"
+    category: "Hardware Features"
+    xpath: "//uses-feature[@android:name='android.hardware.camera.autofocus' and not(@android:required='false')]"
+    recommendation: "If the camera is optional, set android:required='false' to avoid excluding devices unnecessarily."
+
+  - id: "MF-105"
+    name: "Fingerprint Hardware Required"
+    description: "The application requires fingerprint hardware. Absence of fallback authentication may lock users out."
+    severity: "LOW"
+    category: "Hardware Features"
+    xpath: "//uses-feature[@android:name='android.hardware.fingerprint' and not(@android:required='false')]"
+    recommendation: "Set android:required='false' and implement fallback authentication (PIN, password) for devices without fingerprint sensors."
+
+  - id: "MF-106"
+    name: "Telephony Hardware Required"
+    description: "The application requires telephony hardware, restricting it from running on Wi-Fi-only tablets and increasing the attack surface for phone-based permissions."
+    severity: "INFO"
+    category: "Hardware Features"
+    xpath: "//uses-feature[@android:name='android.hardware.telephony' and not(@android:required='false')]"
+    recommendation: "If telephony is optional, set android:required='false' to support tablets and Wi-Fi-only devices."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 21: ProGuard / Code Protection Signals
+  # ──────────────────────────────────────────────
+
+  - id: "MF-107"
+    name: "Application Not Marked for Code Obfuscation (ProGuard Absent)"
+    description: "No ProGuard or R8 obfuscation configuration signal is detected. Without obfuscation, the app's code is trivially reversible."
+    severity: "MEDIUM"
+    category: "Code Protection"
+    xpath: "//application[@android:debuggable='false' and not(@android:extractNativeLibs)]"
+    recommendation: "Enable R8/ProGuard in your build.gradle: minifyEnabled true with a proguard-rules.pro file. Obfuscate all production builds."
+
+  - id: "MF-108"
+    name: "Native Libraries Extracted to Filesystem"
+    description: "android:extractNativeLibs='true' causes native .so files to be extracted to disk, making them easier to analyse and tamper with."
+    severity: "LOW"
+    category: "Code Protection"
+    xpath: "//application[@android:extractNativeLibs='true']"
+    recommendation: "Set android:extractNativeLibs='false' (default for API 23+ with Gradle plugin 3.6+) to keep native libraries compressed inside the APK."
+
+  - id: "MF-109"
+    name: "Application Has No Signature Verification Meta-Data"
+    description: "There is no Play App Signing or attestation meta-data. The APK may lack integrity verification signals."
+    severity: "INFO"
+    category: "Code Protection"
+    xpath: "//manifest[not(//meta-data[@android:name='com.android.vending.splits.required'])]"
+    recommendation: "Use Google Play App Signing and integrate Play Integrity API to verify app and device integrity at runtime."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 22: Auto-Start & Persistence
+  # ──────────────────────────────────────────────
+
+  - id: "MF-110"
+    name: "Receiver Listens for QUICKBOOT_POWERON"
+    description: "The application registers a receiver for HTC's QUICKBOOT_POWERON event, a less common persistence mechanism used alongside BOOT_COMPLETED."
+    severity: "MEDIUM"
+    category: "Persistence"
+    xpath: "//receiver/intent-filter/action[@android:name='com.htc.intent.action.QUICKBOOT_POWERON']"
+    recommendation: "Remove unless dual boot/quick boot persistence is explicitly required. Combine with BOOT_COMPLETED analysis."
+
+  - id: "MF-111"
+    name: "Receiver Listens for MY_PACKAGE_REPLACED"
+    description: "The application restarts itself after an update via MY_PACKAGE_REPLACED, which is a known persistence technique."
+    severity: "LOW"
+    category: "Persistence"
+    xpath: "//receiver/intent-filter/action[@android:name='android.intent.action.MY_PACKAGE_REPLACED']"
+    recommendation: "Evaluate whether automatic restart after update is necessary. If used, ensure no sensitive operations are triggered without user intent."
+
+  - id: "MF-112"
+    name: "Application Uses JobScheduler or WorkManager Service"
+    description: "The application schedules background jobs that can execute code periodically, even when the app is not in the foreground."
+    severity: "INFO"
+    category: "Persistence"
+    xpath: "//service/intent-filter/action[@android:name='android.app.job.JobService']"
+    recommendation: "Ensure scheduled jobs do not collect or transmit sensitive data without user awareness."
+
+  - id: "MF-113"
+    name: "Application Uses AlarmManager Broadcast Receiver"
+    description: "The application uses alarm-based scheduling to wake up and execute code at specific times."
+    severity: "INFO"
+    category: "Persistence"
+    xpath: "//receiver/intent-filter/action[contains(@android:name, 'ALARM') or contains(@android:name, 'alarm')]"
+    recommendation: "Ensure alarms are used for legitimate scheduled tasks and not for stealthy background data collection."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 23: Multi-Window & Display Security
+  # ──────────────────────────────────────────────
+
+  - id: "MF-114"
+    name: "Resizeable Activity Enabled"
+    description: "android:resizeableActivity='true' allows the activity to be displayed in multi-window mode, potentially exposing it alongside untrusted apps."
+    severity: "INFO"
+    category: "Display Security"
+    xpath: "//activity[@android:resizeableActivity='true']"
+    recommendation: "Apply FLAG_SECURE on sensitive activities to prevent screen content capture in multi-window scenarios."
+
+  - id: "MF-115"
+    name: "Picture-in-Picture Mode Enabled"
+    description: "The activity supports Picture-in-Picture mode, potentially displaying sensitive content in an overlay over other apps."
+    severity: "LOW"
+    category: "Display Security"
+    xpath: "//activity[@android:supportsPictureInPicture='true']"
+    recommendation: "Do not display sensitive information (account data, payment details) in PiP mode. Switch to a non-sensitive view when entering PiP."
+
+  - id: "MF-116"
+    name: "Activity Allows Task Reparenting"
+    description: "android:allowTaskReparenting='true' allows an activity to move to a different task when that task comes to foreground, which can be exploited for UI spoofing."
+    severity: "MEDIUM"
+    category: "Display Security"
+    xpath: "//activity[@android:allowTaskReparenting='true']"
+    recommendation: "Remove android:allowTaskReparenting='true' unless specifically required and the security implications are understood."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 24: Accessibility & Overlay Abuse
+  # ──────────────────────────────────────────────
+
+  - id: "MF-117"
+    name: "Accessibility Service Declares Can Perform Gestures"
+    description: "The accessibility service may be configured to perform gestures on behalf of the user, enabling automated UI interaction."
+    severity: "HIGH"
+    category: "Accessibility"
+    xpath: "//service[@android:permission='android.permission.BIND_ACCESSIBILITY_SERVICE']"
+    recommendation: "Ensure accessibility services cannot be abused. Clearly document capabilities in the accessibility service description and request minimal permissions."
+
+  - id: "MF-118"
+    name: "Input Method Service Registered"
+    description: "The application registers a custom input method (keyboard), which has access to everything the user types, including passwords."
+    severity: "HIGH"
+    category: "Accessibility"
+    xpath: "//service/intent-filter/action[@android:name='android.view.InputMethod']"
+    recommendation: "Keyboard apps must clearly disclose their data collection practices. Ensure no keylogging or cloud transmission of typed data without consent."
+
+  - id: "MF-119"
+    name: "Dream Service (Daydream/Screensaver) Registered"
+    description: "The application registers a Daydream/screensaver service that activates when the device is docked or charging."
+    severity: "INFO"
+    category: "Accessibility"
+    xpath: "//service/intent-filter/action[@android:name='android.service.dreams.DreamService']"
+    recommendation: "Ensure the daydream service does not display sensitive information or perform privileged operations while active."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 25: Signing & Distribution Security
+  # ──────────────────────────────────────────────
+
+  - id: "MF-120"
+    name: "APK Requires Installation from Specific Installer"
+    description: "The application does not restrict its installer source, allowing side-loading from untrusted sources."
+    severity: "LOW"
+    category: "Distribution Security"
+    xpath: "//manifest[not(//meta-data[@android:name='com.android.vending.derived_apk_id'])]"
+    recommendation: "Use PackageManager.getInstallSourceInfo() at runtime to verify the app was installed from an expected source (e.g., Play Store)."
+
+  - id: "MF-121"
+    name: "android:installLocation Set to preferExternal or auto"
+    description: "The application may be installed to external storage (SD card), where it has weaker security protections and could be tampered with."
+    severity: "HIGH"
+    category: "Distribution Security"
+    xpath: "//manifest[@android:installLocation='preferExternal' or @android:installLocation='auto']"
+    recommendation: "Set android:installLocation='internalOnly' to prevent installation to removable external storage."
+
+  - id: "MF-122"
+    name: "Application Version Name Exposes Internal Versioning"
+    description: "The android:versionName exposes detailed internal versioning information which can aid attackers in identifying vulnerable versions."
+    severity: "INFO"
+    category: "Distribution Security"
+    xpath: "//manifest[@android:versionName]"
+    recommendation: "Avoid exposing internal build identifiers in versionName in production. Use a user-friendly version string."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 26: Dynamic Code Loading Signals
+  # ──────────────────────────────────────────────
+
+  - id: "MF-123"
+    name: "Application Declares Dynamic Feature Module"
+    description: "The application uses dynamic feature modules which can load code on demand. Malicious modules could be pushed to compromise the app."
+    severity: "MEDIUM"
+    category: "Dynamic Code Loading"
+    xpath: "//*[local-name()='module']"
+    recommendation: "Ensure dynamic feature modules are loaded only from trusted sources (Google Play). Validate module integrity before loading."
+
+  - id: "MF-124"
+    name: "Application Uses Instant App Features"
+    description: "The application is configured as an Instant App, which runs without full installation. Instant apps have reduced sandbox guarantees."
+    severity: "LOW"
+    category: "Dynamic Code Loading"
+    xpath: "//*[local-name()='module'][@*[local-name()='instant']='true']"
+    recommendation: "Ensure instant app entry points do not expose sensitive features. Apply appropriate permission checks."
+
+  - id: "MF-125"
+    name: "ClassLoader Referenced in Application Meta-Data"
+    description: "A custom ClassLoader is declared in meta-data, suggesting dynamic code loading which can bypass static analysis and introduce security risks."
+    severity: "HIGH"
+    category: "Dynamic Code Loading"
+    xpath: "//meta-data[contains(translate(@android:name,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'classloader') or contains(translate(@android:value,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'classloader')]"
+    recommendation: "Avoid custom ClassLoaders in production builds. If required, ensure all dynamically loaded code is signature-verified before execution."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 27: Third-Party SDK Signals
+  # ──────────────────────────────────────────────
+
+  - id: "MF-126"
+    name: "Facebook SDK Presence Detected"
+    description: "The Facebook SDK is integrated and may collect device identifiers, app events, and user data by default."
+    severity: "MEDIUM"
+    category: "Third-Party SDKs"
+    xpath: "//meta-data[@android:name='com.facebook.sdk.ApplicationId']"
+    recommendation: "Disable automatic app event logging and limit data collection. Disclose Facebook data sharing in your privacy policy."
+
+  - id: "MF-127"
+    name: "AdMob / Google Ads SDK Presence Detected"
+    description: "Google AdMob is integrated, which collects user data and device identifiers for ad targeting."
+    severity: "MEDIUM"
+    category: "Third-Party SDKs"
+    xpath: "//meta-data[@android:name='com.google.android.gms.ads.APPLICATION_ID']"
+    recommendation: "Configure AdMob to request user consent (UMP SDK) in GDPR regions. Disable personalized ads when consent is not granted."
+
+  - id: "MF-128"
+    name: "MoPub SDK Presence Detected"
+    description: "MoPub (now AppLovin MAX) SDK is integrated for ad monetization and may collect sensitive user data."
+    severity: "MEDIUM"
+    category: "Third-Party SDKs"
+    xpath: "//meta-data[@android:name='com.mopub.nativeads.CUSTOM_EVENT_NATIVE']"
+    recommendation: "Implement a proper consent management platform (CMP) and disable data collection before user consent."
+
+  - id: "MF-129"
+    name: "Adjust Analytics SDK Presence Detected"
+    description: "Adjust SDK is integrated for attribution and analytics, collecting install and event data."
+    severity: "LOW"
+    category: "Third-Party SDKs"
+    xpath: "//meta-data[@android:name='com.adjust.sdk.app_token']"
+    recommendation: "Disable tracking until user consent is obtained. Implement opt-out mechanisms for privacy-conscious users."
+
+  - id: "MF-130"
+    name: "Braze (Appboy) SDK Presence Detected"
+    description: "Braze engagement SDK is integrated, collecting device and usage data for marketing automation."
+    severity: "LOW"
+    category: "Third-Party SDKs"
+    xpath: "//meta-data[@android:name='com.braze.push_gcm_message_handling_enabled']"
+    recommendation: "Configure Braze data collection policies. Do not pass sensitive PII to Braze without user consent."
+
+  - id: "MF-131"
+    name: "AppsFlyer SDK Presence Detected"
+    description: "AppsFlyer attribution SDK is integrated. It collects install source, in-app events, and device identifiers."
+    severity: "LOW"
+    category: "Third-Party SDKs"
+    xpath: "//meta-data[@android:name='com.appsflyer.AppsFlyerLib']"
+    recommendation: "Implement GDPR and CCPA opt-out APIs provided by AppsFlyer before collecting data."
+
+  - id: "MF-132"
+    name: "Third-Party Analytics SDK Detected (Generic)"
+    description: "An unrecognized analytics or tracking SDK is detected via meta-data entries."
+    severity: "INFO"
+    category: "Third-Party SDKs"
+    xpath: "//meta-data[contains(translate(@android:name,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'analytics') or contains(translate(@android:name,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'tracking')]"
+    recommendation: "Audit all third-party analytics SDKs. Ensure they comply with your privacy policy and applicable data regulations (GDPR, CCPA, PDPB)."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 28: Automotive, TV & Wear OS
+  # ──────────────────────────────────────────────
+
+  - id: "MF-133"
+    name: "Android Auto Activity Exported"
+    description: "An Android Auto media or messaging service is exported, potentially allowing unauthorized apps to interact with car head unit integrations."
+    severity: "MEDIUM"
+    category: "Platform-Specific"
+    xpath: "//service/intent-filter/action[@android:name='android.media.browse.MediaBrowserService']"
+    recommendation: "Restrict MediaBrowserService access with a permission or validate the connecting client's identity."
+
+  - id: "MF-134"
+    name: "Android TV Main Launcher Declared"
+    description: "The application declares itself as an Android TV app. TV apps have different permission and UX contexts that require specific security review."
+    severity: "INFO"
+    category: "Platform-Specific"
+    xpath: "//activity/intent-filter/category[@android:name='android.intent.category.LEANBACK_LAUNCHER']"
+    recommendation: "Review TV-specific data exposure. Avoid displaying sensitive information without a secure unlock mechanism on shared TV devices."
+
+  - id: "MF-135"
+    name: "Wear OS App Component Exported"
+    description: "A Wear OS component (ChannelClient, DataLayer) is exported, potentially allowing other wearable apps to access data or trigger functionality."
+    severity: "MEDIUM"
+    category: "Platform-Specific"
+    xpath: "//service/intent-filter/action[contains(@android:name, 'com.google.android.gms.wearable')]"
+    recommendation: "Authenticate Wear OS data layer messages. Verify the node sending requests is from your own companion app."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 29: App Linking & Credential Management
+  # ──────────────────────────────────────────────
+
+  - id: "MF-136"
+    name: "Android App Links Not Verified"
+    description: "The application handles http/https deep links but does not appear to have android:autoVerify='true', leaving it vulnerable to link hijacking."
+    severity: "HIGH"
+    category: "App Linking"
+    xpath: "//activity/intent-filter[action[@android:name='android.intent.action.VIEW'] and category[@android:name='android.intent.category.BROWSABLE'] and not(@android:autoVerify='true')]"
+    recommendation: "Add android:autoVerify='true' to intent filters handling HTTPS deep links and host an assetlinks.json file on your domain."
+
+  - id: "MF-137"
+    name: "Credential Manager or Account Authenticator Registered"
+    description: "The application acts as an account authenticator, storing and managing user credentials for other apps."
+    severity: "HIGH"
+    category: "App Linking"
+    xpath: "//service/intent-filter/action[@android:name='android.accounts.AccountAuthenticator']"
+    recommendation: "Authenticator services must protect credentials using the Android Keystore. Ensure the service is not accessible to unauthorized apps."
+
+  - id: "MF-138"
+    name: "Autofill Service Registered"
+    description: "The application provides autofill services and has access to all form fields across other apps, including usernames and passwords."
+    severity: "HIGH"
+    category: "App Linking"
+    xpath: "//service/intent-filter/action[@android:name='android.service.autofill.AutofillService']"
+    recommendation: "Autofill providers must not store or transmit autofill data beyond what is necessary. Encrypt all stored credentials with the Android Keystore."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 30: Compliance & App Store Requirements
+  # ──────────────────────────────────────────────
+
+  - id: "MF-139"
+    name: "No Privacy Policy Link Declared"
+    description: "The application manifest does not reference a privacy policy URL, which is required by Google Play for apps that collect user data."
+    severity: "MEDIUM"
+    category: "Compliance"
+    xpath: "//manifest[not(//meta-data[@android:name='android.support.FILE_PROVIDER_PATHS' or contains(@android:name,'privacy')])]"
+    recommendation: "Declare your privacy policy URL in the Google Play Console. Consider adding a meta-data reference to the privacy policy URL."
+
+  - id: "MF-140"
+    name: "Health Connect Permission Requested"
+    description: "The application requests access to Health Connect data (health and fitness metrics), which is highly sensitive personal health information."
+    severity: "HIGH"
+    category: "Compliance"
+    xpath: "//uses-permission[contains(@android:name, 'android.permission.health.')]"
+    recommendation: "Health Connect data access requires explicit user consent per data type, a privacy policy, and compliance with Health Connect developer policies."
+
+  - id: "MF-141"
+    name: "Exact Alarm Permission Requires Policy Compliance"
+    description: "USE_EXACT_ALARM is only permitted for calendar and alarm apps per Google Play policy. Other apps must use SCHEDULE_EXACT_ALARM with user grant."
+    severity: "MEDIUM"
+    category: "Compliance"
+    xpath: "//uses-permission[@android:name='android.permission.USE_EXACT_ALARM']"
+    recommendation: "Verify your app category qualifies for USE_EXACT_ALARM. Otherwise use SCHEDULE_EXACT_ALARM and handle the case where the user denies it."
+
+  - id: "MF-142"
+    name: "App Not Targeting 64-bit ABI"
+    description: "The application does not declare 64-bit native library support. Google Play requires 64-bit support for all apps with native code."
+    severity: "HIGH"
+    category: "Compliance"
+    xpath: "//uses-feature[@android:name='android.hardware.type.watch' or not(@android:name)]"
+    recommendation: "Ensure your app includes arm64-v8a and x86_64 native libraries. 32-bit-only apps are rejected by Google Play."
+
+  - id: "MF-143"
+    name: "POST_NOTIFICATIONS Permission Not Declared (API 33+)"
+    description: "Apps targeting Android 13+ that send notifications must declare POST_NOTIFICATIONS permission and request it at runtime."
+    severity: "MEDIUM"
+    category: "Compliance"
+    xpath: "//manifest[//uses-sdk[@android:targetSdkVersion >= 33] and not(//uses-permission[@android:name='android.permission.POST_NOTIFICATIONS'])]"
+    recommendation: "Add <uses-permission android:name='android.permission.POST_NOTIFICATIONS'/> and request it at runtime for apps targeting API 33+."
+
+  - id: "MF-144"
+    name: "QUERY_ALL_PACKAGES Permission Requested"
+    description: "The application can see all installed packages on the device, enabling app fingerprinting and privacy violations."
+    severity: "HIGH"
+    category: "Compliance"
+    xpath: "//uses-permission[@android:name='android.permission.QUERY_ALL_PACKAGES']"
+    recommendation: "Use <queries> in the manifest to declare only the specific apps you need to interact with. QUERY_ALL_PACKAGES requires Google Play approval."
+
+  - id: "MF-145"
+    name: "App Uses Legacy Apache HTTP Client"
+    description: "The application opts back into the legacy Apache HTTP client library which has known vulnerabilities and is not maintained."
+    severity: "MEDIUM"
+    category: "Compliance"
+    xpath: "//uses-library[@android:name='org.apache.http.legacy']"
+    recommendation: "Migrate from Apache HTTP Client to HttpsURLConnection or OkHttp, which are actively maintained and support modern TLS."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 31: Cross-Profile & Work Profile
+  # ──────────────────────────────────────────────
+
+  - id: "MF-146"
+    name: "INTERACT_ACROSS_PROFILES Permission Requested"
+    description: "The application can interact across Android work and personal profiles, potentially leaking enterprise data to personal profile apps."
+    severity: "HIGH"
+    category: "Work Profile"
+    xpath: "//uses-permission[@android:name='android.permission.INTERACT_ACROSS_PROFILES']"
+    recommendation: "Only MDM/enterprise apps should use this permission. Ensure cross-profile data sharing does not violate enterprise data policies."
+
+  - id: "MF-147"
+    name: "CROSS_PROFILE_CAMERA Permission Requested"
+    description: "The application requests cross-profile camera access, allowing camera sharing between work and personal profiles."
+    severity: "MEDIUM"
+    category: "Work Profile"
+    xpath: "//uses-permission[@android:name='android.permission.CAMERA' and //uses-permission[@android:name='android.permission.INTERACT_ACROSS_PROFILES']]"
+    recommendation: "Restrict cross-profile camera usage. Ensure captured media is stored in the appropriate profile."
+
+  - id: "MF-148"
+    name: "Managed Profile Application Removal Receiver"
+    description: "The app listens for managed profile removal events, which could allow it to react to enterprise policy changes or data wipes."
+    severity: "MEDIUM"
+    category: "Work Profile"
+    xpath: "//receiver/intent-filter/action[@android:name='android.intent.action.MANAGED_PROFILE_REMOVED']"
+    recommendation: "Ensure managed profile event handling does not attempt to circumvent enterprise data removal policies."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 32: App Cloning & Multi-Instance
+  # ──────────────────────────────────────────────
+
+  - id: "MF-149"
+    name: "Application Supports Multiple Instances"
+    description: "The application declares support for multiple instances, which can lead to data isolation issues between instances."
+    severity: "INFO"
+    category: "Multi-Instance"
+    xpath: "//activity[@android:maxInstances]"
+    recommendation: "Ensure sensitive data (session tokens, cached credentials) is properly isolated between multiple instances."
+
+  - id: "MF-150"
+    name: "Application Uses Shared User ID Across Package Family"
+    description: "Multiple applications share a Linux user ID via sharedUserId, giving them access to each other's data. This is deprecated."
+    severity: "HIGH"
+    category: "Multi-Instance"
+    xpath: "//manifest[@android:sharedUserId and @android:sharedUserId != '']"
+    recommendation: "Migrate to explicit inter-app communication via AIDL or Content Providers protected by signature permissions. sharedUserId is deprecated in API 29+."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 33: UI & Touch Security
+  # ──────────────────────────────────────────────
+
+  - id: "MF-151"
+    name: "Touch Filtering When Obscured Not Applied"
+    description: "The activity does not filter touches when obscured by other windows, making it vulnerable to tapjacking attacks where malicious overlays trick users into tapping on UI elements."
+    severity: "HIGH"
+    category: "UI Security"
+    xpath: "//activity[not(@android:filterTouchesWhenObscured='true') and (@android:exported='true')]"
+    recommendation: "Set android:filterTouchesWhenObscured='true' or call getWindow().setFlags(FLAG_WATCH_OUTSIDE_TOUCH, FLAG_WATCH_OUTSIDE_TOUCH) on exported activities that handle sensitive interactions (login, payment, consent)."
+
+  - id: "MF-152"
+    name: "Exported Activity Does Not Use FLAG_SECURE Equivalent"
+    description: "An exported activity handles sensitive user data but does not declare any window security flags, leaving it susceptible to screen capture and recording by malicious apps."
+    severity: "MEDIUM"
+    category: "UI Security"
+    xpath: "//activity[@android:exported='true' and not(@android:windowSoftInputMode)]"
+    recommendation: "Apply FLAG_SECURE via getWindow().setFlags(FLAG_SECURE, FLAG_SECURE) in onCreate() to prevent screenshots and screen recording on sensitive screens."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 34: Memory & Resource Security
+  # ──────────────────────────────────────────────
+
+  - id: "MF-153"
+    name: "Large Heap Requested (android:largeHeap)"
+    description: "The application requests a large heap via android:largeHeap='true', increasing memory pressure on the device and expanding the attack surface for memory-based exploits such as heap spraying."
+    severity: "LOW"
+    category: "Build Configuration"
+    xpath: "//application[@android:largeHeap='true']"
+    recommendation: "Remove android:largeHeap unless the app has a verified need (large image/asset processing). Profile and optimise memory usage instead."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 35: Direct Boot & FBE
+  # ──────────────────────────────────────────────
+
+  - id: "MF-154"
+    name: "Direct Boot Mode Not Handled for Boot Receiver"
+    description: "The app listens for BOOT_COMPLETED but lacks android:directBootAware='true', so it will not receive the broadcast on devices with File-Based Encryption (FBE) before the user unlocks the device."
+    severity: "MEDIUM"
+    category: "Persistence"
+    xpath: "//receiver[intent-filter/action[@android:name='android.intent.action.BOOT_COMPLETED'] and (not(@android:directBootAware) or @android:directBootAware='false')]"
+    recommendation: "Set android:directBootAware='true' on BOOT_COMPLETED receivers. Use Device-Encrypted (DE) storage for any data accessed in Direct Boot mode and migrate to Credential-Encrypted (CE) storage after user unlock."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 36: Platform Compliance (API 31+)
+  # ──────────────────────────────────────────────
+
+  - id: "MF-155"
+    name: "Data Extraction Rules Not Defined (API 31+)"
+    description: "The app targets API 31+ but does not declare a dataExtractionRules XML, which is required to control cloud backup and device-to-device transfer content on Android 12+."
+    severity: "MEDIUM"
+    category: "Data Exposure"
+    xpath: "//manifest[//uses-sdk[@android:targetSdkVersion >= 31] and not(//application[@android:dataExtractionRules])]"
+    recommendation: "Define res/xml/data_extraction_rules.xml and reference it via android:dataExtractionRules in <application>. Use the <cloud-backup> and <device-transfer> elements to control what data is backed up."
+
+  - id: "MF-156"
+    name: "POST_NOTIFICATIONS Not Declared (API 33+ Target)"
+    description: "Apps targeting Android 13+ that do not declare POST_NOTIFICATIONS permission will have notifications blocked by default, potentially breaking core notification-dependent features."
+    severity: "HIGH"
+    category: "Compliance"
+    xpath: "//manifest[//uses-sdk[@android:targetSdkVersion >= 33] and not(//uses-permission[@android:name='android.permission.POST_NOTIFICATIONS'])]"
+    recommendation: "Add <uses-permission android:name='android.permission.POST_NOTIFICATIONS'/> and request it at runtime for notification-dependent features."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 37: App Integrity & Attestation
+  # ──────────────────────────────────────────────
+
+  - id: "MF-157"
+    name: "Google Play Integrity API Not Referenced"
+    description: "The application does not reference Play Integrity API meta-data, which is Google's recommended approach for verifying device and app integrity for sensitive operations."
+    severity: "INFO"
+    category: "Code Protection"
+    xpath: "//manifest[not(//meta-data[contains(@android:name, 'integrity') or contains(@android:name, 'safetynet')])]"
+    recommendation: "Integrate Play Integrity API to verify device integrity and confirm the app has not been tampered with before performing sensitive operations like authentication or payments."
+
+  - id: "MF-158"
+    name: "Android App Links Without autoVerify"
+    description: "The app handles HTTP/HTTPS deep links but does not set android:autoVerify='true', leaving it vulnerable to link hijacking by other apps that register the same link pattern."
+    severity: "HIGH"
+    category: "App Linking"
+    xpath: "//activity/intent-filter[data/@android:scheme='https'][category/@android:name='android.intent.category.BROWSABLE'][action/@android:name='android.intent.action.VIEW'][not(@android:autoVerify='true')]"
+    recommendation: "Add android:autoVerify='true' to all HTTPS VIEW intent filters. Host an assetlinks.json file on your domain to verify ownership of the app links."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 38: Automotive & Vehicle Security
+  # ──────────────────────────────────────────────
+
+  - id: "MF-159"
+    name: "Automotive Permission Declared"
+    description: "The application declares Android Automotive permissions controlling vehicle functions (e.g., climate, media, fuel level). Unauthorized access could affect vehicle safety and user privacy."
+    severity: "HIGH"
+    category: "Platform-Specific"
+    xpath: "//uses-permission[starts-with(@android:name, 'android.car.permission.')]"
+    recommendation: "Review all Android Automotive permissions for necessity. Vehicle-related permissions require Google approval and must be clearly documented. Restrict them using signature-level protection."
+
+  - id: "MF-160"
+    name: "Health Connect Data Access Declared"
+    description: "The application declares Health Connect permissions which grant access to sensitive health metrics (steps, heart rate, sleep, nutrition). Health data is subject to stringent privacy regulations."
+    severity: "HIGH"
+    category: "Privacy"
+    xpath: "//uses-permission[contains(@android:name, '.health.')]"
+    recommendation: "Only request the minimum Health Connect data types needed. Disclose all health data access in your privacy policy and comply with applicable health data regulations (HIPAA, GDPR)."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 39: Inadvertently Exported Components
+  # ──────────────────────────────────────────────
+
+  - id: "MF-161"
+    name: "Inadvertently Exported Activity (Implicit Export)"
+    description: "An Activity declares an intent-filter but does not explicitly set android:exported. Prior to Android 12.1 (API 32), declaring an intent-filter implicitly exports the component, making it launchable by any app without explicit intent."
+    severity: "HIGH"
+    category: "Component Exposure"
+    xpath: "//activity[intent-filter][not(@android:exported)]"
+    recommendation: "Explicitly add android:exported='false' to all activities with intent-filters that are meant for internal use only. Or consider using the 'exported' attribute explicitly to document the intended behavior."
+
+  - id: "MF-162"
+    name: "Inadvertently Exported Service (Implicit Export)"
+    description: "A Service declares an intent-filter but does not explicitly set android:exported. Prior to Android 12.1, this implicitly exports the service, allowing any app to bind to or start it."
+    severity: "HIGH"
+    category: "Component Exposure"
+    xpath: "//service[intent-filter][not(@android:exported)]"
+    recommendation: "Set android:exported='false' explicitly on services with intent-filters that should not be accessible by other applications. Protect with signature-level permissions if external access is required."
+
+  - id: "MF-163"
+    name: "Inadvertently Exported BroadcastReceiver (Implicit Export)"
+    description: "A BroadcastReceiver declares an intent-filter but does not explicitly set android:exported. Prior to Android 12.1, this implicitly exports the receiver, allowing any app to send broadcasts to it."
+    severity: "HIGH"
+    category: "Component Exposure"
+    xpath: "//receiver[intent-filter][not(@android:exported)]"
+    recommendation: "Set android:exported='false' on internal receivers. For system broadcast receivers (e.g., BOOT_COMPLETED), explicitly set android:exported='true' and validate all received broadcasts."
+
+  - id: "MF-164"
+    name: "Inadvertently Exported ContentProvider (Implicit Export)"
+    description: "A ContentProvider is declared without an explicit android:exported attribute. Prior to Android 16 (API 16), ContentProviders were exported by default, and even on newer APIs, the default behavior can be ambiguous."
+    severity: "CRITICAL"
+    category: "Component Exposure"
+    xpath: "//provider[not(@android:exported)]"
+    recommendation: "Always explicitly set android:exported='false' on ContentProviders that should not be accessed by other apps. If external access is needed, define read/write permissions."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 40: Improper Component Protection
+  # ──────────────────────────────────────────────
+
+  - id: "MF-165"
+    name: "Exported Activity with Weak Permission Protection"
+    description: "A 'normal' protection-level permission is protecting an exported activity, which means any app can request and obtain this permission without user consent, providing minimal protection."
+    severity: "MEDIUM"
+    category: "Component Exposure"
+    xpath: "//activity[@android:exported='true'][@android:permission][not(contains(//permission[@android:name=current()/@android:permission]/@android:protectionLevel, 'signature'))]"
+    recommendation: "Use 'signature' or 'signatureOrSystem' protection level for permissions protecting exported components. This ensures only apps signed with the same certificate can access them."
+
+  - id: "MF-166"
+    name: "Exported Service with Weak Permission Protection"
+    description: "An exported service is protected by a 'normal' or non-existent permission. Any app can bind to or start this service, potentially leading to unauthorized data access."
+    severity: "MEDIUM"
+    category: "Component Exposure"
+    xpath: "//service[@android:exported='true'][not(@android:permission)]"
+    recommendation: "Add a signature-level permission to all exported services. Review whether the service truly needs to be exported or can be set to android:exported='false'."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 41: Activities Leaking Data
+  # ──────────────────────────────────────────────
+
+  - id: "MF-167"
+    name: "Activity Exposed to Task Hijacking via taskAffinity"
+    description: "An exported activity does not set taskAffinity or uses a taskAffinity that allows it to be associated with other tasks, making it vulnerable to task hijacking attacks where malicious apps overlay on top."
+    severity: "MEDIUM"
+    category: "Intent Security"
+    xpath: "//activity[@android:exported='true'][not(@android:taskAffinity) or @android:taskAffinity='']"
+    recommendation: "Set a unique android:taskAffinity for sensitive activities. Use android:launchMode='standard' and avoid FLAG_ACTIVITY_NEW_TASK for activities that handle sensitive data."
+
+  - id: "MF-168"
+    name: "Activity Exposed to Intent Spooning (noHistory Not Set)"
+    description: "A sensitive exported activity does not set android:noHistory='true', allowing it to remain in the activity back stack where it can be revisited or inspected later."
+    severity: "LOW"
+    category: "Intent Security"
+    xpath: "//activity[@android:exported='true'][not(@android:noHistory='true')]"
+    recommendation: "Set android:noHistory='true' on activities handling sensitive data (login, payment, OTP screens) to prevent them from remaining in the back stack."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 42: Intent Interception Prevention
+  # ──────────────────────────────────────────────
+
+  - id: "MF-169"
+    name: "Application Uses Implicit Intents (No Package Target)"
+    description: "The application does not restrict intent delivery to specific packages. Implicit intents can be intercepted by any app that registers an appropriate intent-filter."
+    severity: "MEDIUM"
+    category: "Intent Security"
+    xpath: "//activity[intent-filter/action[not(@android:package)]]"
+    recommendation: "Always use explicit intents (setComponent() or setPackage()) when sending sensitive data. For broadcast intents, use setPackage() to restrict delivery to a specific app."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 43: Sticky Intents (Manifest-Level)
+  # ──────────────────────────────────────────────
+
+  - id: "MF-170"
+    name: "BroadcastReceiver Registered for sticky system broadcasts"
+    description: "The receiver listens for system broadcasts (BATTERY_CHANGED, NFC_ADAPTER_STATE, etc.) that are sticky broadcasts. Sticky broadcasts persist beyond the broadcast lifecycle and can be read by any app with appropriate permissions."
+    severity: "LOW"
+    category: "Broadcast Receiver"
+    xpath: "//receiver/intent-filter/action[contains(@android:name, 'BATTERY') or contains(@android:name, 'NFC') or contains(@android:name, 'WIFI') or contains(@android:name, 'BLUETOOTH')]"
+    recommendation: "Register for sticky broadcasts only when absolutely necessary. Consider using callbacks or state-change listeners provided by the Android framework instead."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 44: X.509 Certificate Validation
+  # ──────────────────────────────────────────────
+
+  - id: "MF-171"
+    name: "No Network Security Configuration (SSL Validation Defaults)"
+    description: "The application does not define a Network Security Configuration, leaving TLS certificate validation to the platform defaults which may permit system-installed CA certificates including user-added ones."
+    severity: "MEDIUM"
+    category: "Network Security"
+    xpath: "//application[not(@android:networkSecurityConfig)]"
+    recommendation: "Define a res/xml/network_security_config.xml that pins certificates and restricts trust to system CAs only. For sensitive apps, implement certificate pinning via the config."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 45: Outdated API Versions
+  # ──────────────────────────────────────────────
+
+  - id: "MF-172"
+    name: "Target SDK Version Below API 33 (Known Vulnerability Exposure)"
+    description: "The application targets an API level below 33 (Android 13), missing critical security behaviors enforced in newer versions such as notification permission enforcement, scoped storage, and background location restrictions."
+    severity: "HIGH"
+    category: "SDK Targeting"
+    xpath: "//uses-sdk[@android:targetSdkVersion < 33]"
+    recommendation: "Update targetSdkVersion to at least 33 (Android 13). Google Play requires targetSdkVersion >= 33 for all new apps and updates. This ensures modern security defaults are applied."
+
+  - id: "MF-173"
+    name: "Minimum SDK Version Below API 23 (Marshmallow)"
+    description: "The application supports devices running Android versions below 6.0 (API 23), which lack runtime permissions, hardware-backed keystore, and many other critical security features."
+    severity: "MEDIUM"
+    category: "SDK Targeting"
+    xpath: "//uses-sdk[@android:minSdkVersion < 23]"
+    recommendation: "Set minSdkVersion to at least 23 (Android 6.0 Marshmallow). This ensures runtime permission model and hardware-backed security features are available."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 46: PreferenceActivity Security
+  # ──────────────────────────────────────────────
+
+  - id: "MF-174"
+    name: "Exported PreferenceActivity (Fragment Injection Vector)"
+    description: "A PreferenceActivity is exported without proper fragment validation. PreferenceActivity is a known vector for fragment injection attacks when exported, as it loads fragment class names from Intent extras."
+    severity: "HIGH"
+    category: "Component Exposure"
+    xpath: "//activity[@android:exported='true' and contains(translate(@android:name,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'preference')]"
+    recommendation: "Set android:exported='false' on PreferenceActivity. If it must be exported, override isValidFragment() to validate fragment names against a strict allowlist and reject all unknown fragments."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 47: Widget & AppWidget Security
+  # ──────────────────────────────────────────────
+
+  - id: "MF-175"
+    name: "AppWidget Provider Exported Without Permission"
+    description: "An AppWidget provider is exported without permission, allowing any app to configure or interact with the widget and potentially extract data from widget configuration."
+    severity: "MEDIUM"
+    category: "Component Exposure"
+    xpath: "//receiver[@android:name and contains(translate(@android:name,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'widget') and not(@android:permission)]"
+    recommendation: "Protect AppWidget providers with a permission or set android:exported='false' if the widget is only used by the host app."
+
+  - id: "MF-176"
+    name: "AppWidget With RemoteViews Service Exported"
+    description: "An AppWidget uses a RemoteViewsService that is exported, potentially allowing other apps to modify the widget's appearance or intercept user interactions."
+    severity: "MEDIUM"
+    category: "Component Exposure"
+    xpath: "//service[contains(translate(@android:name,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'remoteviews') and @android:exported='true']"
+    recommendation: "Set android:exported='false' on RemoteViewsService used by AppWidgets. This service should only be accessible by the system widget host."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 48: Account & Sync Security
+  # ──────────────────────────────────────────────
+
+  - id: "MF-177"
+    name: "SyncAdapter Service Exported Without Permission"
+    description: "A SyncAdapter service is exported without permission, allowing any app to trigger synchronization which could be used for data exfiltration via sync operations."
+    severity: "MEDIUM"
+    category: "Component Exposure"
+    xpath: "//service/intent-filter/action[@android:name='android.content.SyncAdapter' and not(../..//@android:permission)]"
+    recommendation: "Set android:exported='false' on SyncAdapter services or protect them with a signature-level permission."
+
+  - id: "MF-178"
+    name: "Account Authenticator Exported Without Required Permission"
+    description: "An AccountAuthenticator service does not require AUTHENTICATE_ACCOUNTS permission, potentially allowing unauthorized apps to interact with the account system."
+    severity: "MEDIUM"
+    category: "Component Exposure"
+    xpath: "//service/intent-filter/action[@android:name='android.accounts.AccountAuthenticator' and not(../..//@android:permission)]"
+    recommendation: "Export AccountAuthenticator services only with signature-level permission protection. Alternatively, set android:exported='false'."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 49: Input Method & Keyboard Security
+  # ──────────────────────────────────────────────
+
+  - id: "MF-179"
+    name: "Input Method Registered (Potential Keylogging)"
+    description: "The application registers a custom InputMethod (keyboard). Input methods have access to all keystrokes including passwords. This is a high-risk capability."
+    severity: "HIGH"
+    category: "Accessibility"
+    xpath: "//service[@android:permission='android.permission.BIND_INPUT_METHOD']"
+    recommendation: "Disclose all data collection practices if the app is a legitimate keyboard. Ensure no cloud transmission of keystrokes without explicit consent."
+
+  - id: "MF-180"
+    name: "AccessibilityService Without Required Permission"
+    description: "An AccessibilityService does not require BIND_ACCESSIBILITY_SERVICE permission, which is required by the system. Malicious apps may try to register accessibility services without proper system binding."
+    severity: "HIGH"
+    category: "Accessibility"
+    xpath: "//service[intent-filter/action[@android:name='android.accessibilityservice.AccessibilityService'] and not(@android:permission='android.permission.BIND_ACCESSIBILITY_SERVICE')]"
+    recommendation: "Ensure BIND_ACCESSIBILITY_SERVICE permission is declared on all accessibility services. Accessibility services can read on-screen content including passwords."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 50: Backup & Data Persistence
+  # ──────────────────────────────────────────────
+
+  - id: "MF-181"
+    name: "Auto Backup Enabled with No Exclusion Rules (API 31+)"
+    description: "The app targets API 31+ and allows backup without defining dataExtractionRules, which means full app data including databases, shared preferences, and cached files are backed up to Google Drive."
+    severity: "MEDIUM"
+    category: "Data Exposure"
+    xpath: "//manifest[//uses-sdk[@android:targetSdkVersion >= 31] and not(@android:dataExtractionRules) and not(//application[@android:allowBackup='false'])]"
+    recommendation: "Define dataExtractionRules XML to exclude sensitive files (tokens, credentials, PII) from cloud backup and device-to-device transfers."
+
+  - id: "MF-182"
+    name: "BackupAgent Service Declared"
+    description: "A custom BackupAgent is declared which handles backup/restore operations. If insecure, this can be used to extract or inject data via ADB backup."
+    severity: "MEDIUM"
+    category: "Data Exposure"
+    xpath: "//application[@android:backupAgent]"
+    recommendation: "Review the BackupAgent implementation for data leakage. Ensure sensitive data is excluded from backup via onBackup() filtering."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 51: Installer & Distribution Security
+  # ──────────────────────────────────────────────
+
+  - id: "MF-183"
+    name: "App Allows Installation on External Storage"
+    description: "The application can be installed on external/SD storage via android:installLocation='preferExternal' or 'auto'. External storage has weaker security guarantees."
+    severity: "MEDIUM"
+    category: "Distribution Security"
+    xpath: "//manifest[@android:installLocation='preferExternal']"
+    recommendation: "Set android:installLocation='internalOnly' for security-sensitive apps. External storage is less secure and can be tampered with."
+
+  - id: "MF-184"
+    name: "App Supports Split APK / On-Demand Delivery"
+    description: "The application uses Split APK or on-demand delivery (Play Feature Delivery), which downloads feature modules at runtime. If the delivery channel is compromised, malicious modules could be injected."
+    severity: "MEDIUM"
+    category: "Distribution Security"
+    xpath: "//meta-data[contains(@android:name, 'com.android.dynamic.apk') or contains(@android:name, 'split')]"
+    recommendation: "Ensure dynamic feature splits are delivered exclusively through Google Play. Verify module integrity before loading."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 52: Screen Overlay & Display
+  # ──────────────────────────────────────────────
+
+  - id: "MF-185"
+    name: "Activity Does Not Lock Screen Orientation for Sensitive Data"
+    description: "An activity handling sensitive data does not lock screen orientation. Screen rotation can cause activity recreation that leaves previous screen content in memory or cached layers."
+    severity: "LOW"
+    category: "UI Security"
+    xpath: "//activity[not(@android:screenOrientation)]"
+    recommendation: "Consider locking orientation (portrait or landscape) on sensitive screens to prevent accidental exposure of screen content during rotation transitions."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 53: Process & Memory Protection
+  # ──────────────────────────────────────────────
+
+  - id: "MF-186"
+    name: "Application Uses android:process to Run in Separate Process"
+    description: "A component is configured to run in a separate process via android:process. Inter-process communication between component processes increases attack surface."
+    severity: "MEDIUM"
+    category: "Build Configuration"
+    xpath: "//*[@android:process][not(contains(@android:process, ':'))]"
+    recommendation: "Run components in the default process unless strictly necessary. For IPC between processes, use signature-level permissions and validate all incoming data."
+
+  - id: "MF-187"
+    name: "Persistent Attribute Set on Application or Activity"
+    description: "The android:persistent='true' attribute forces the component to remain running at all times. This is reserved for system apps and should not be used by user-installed apps."
+    severity: "HIGH"
+    category: "Build Configuration"
+    xpath: "//*[@android:persistent='true']"
+    recommendation: "Remove android:persistent='true'. This attribute is only honored for system apps and including it in a user-installed app indicates a misconfiguration."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 54: Network Configuration
+  # ──────────────────────────────────────────────
+
+  - id: "MF-188"
+    name: "Permission for Foreground Service Not Declared (API 34+)"
+    description: "The app targets API 34+ with foreground service type declared but missing the required foreground service permission for that type."
+    severity: "HIGH"
+    category: "Compliance"
+    xpath: "//manifest[//uses-sdk[@android:targetSdkVersion >= 34] and //service[@android:foregroundServiceType] and not(//uses-permission[starts-with(@android:name, 'android.permission.FOREGROUND_SERVICE')])]"
+    recommendation: "Declare the appropriate foreground service type permission (e.g., FOREGROUND_SERVICE_DATA_SYNC, FOREGROUND_SERVICE_LOCATION) as required by Android 14+."
+
+  - id: "MF-189"
+    name: "Application Uses WiFi Network Change Intents"
+    description: "The app listens for WIFI_STATE_CHANGED or NETWORK_STATE_CHANGED broadcasts, which can be used to infer device location without location permission on older Android versions."
+    severity: "LOW"
+    category: "Broadcast Receiver"
+    xpath: "//receiver/intent-filter/action[@android:name='android.net.wifi.WIFI_STATE_CHANGED' or @android:name='android.net.conn.CONNECTIVITY_CHANGE']"
+    recommendation: "Use ConnectivityManager callbacks instead of manifest-declared broadcast receivers for network state changes (API 24+)."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 55: Miscellaneous High-Severity Items
+  # ──────────────────────────────────────────────
+
+  - id: "MF-190"
+    name: "Application Binds to SMS or MMS Service"
+    description: "The app declares BIND_SMS_SERVICE or bind to MMS-related services, indicating direct access to SMS/MMS messages."
+    severity: "CRITICAL"
+    category: "Component Exposure"
+    xpath: "//service[@android:permission='android.permission.BIND_SMS_SERVICE']"
+    recommendation: "Only default SMS apps should bind to SMS services. Remove this if the app is not a default SMS handler."
+
+  - id: "MF-191"
+    name: "Midnight/Critical Alarm Receiver Registered"
+    description: "The application registers for TIME_SET or TIMEZONE_CHANGED broadcasts, which can be used to trigger timed behavior changes."
+    severity: "INFO"
+    category: "Broadcast Receiver"
+    xpath: "//receiver/intent-filter/action[@android:name='android.intent.action.TIME_SET' or @android:name='android.intent.action.TIMEZONE_CHANGED']"
+    recommendation: "Ensure time-change receivers do not alter security-sensitive behavior (e.g., authentication expiry, license checks)."
+
+  - id: "MF-192"
+    name: "Reserved System Broadcasts May Require System-Level Permissions"
+    description: "The application listens for system-level broadcasts (PACKAGE_*, USER_*, LOCALE_CHANGED, CONFIGURATION_CHANGED) which can be used to track device state changes."
+    severity: "LOW"
+    category: "Broadcast Receiver"
+    xpath: "//receiver/intent-filter/action[@android:name='android.intent.action.PACKAGE_FULLY_REMOVED' or @android:name='android.intent.action.USER_PRESENT' or @android:name='android.intent.action.LOCALE_CHANGED']"
+    recommendation: "Remove receivers that are not essential for app functionality. These broadcasts provide additional attack surface and drain battery."
+
+  - id: "MF-193"
+    name: "App Uses Placeholder or Default App Icon"
+    description: "The application does not define a custom android:icon. Default or placeholder icons are commonly associated with test apps or malware."
+    severity: "INFO"
+    category: "Miscellaneous"
+    xpath: "//application[not(@android:icon) or @android:icon='@mipmap/ic_launcher' or @android:icon='@drawable/ic_launcher']"
+    recommendation: "Define a custom application icon to distinguish your app from malicious clones that use default icons."
+
+  - id: "MF-194"
+    name: "App Name Contains Generic or Suspicious Keywords"
+    description: "The application's label contains words commonly associated with malicious apps (hack, crack, root, mod, unlock, free, premium)."
+    severity: "INFO"
+    category: "Miscellaneous"
+    xpath: "//application[@android:label and (contains(translate(@android:label,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'hack') or contains(translate(@android:label,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'crack') or contains(translate(@android:label,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'root') or contains(translate(@android:label,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'mod'))]"
+    recommendation: "Use a professional, descriptive app name that reflects actual app functionality."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 56: Task Hijacking & Screen Overlay
+  # ──────────────────────────────────────────────
+
+  - id: "MF-195"
+    name: "App Has Same Task Affinity as Other Common Apps"
+    description: "The application does not set a custom taskAffinity, making it use the default package name. Exported activities may be vulnerable to task hijacking where a malicious app launches an activity that appears to belong to a different app."
+    severity: "MEDIUM"
+    category: "Intent Security"
+    xpath: "//activity[@android:exported='true'][not(@android:taskAffinity)]"
+    recommendation: "Set a unique android:taskAffinity on exported activities to prevent task hijacking. Consider using android:launchMode='standard' for sensitive activities."
+
+  - id: "MF-196"
+    name: "Application Adopts System UI Style (UI Spoofing Risk)"
+    description: "The application uses system UI themes or styles that make it visually indistinguishable from system dialogs, enabling phishing attacks."
+    severity: "HIGH"
+    category: "UI Security"
+    xpath: "//activity[@android:theme and (contains(@android:theme, 'Theme.Dialog') or contains(@android:theme, 'Theme.Holo.Dialog') or contains(@android:theme, 'Theme.Material.Dialog'))]"
+    recommendation: "Use distinct branding and visual styling for dialogs so users can distinguish them from system dialogs. Avoid duplicating system UI patterns."
+
+  - id: "MF-197"
+    name: "Activity Exported with No Task Affinity (Task Hijacking)"
+    description: "An exported activity does not have a unique taskAffinity, making it vulnerable to StrandHogg-style task hijacking attacks where a malicious app can overlay its own activity."
+    severity: "HIGH"
+    category: "Intent Security"
+    xpath: "//activity[@android:exported='true' and not(@android:taskAffinity)]"
+    recommendation: "Set android:taskAffinity on all exported activities. To prevent task hijacking entirely, set android:launchMode='standard' and handle sensitive operations in onCreate()."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 57: Content Provider Security (Extended)
+  # ──────────────────────────────────────────────
+
+  - id: "MF-198"
+    name: "ContentProvider Exported Without Path Permission"
+    description: "A ContentProvider is exported without path-level permissions, allowing all data URIs under the provider to be accessed by any app."
+    severity: "MEDIUM"
+    category: "Component Exposure"
+    xpath: "//provider[@android:exported='true' and not(@android:permission) and not(@android:readPermission) and not(@android:writePermission)]"
+    recommendation: "Set android:permission, android:readPermission, or android:writePermission on exported ContentProviders. Use signature-level permissions for sensitive data."
+
+  - id: "MF-199"
+    name: "ContentProvider with grantUriPermissions Without Permission"
+    description: "A ContentProvider allows grantUriPermissions without a base permission, meaning temporary URI grants bypass all access controls."
+    severity: "HIGH"
+    category: "Component Exposure"
+    xpath: "//provider[@android:grantUriPermissions='true' and not(@android:permission) and not(@android:readPermission) and not(@android:writePermission)]"
+    recommendation: "Set a base permission on ContentProviders that use grantUriPermissions. Otherwise, temporary URI grants can access all provider data without restriction."
+
+  - id: "MF-200"
+    name: "ContentProvider Exported Without multiprocess Protection"
+    description: "A ContentProvider is exported and does not set android:multiprocess='false', potentially allowing multiple processes to access provider data concurrently without synchronization."
+    severity: "LOW"
+    category: "Component Exposure"
+    xpath: "//provider[@android:exported='true' and not(@android:multiprocess)]"
+    recommendation: "Set android:multiprocess='false' on exported ContentProviders to ensure only one instance runs. If multiprocess is needed, implement thread-safe access to shared data."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 58: Service Security Exposure
+  # ──────────────────────────────────────────────
+
+  - id: "MF-201"
+    name: "Service Exported Without Permission (Data Service)"
+    description: "A Service is exported without permission protection. If the service handles sensitive data or performs operations, it can be exploited by malicious apps."
+    severity: "HIGH"
+    category: "Component Exposure"
+    xpath: "//service[not(@android:exported) or @android:exported='true'][not(@android:permission)]"
+    recommendation: "Set android:exported='false' on services that are only used internally. If export is required, protect with a signature-level permission."
+
+  - id: "MF-202"
+    name: "Exported Service with Intent Filter Without Permission"
+    description: "A Service has an intent-filter and is exported without permission, allowing any app to discover and bind to the service via implicit intents."
+    severity: "HIGH"
+    category: "Component Exposure"
+    xpath: "//service[intent-filter][@android:exported='true' or not(@android:exported)][not(@android:permission)]"
+    recommendation: "Add a permission to all services with intent-filters. Use signature-level permission to restrict binding to apps signed with the same certificate."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 59: Meta-Data & Configuration Analysis
+  # ──────────────────────────────────────────────
+
+  - id: "MF-203"
+    name: "Google Maps API Key May Be Stored Insecurely"
+    description: "A Google Maps API key is declared in AndroidManifest.xml meta-data, which is visible to anyone who decompiles the APK."
+    severity: "MEDIUM"
+    category: "Configuration"
+    xpath: "//meta-data[@android:name='com.google.android.geo.API_KEY']"
+    recommendation: "Restrict the Google Maps API key in Google Cloud Console to your app's package name and SHA-1 certificate fingerprint. Consider using a proxy service."
+
+  - id: "MF-204"
+    name: "Firebase Cloud Messaging Service Declared"
+    description: "The app declares Firebase Cloud Messaging components, indicating push notification capability."
+    severity: "INFO"
+    category: "Configuration"
+    xpath: "//service[@android:name='com.google.firebase.messaging.FirebaseMessagingService' or @android:name='.fcm.FirebaseMessagingService' or @android:name='.FirebaseMessagingService']"
+    recommendation: "Ensure FCM data messages are not used to transmit sensitive information. Notification payloads are visible to other apps on the device."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 60: Debug & Test Configuration
+  # ──────────────────────────────────────────────
+
+  - id: "MF-205"
+    name: "Application Is Debuggable (android:debuggable=true)"
+    description: "The application is debuggable, which allows debugging from any device connected via USB. This is a security risk and should only be enabled in debug builds."
+    severity: "HIGH"
+    category: "Build Configuration"
+    xpath: "//application[@android:debuggable='true']"
+    recommendation: "Remove android:debuggable from the manifest or set it to false. Debug builds should be handled automatically by the build system."
+
+  - id: "MF-206"
+    name: "Application Has Test Only Flag (android:testOnly=true)"
+    description: "The application has android:testOnly set to true, which indicates it is a test build not intended for production distribution."
+    severity: "INFO"
+    category: "Build Configuration"
+    xpath: "//application[@android:testOnly='true']"
+    recommendation: "Remove android:testOnly for production builds. Test-only apps cannot be distributed via Google Play."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 61: Vendor-Specific SDK Detection
+  # ──────────────────────────────────────────────
+
+  - id: "MF-207"
+    name: "Huawei Mobile Services (HMS) SDK Detected"
+    description: "The application integrates Huawei Mobile Services, which sends data to Huawei servers and has different privacy implications."
+    severity: "INFO"
+    category: "SDK Detection"
+    xpath: "//meta-data[contains(@android:name, 'com.huawei') or contains(@android:name, 'hms')]"
+    recommendation: "Ensure HMS data collection is disclosed in the privacy policy. HMS Core may transmit analytics and crash data to Huawei servers."
+
+  - id: "MF-208"
+    name: "Xiaomi MiPush SDK Detected"
+    description: "The application integrates Xiaomi push notification services."
+    severity: "INFO"
+    category: "SDK Detection"
+    xpath: "//meta-data[contains(@android:name, 'xiaomi') or contains(@android:name, 'MiPush')]"
+    recommendation: "Ensure push notification data handling complies with privacy regulations."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 62: Screen Orientation & UI Protection
+  # ──────────────────────────────────────────────
+
+  - id: "MF-209"
+    name: "Activity Does Not Lock Task (FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)"
+    description: "An exported activity does not set android:excludeFromRecents='true', allowing the activity to appear in the recent tasks screen with potentially sensitive data."
+    severity: "LOW"
+    category: "UI Security"
+    xpath: "//activity[@android:exported='true'][not(@android:excludeFromRecents='true')]"
+    recommendation: "Set android:excludeFromRecents='true' on activities handling sensitive data to prevent them from appearing in the recents screen."
+
+  - id: "MF-210"
+    name: "Activity Allows Screen Capture (FLAG_SECURE Not Applied in Manifest)"
+    description: "The manifest does not enforce screen security. Activities displaying sensitive data should use FLAG_SECURE or android:screenOrientation to protect content."
+    severity: "INFO"
+    category: "UI Security"
+    xpath: "//activity[not(@android:screenOrientation)]"
+    recommendation: "Consider setting android:screenOrientation on sensitive activities and apply FLAG_SECURE programmatically to prevent screenshots."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 63: Multiple APK / Split APK
+  # ──────────────────────────────────────────────
+
+  - id: "MF-211"
+    name: "Application Uses Android App Bundle (Dynamic Delivery)"
+    description: "The application uses Play Feature Delivery or Play Asset Delivery for on-demand module installation."
+    severity: "INFO"
+    category: "Distribution Security"
+    xpath: "//meta-data[@android:name='com.android.dynamic.apk.fused.modules']"
+    recommendation: "Ensure feature modules do not contain sensitive logic that should be present in the base module. Modules downloaded on demand can be analyzed after extraction."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 64: Intent Filter Analysis
+  # ──────────────────────────────────────────────
+
+  - id: "MF-212"
+    name: "Activity Registers for Custom Scheme (Deep Link)"
+    description: "An activity registers a deep link scheme other than http/https, which cannot use autoVerify and is less secure."
+    severity: "LOW"
+    category: "Intent Security"
+    xpath: "//activity/intent-filter/data[not(@android:scheme='http') and not(@android:scheme='https')]"
+    recommendation: "Prefer https:// schemes for deep links as they support auto-verification via Digital Asset Links. Custom schemes cannot be verified and can be claimed by any app."
+
+  - id: "MF-213"
+    name: "Custom Permission with Protection Level Below Signature"
+    description: "A custom permission is defined with a protection level below 'signature', allowing any app to request and obtain this permission."
+    severity: "HIGH"
+    category: "Permissions"
+    xpath: "//permission[@android:protectionLevel='normal' or @android:protectionLevel='dangerous']"
+    recommendation: "Use 'signature' protection level for custom permissions that protect sensitive features or data. This restricts access to apps signed with the same key."
+
+  - id: "MF-214"
+    name: "Custom Permission Defined Without Description"
+    description: "A custom permission is defined without a description, making it unclear to users what the permission protects."
+    severity: "INFO"
+    category: "Permissions"
+    xpath: "//permission[not(@android:description)]"
+    recommendation: "Provide a clear description for all custom permissions explaining what data or feature they protect."
+  # ──────────────────────────────────────────────
+  # CATEGORY 65: SharedUserId & System-Level Exposure
+  # ──────────────────────────────────────────────
+
+  - id: "MANIFEST-SHAREDUID-001"
+    name: "android:sharedUserId Set to System UID"
+    description: "App declares sharedUserId='android.uid.system'. This allows the app to run with system-level privileges. A vulnerability in this app can lead to complete device compromise."
+    severity: "CRITICAL"
+    category: "SharedUserId & System-Level Exposure"
+    condition: "sharedUserId"
+    pattern: 'android.uid.system'
+    recommendation: "Never use android:sharedUserId='android.uid.system'. Remove the sharedUserId declaration."
+
+  - id: "MANIFEST-SHAREDUID-002"
+    name: "android:sharedUserId Set to Shared/Phone UID"
+    description: "App declares sharedUserId='android.uid.shared' or 'android.uid.phone'. This broadens the security boundary shared with other apps signed with the same key."
+    severity: "HIGH"
+    category: "SharedUserId & System-Level Exposure"
+    condition: "sharedUserId"
+    pattern: 'android.uid.(shared|phone|bluetooth|shell)'
+    recommendation: "Remove sharedUserId declaration. Use IPC mechanisms like Binder with permissions instead."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 66: App Links & Associated Domains
+  # ──────────────────────────────────────────────
+
+  - id: "MANIFEST-APPLINKS-001"
+    name: "Android App Links Without autoVerify"
+    description: "App uses intent-filters for URL schemes but may not have autoVerify enabled. Without autoVerify, any app can claim the same URL scheme and intercept deep links."
+    severity: "HIGH"
+    category: "App Links & Associated Domains"
+    condition: "intent-filter"
+    pattern: 'autoVerify'
+    recommendation: "Add android:autoVerify='true' to all URL-based intent-filters. Host Digital Asset Links JSON at https://domain.com/.well-known/assetlinks.json"
+
+  - id: "MANIFEST-APPLINKS-002"
+    name: "Deep Link Without Host Verification"
+    description: "Intent-filters with android:scheme but no android:host allow any URL with that scheme to match. This enables arbitrary deep link injection."
+    severity: "HIGH"
+    category: "App Links & Associated Domains"
+    condition: "data"
+    pattern: 'scheme'
+    recommendation: "Always specify android:host in deep link intent-filters. Validate the host against an allowlist."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 67: Content Provider Security Extended
+  # ──────────────────────────────────────────────
+
+  - id: "MANIFEST-CP-GRANT-001"
+    name: "ContentProvider With grantUriPermissions Enabled"
+    description: "ContentProvider declares android:grantUriPermissions='true'. This allows the provider to grant URI permissions to other apps, potentially exposing sensitive data."
+    severity: "MEDIUM"
+    category: "Content Provider Security Extended"
+    condition: "provider"
+    pattern: 'grantUriPermissions'
+    recommendation: "Disable grantUriPermissions if not needed. Use android:grantUriPermissions='false' and selectively grant via FLAG_GRANT_READ_URI_PERMISSION."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 68: Backup & Data Protection Enhanced
+  # ──────────────────────────────────────────────
+
+  - id: "MANIFEST-BACKUP-002"
+    name: "Full Backup Enabled (android:fullBackupContent Not Specified)"
+    description: "App uses android:allowBackup='true' but does not specify android:fullBackupContent. All app data is eligible for backup by default."
+    severity: "HIGH"
+    category: "Backup & Data Protection Enhanced"
+    condition: "allowBackup"
+    pattern: 'fullBackupContent'
+    recommendation: "Set android:fullBackupContent='@xml/backup_rules' and define backup rules that exclude sensitive data."
+
+  # ──────────────────────────────────────────────
+  # CATEGORY 69: Install Location & Signature Security
+  # ──────────────────────────────────────────────
+
+  - id: "MANIFEST-INSTALL-001"
+    name: "App Installable on External Storage"
+    description: "App allows installation on external storage (android:installLocation='preferExternal'/'auto'). Apps on removable media can be physically extracted."
+    severity: "MEDIUM"
+    category: "Install Location & Signature Security"
+    condition: "installLocation"
+    pattern: 'preferExternal|auto'
+    recommendation: "Set android:installLocation='internalOnly' for apps handling sensitive data."
+
+  - id: "MANIFEST-SIG-002"
+    name: "V1 Signature Scheme Only (JAR Signing)"
+    description: "App may only use V1 (JAR) signature scheme which is more vulnerable to stripping attacks."
+    severity: "MEDIUM"
+    category: "Install Location & Signature Security"
+    condition: "signature"
+    pattern: 'v1'
+    recommendation: "Ensure V2 (APK Signature Scheme) or V3 signing is used alongside or instead of V1."

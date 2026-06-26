@@ -1,0 +1,43 @@
+services:
+  oversecured:
+    build:
+      context: ./oversecured
+      dockerfile: Dockerfile
+    container_name: oversecured_app
+    ports:
+      - "5000:5000"
+    # volumes:
+    #   - ./oversecured:/app
+    command: python -m http.server 5000
+    depends_on:
+      - db
+
+  hacknova:
+    build:
+      context: ./hacknova
+      dockerfile: Dockerfile
+    container_name: hacknova_app
+    ports:
+      - "3000:3000"
+    # volumes:
+    #   - ./hacknova:/app
+    command: npm run dev
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    container_name: merged_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: secret_root
+      MYSQL_DATABASE: merged_db
+      MYSQL_USER: merged_user
+      MYSQL_PASSWORD: secret_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:

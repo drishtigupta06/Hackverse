@@ -1,0 +1,88 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: apkscanner
+      POSTGRES_USER: scanner
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-scannerpass}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U scanner -d apkscanner"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+asyncpg://scanner:${POSTGRES_PASSWORD:-scannerpass}@postgres:5432/apkscanner
+      REDIS_URL: redis://redis:6379
+      SCANNER_PATH: /scanner/scanner.py
+      DATA_DIR: /data
+      OLLAMA_URL: ${OLLAMA_URL:-http://host.docker.internal:11434}
+      ANDROID_HOME: /opt/android-sdk
+      EMULATOR_AVD: Pixel_6_API_33
+      EMULATOR_RAM: 2048
+      EMULATOR_ENABLED: "true"
+      ANDROID_AVD_HOME: /opt/android-sdk/.android/avd
+      ADB_DEVICE_HOST: ${ADB_DEVICE_HOST:-}
+      ADB_DEVICE_PORT: ${ADB_DEVICE_PORT:-5555}
+    volumes:
+      - ./backend:/app
+      - scanner_data:/data
+      - ${SCANNER_PATH:-../manifest_scanner}:/scanner:ro
+      - avd_data:/opt/android-sdk/.android
+    devices:
+      - /dev/kvm
+    ports:
+      - "127.0.0.1:8001:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      target: dev
+    volumes:
+      - ./frontend/src:/app/src
+    environment:
+      VITE_API_URL: http://localhost/api
+      VITE_WS_URL: ws://localhost/ws
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - frontend
+    restart: unless-stopped
+
+volumes:
+  pg_data:
+  redis_data:
+  scanner_data:
+  avd_data:

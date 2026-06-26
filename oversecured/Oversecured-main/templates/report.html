@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Android Security Scan Report — {{ package_name }}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 30px 40px; background: #f5f6fa; color: #2c3e50; }
+        h1 { color: #2c3e50; font-size: 26px; display: flex; align-items: center; gap: 8px; }
+        h1 small { font-size: 13px; font-weight: normal; color: #7f8c8d; margin-left: 12px; }
+        h2 { color: #2c3e50; font-size: 20px; }
+        h2.section-header { margin-top: 35px; border-bottom: 2px solid #dcdde1; padding-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+        h3 { font-size: 16px; margin: 0 0 6px 0; }
+        .summary { background: #fff; padding: 18px 22px; border-radius: 8px; margin-bottom: 18px; box-shadow: 0 2px 5px rgba(0,0,0,0.06); }
+        .summary p { margin: 5px 0; font-size: 13px; }
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 12px; }
+        .stat-card { background: #fafafa; padding: 14px 10px; border-radius: 6px; text-align: center; border: 1px solid #eef0f2; }
+        .stat-card .num { font-size: 24px; font-weight: 700; color: #2c3e50; }
+        .stat-card .label { font-size: 10px; color: #95a5a6; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 3px; }
+        .stat-card.highlight { background: #eafaf1; border-color: #27ae60; }
+        .stat-card.highlight .num { color: #27ae60; }
+        .badge { padding: 3px 7px; border-radius: 3px; color: #fff; display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 0.3px; }
+        .badge.CRITICAL { background: #8e44ad; }
+        .badge.HIGH { background: #e74c3c; }
+        .badge.MEDIUM { background: #e67e22; }
+        .badge.LOW { background: #f39c12; color: #333; }
+        .badge.INFO { background: #3498db; }
+        .badge.validated { background: #27ae60; }
+        .badge.partial { background: #f39c12; color: #333; }
+        .badge.unvalidated { background: #95a5a6; }
+        .rc-card { background: #fff; border-radius: 6px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); border-left: 5px solid #95a5a6; overflow: hidden; }
+        .rc-card.validated { border-left-color: #27ae60; }
+        .rc-card.partial { border-left-color: #f39c12; }
+        .rc-card.HIGH { border-left-color: #e74c3c; }
+        .rc-card.CRITICAL { border-left-color: #8e44ad; }
+        .rc-card.MEDIUM { border-left-color: #e67e22; }
+        .rc-header { padding: 14px 18px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; border-bottom: 1px solid #f0f0f0; }
+        .rc-header .rc-id { font-weight: 700; font-size: 14px; color: #2c3e50; min-width: 80px; }
+        .rc-header .rc-title { font-size: 14px; color: #555; flex: 1; }
+        .rc-header .rc-stats { display: flex; gap: 6px; align-items: center; margin-left: auto; }
+        .rc-body { padding: 12px 18px 14px; }
+        .rc-body p { font-size: 13px; color: #555; margin: 4px 0; }
+        .rc-evidence { margin-top: 10px; }
+        .rc-evidence-summary { font-size: 12px; color: #7f8c8d; cursor: pointer; font-weight: 600; }
+        .rc-evidence-list { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+        .rc-evidence-item { padding: 6px 10px; background: #f8f9fb; border-radius: 4px; font-size: 12px; display: flex; align-items: center; gap: 8px; }
+        .rc-evidence-item .eid { font-weight: 600; color: #2c3e50; min-width: 100px; }
+        .rc-evidence-item .estatus { margin-left: auto; font-size: 11px; }
+        .screenshot-container { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
+        .screenshot-container .shot { flex: 1; min-width: 140px; max-width: 220px; }
+        .screenshot-container .shot img { width: 100%; border: 1px solid #ddd; border-radius: 4px; }
+        .screenshot-container .shot .label { font-size: 10px; color: #7f8c8d; text-align: center; margin-top: 3px; }
+.screenshot-container .video-shot { max-width: 340px; }
+        .finding { margin-bottom: 14px; padding: 14px 16px; border-left: 5px solid #e74c3c; background: #fff; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+        .finding.MEDIUM { border-left-color: #f39c12; }
+        .finding.LOW { border-left-color: #f1c40f; }
+        .finding.INFO { border-left-color: #3498db; }
+        .finding.CRITICAL { border-left-color: #8e44ad; }
+        .finding h3 { margin: 0 0 6px 0; font-size: 14px; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+        .finding p { font-size: 13px; line-height: 1.5; margin: 4px 0; }
+        .finding .recommendation { background: #eef2f7; padding: 8px 12px; border-radius: 4px; margin-top: 8px; font-size: 12px; border-left: 3px solid #3498db; }
+        .match-block { margin-top: 10px; }
+        .match-block-title { font-size: 11px; font-weight: 600; color: #7f8c8d; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 5px; }
+        .match-table { width: 100%; border-collapse: collapse; font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; font-size: 11px; background: #1e272e; border-radius: 4px; overflow: hidden; }
+        .match-table tr { border-bottom: 1px solid #2d3a41; }
+        .match-table tr:last-child { border-bottom: none; }
+        .match-table td { padding: 3px 0; vertical-align: top; white-space: nowrap; }
+        .match-table td.line-num { color: #636e72; padding: 3px 8px; text-align: right; user-select: none; min-width: 60px; border-right: 1px solid #2d3a41; background: #1a2128; font-size: 10px; }
+        .match-table td.line-code { color: #e6e9ed; padding: 3px 10px; white-space: pre; overflow-x: auto; font-size: 11px; }
+        .code-context { margin-top: 10px; background: #1e272e; border-radius: 4px; overflow: hidden; font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; font-size: 11px; line-height: 1.5; }
+        .code-context .line-row { display: flex; padding: 0 0 0 8px; }
+        .code-context .line-row.affected { background: rgba(231,76,60,0.25); border-left: 4px solid #e74c3c; }
+        .code-context .line-row.affected .line-code { font-weight: 700; color: #fff; }
+        .code-context .line-num { color: #636e72; min-width: 40px; text-align: right; padding-right: 10px; user-select: none; border-right: 1px solid #2d3a41; background: #1a2128; line-height: 1.5; font-size: 10px; }
+        .code-context .line-code { color: #abb2bf; padding-left: 10px; white-space: pre; overflow-x: auto; flex: 1; line-height: 1.5; font-size: 11px; }
+        .phase2-badge { background: #8e44ad; color: #fff; padding: 2px 6px; border-radius: 3px; font-size: 9px; font-weight: 600; letter-spacing: 0.3px; }
+        .severity-count { font-size: 12px; color: #7f8c8d; font-weight: normal; }
+        .p2-label { color: #7f8c8d; font-size: 11px; margin-top: 8px; }
+        code { background: #ecf0f1; padding: 2px 4px; border-radius: 3px; font-size: 11px; font-family: 'Consolas', monospace; }
+        .empty-state { color: #95a5a6; font-style: italic; padding: 16px 0; }
+        .kpi-row { display: flex; gap: 12px; flex-wrap: wrap; }
+        .kpi-card { flex: 1; min-width: 120px; background: #fff; padding: 16px 14px; border-radius: 8px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.06); }
+        .kpi-card .kpi-num { font-size: 28px; font-weight: 700; color: #2c3e50; }
+        .kpi-card .kpi-label { font-size: 10px; color: #95a5a6; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+        .kpi-card.green { background: #eafaf1; }
+        .kpi-card.green .kpi-num { color: #27ae60; }
+        .kpi-card.orange { background: #fef9e7; }
+        .kpi-card.orange .kpi-num { color: #e67e22; }
+        .kpi-card.purple { background: #f4ecf7; }
+        .kpi-card.purple .kpi-num { color: #8e44ad; }
+        .kpi-card.blue { background: #eaf2f8; }
+        .kpi-card.blue .kpi-num { color: #2980b9; }
+        .kpi-card.grey { background: #f7f7f7; }
+        .kpi-card.grey .kpi-num { color: #7f8c8d; }
+        .collapsible { margin-top: 10px; }
+        .collapsible summary { cursor: pointer; font-size: 13px; font-weight: 600; color: #2c3e50; padding: 8px 0; }
+        .finding-details { margin-top: 8px; }
+        .finding-details p { font-size: 12px; margin: 3px 0; }
+        .rc-evidence-block { margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px; }
+        .rc-vector { font-size: 11px; color: #7f8c8d; display: inline-flex; align-items: center; gap: 4px; }
+        .confidence-bar { height: 6px; border-radius: 3px; background: #ecf0f1; margin-top: 6px; overflow: hidden; }
+        .confidence-bar .fill { height: 100%; border-radius: 3px; background: #95a5a6; }
+        .confidence-bar .fill.c100 { background: #27ae60; }
+        .confidence-bar .fill.c75 { background: #f39c12; }
+        .confidence-bar .fill.c40 { background: #95a5a6; }
+    </style>
+</head>
+
+<body>
+
+    <h1>
+        Android Security Scan Report
+        <small>{{ package_name }}</small>
+    </h1>
+
+    <!-- ====== KPI DASHBOARD ====== -->
+    {% if exploit_results or dedup_results %}
+    <div class="kpi-row" style="margin-top:18px;">
+        {% set total_validated = exploit_summary.get('validated', 0) if exploit_results else 0 %}
+        {% set total_exploits = exploit_summary.get('exploitable', 0) if exploit_results else 0 %}
+        {% set yield_pct = (total_validated / total_exploits * 100)|round(1) if total_exploits > 0 else 0 %}
+        {% set rc_verified = dedup_summary.get('verified', 0) if dedup_results else 0 %}
+        {% set rc_total = dedup_summary.get('root_causes', 0) if dedup_results else 0 %}
+        {% set conf_100 = total_validated %}
+        {% set conf_75 = total_exploits - total_validated if total_exploits >= total_validated else 0 %}
+        {% set conf_40 = (manifest_findings|length + source_findings|length + phase2_summary.get('total', 0)) - total_exploits %}
+
+        <div class="kpi-card green">
+            <div class="kpi-num">{{ total_validated }}</div>
+            <div class="kpi-label">Validated Exploits</div>
+        </div>
+        <div class="kpi-card orange">
+            <div class="kpi-num">{{ rc_verified }}/{{ rc_total }}</div>
+            <div class="kpi-label">Validated Root Causes</div>
+        </div>
+        <div class="kpi-card purple">
+            <div class="kpi-num">{{ yield_pct }}%</div>
+            <div class="kpi-label">Verification Yield</div>
+        </div>
+        <div class="kpi-card green">
+            <div class="kpi-num">{{ conf_100 }}</div>
+            <div class="kpi-label">Confidence 100</div>
+        </div>
+        <div class="kpi-card orange">
+            <div class="kpi-num">{{ conf_75 }}</div>
+            <div class="kpi-label">Confidence 75</div>
+        </div>
+        <div class="kpi-card grey">
+            <div class="kpi-num">{{ conf_40 }}</div>
+            <div class="kpi-label">Confidence 40</div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if validated_chain_results %}
+    <div class="kpi-row" style="margin-top:12px;">
+        {% set full_chains = validated_chain_summary.get('fully_validated', 0) %}
+        {% set partial_chains = validated_chain_summary.get('partial', 0) %}
+        {% set total_chains = validated_chain_summary.get('total_chains', 0) %}
+        <div class="kpi-card" style="background:#fef9e7;border:2px solid #e67e22;">
+            <div class="kpi-num" style="color:#e67e22;">{{ total_chains }}</div>
+            <div class="kpi-label">Total Attack Chains</div>
+        </div>
+        <div class="kpi-card" style="background:#eafaf1;border:2px solid #27ae60;">
+            <div class="kpi-num" style="color:#27ae60;">{{ full_chains }}</div>
+            <div class="kpi-label">🔗 Fully Validated</div>
+        </div>
+        <div class="kpi-card" style="background:#fdf2e9;border:2px solid #f39c12;">
+            <div class="kpi-num" style="color:#f39c12;">{{ partial_chains }}</div>
+            <div class="kpi-label">⚠️ Partial Chains</div>
+        </div>
+    </div>
+
+    <h2 class="section-header">
+        Validated Exploit Chains — Multi-Step Attack Paths
+        <span class="severity-count">{{ total_chains }} chains ({{ full_chains }} validated)</span>
+    </h2>
+    {% for vc in validated_chain_results %}
+    <div class="rc-card {% if vc.chain_validated %}validated{% else %}partial{% endif %} {{ vc.severity }}">
+        <div class="rc-header">
+            <span class="rc-id">{{ vc.id }}</span>
+            <span class="rc-title">{{ vc.name }}</span>
+            <div class="rc-stats">
+                <span class="badge {{ vc.severity }}">{{ vc.severity }}</span>
+                {% if vc.chain_validated %}
+                <span class="badge validated">✅ FULL CHAIN</span>
+                {% else %}
+                <span class="badge partial">⚡ {{ vc.matched_steps }}/{{ vc.total_steps }} steps</span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="rc-body">
+            <p>{{ vc.description }}</p>
+            <div style="margin:12px 0;overflow-x:auto;text-align:center;">
+            <svg width="100%" height="60" viewBox="0 0 400 60" style="max-width:400px;">
+                {% set vc_nodes = vc.steps|map(attribute='role')|list if vc.steps else [vc.id] %}
+                {% for vn in vc_nodes %}
+                {% set vx = 50 + (loop.index0 * 150) %}
+                {% set vs_validated = vc.steps and vc.steps[loop.index0].status == 'validated' %}
+                <rect x="{{ vx - 40 }}" y="12" width="80" height="32" rx="5"
+                      fill="{% if vs_validated %}#eafaf1{% else %}#f8f9fb{% endif %}"
+                      stroke="{% if vs_validated %}#27ae60{% else %}#bdc3c7{% endif %}"
+                      stroke-width="2"/>
+                <text x="{{ vx }}" y="33" text-anchor="middle"
+                      font-size="12" fill="#2c3e50"
+                      font-family="monospace">{{ vn }}</text>
+                {% if not loop.last %}
+                {% set varrow_x = vx + 40 %}
+                <line x1="{{ varrow_x }}" y1="28" x2="{{ varrow_x + 70 }}" y2="28"
+                      stroke="#bdc3c7" stroke-width="2" stroke-dasharray="4,3"/>
+                <polygon points="{{ varrow_x + 70 }},24 {{ varrow_x + 78 }},28 {{ varrow_x + 70 }},32"
+                         fill="#bdc3c7"/>
+                {% endif %}
+                {% endfor %}
+            </svg>
+            </div>
+            <div class="rc-evidence">
+                {% for step in vc.steps %}
+                <div style="margin-top:8px;padding:10px 14px;background:{% if step.status == 'validated' %}#f0faf5{% else %}#f8f9fb{% endif %};border-radius:5px;border-left:4px solid {% if step.status == 'validated' %}#27ae60{% else %}#ddd{% endif %};">
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <strong>Step {{ loop.index }}: {{ step.role }}</strong>
+                        <span style="font-size:11px;color:#7f8c8d;flex:1;">{{ step.desc }}</span>
+                        {% if step.status == 'validated' %}
+                        <span class="badge validated">✅ {{ step.evidence.finding_id }}</span>
+                        {% else %}
+                        <span class="badge unvalidated">⚪ Missing</span>
+                        {% endif %}
+                    </div>
+                    {% if step.status == 'validated' %}
+                    <div style="font-size:11px;color:#27ae60;margin-top:3px;">
+                        {{ step.evidence.detail }} ({{ step.evidence.confidence }})
+                    </div>
+                    {% else %}
+                    <div style="font-size:11px;color:#95a5a6;margin-top:3px;">
+                        Needs: {{ step.finding_ids|join(', ') }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="confidence-bar" style="margin-top:10px;">
+                <div class="fill c{{ vc.validated_pct }}" style="width:{{ vc.validated_pct }}%;background:{% if vc.chain_validated %}#27ae60{% else %}#f39c12{% endif %};"></div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    {% if system_analysis %}
+    {% set sa = system_analysis %}
+    {% set ss = sa.get('context_summary', {}) %}
+    {% set bs = sa.get('boundary_summary', {}) %}
+    {% set sig = sa.get('signature_analysis', {}) %}
+    <h2 class="section-header">
+        🔐 System App Analysis — Trust Boundaries & Escalation
+        <span class="severity-count">{{ bs.total_boundaries }} boundaries, {{ bs.escalation_paths }} paths</span>
+    </h2>
+    <div class="kpi-row" style="margin-top:8px;">
+        <div class="kpi-card" style="background:#f4ecf7;border:1px solid #8e44ad;">
+            <div class="kpi-num" style="color:#8e44ad;font-size:20px;">{{ ss.trust_boundaries }}</div>
+            <div class="kpi-label">Trust Boundaries</div>
+        </div>
+        <div class="kpi-card" style="background:#eafaf1;border:1px solid #27ae60;">
+            <div class="kpi-num" style="color:#27ae60;font-size:20px;">{{ bs.bypassable }}</div>
+            <div class="kpi-label">🔓 Bypassable</div>
+        </div>
+        <div class="kpi-card" style="background:#fef9e7;border:1px solid #e67e22;">
+            <div class="kpi-num" style="color:#e67e22;font-size:20px;">{{ bs.protected }}</div>
+            <div class="kpi-label">🔒 Protected</div>
+        </div>
+        <div class="kpi-card" style="background:#fdf2e9;border:1px solid #e74c3c;">
+            <div class="kpi-num" style="color:#e74c3c;font-size:20px;">{{ bs.escalation_paths }}</div>
+            <div class="kpi-label">Escalation Paths</div>
+        </div>
+    </div>
+    <div class="summary" style="margin-top:10px;">
+        <p><strong>Package:</strong> {{ ss.package }}
+        | <strong>Privileged:</strong> {{ ss.is_privileged }}
+        | <strong>UID:</strong> {{ ss.uid }}
+        | <strong>SharedUID:</strong> {{ ss.shared_user_id or 'none' }}
+        | <strong>Components:</strong> {{ ss.total_components }} ({{ ss.exported }} exported)</p>
+        {% if sig.signature_permissions %}
+        <p><strong>Signature/Privileged Permissions:</strong>
+        {% for sp in sig.signature_permissions %}
+        <span class="badge" style="background:#8e44ad;">{{ sp.permission.split('.')[-1] }}</span>
+        {% endfor %}
+        </p>
+        {% endif %}
+    </div>
+
+    {% for tb in sa.get('trust_boundaries', []) %}
+    <div class="rc-card {{ 'validated' if tb.bypassable else 'HIGH' }}" style="border-left-color:{{ '#27ae60' if tb.bypassable else '#8e44ad' }};">
+        <div class="rc-header">
+            <span class="rc-id">{% if tb.bypassable %}🔓{% else %}🔒{% endif %} {{ tb.id }}</span>
+            <span class="rc-title">{{ tb.component.split('.')[-1] }} — {{ tb.type }}</span>
+            <div class="rc-stats">
+                <span class="badge" style="background:{{ '#27ae60' if tb.bypassable else '#8e44ad' }};">
+                    {% if tb.bypassable %}BYPASSABLE{% else %}PROTECTED{% endif %}
+                </span>
+                <span class="badge {{ tb.risk }}">{{ tb.risk }}</span>
+            </div>
+        </div>
+        <div class="rc-body">
+            <p><strong>Component:</strong> <code>{{ tb.component }}</code></p>
+            <p><strong>Permission:</strong> {{ tb.permission or 'none' }}</p>
+            <p><strong>Trust Level:</strong> {{ tb.trust_level }} — {{ tb.note }}</p>
+        </div>
+    </div>
+    {% endfor %}
+
+    {% endif %}
+
+    {% if system_root_causes %}
+    <h2 class="section-header">
+        🧩 v2.1 Component-Centric Root Causes
+        <span class="severity-count">{{ system_root_causes|length }} components (open={{ system_root_causes|selectattr('exploitability', 'equalto', 'open')|list|length }},
+        cond={{ system_root_causes|selectattr('exploitability', 'equalto', 'conditional')|list|length }},
+        blocked={{ system_root_causes|selectattr('exploitability', 'equalto', 'blocked')|list|length }})</span>
+    </h2>
+    {% for rc in system_root_causes %}
+    {% set icon = {'validated':'✅','open':'🔴','conditional':'🔓','blocked':'🔒'} %}
+    {% set bg = {'validated':'#eafaf1','open':'#fdedec','conditional':'#fef9e7','blocked':'#f4ecf7'} %}
+    <div class="rc-card {{ rc.severity }}" style="border-left-color:{{ '#27ae60' if rc.exploitability=='open' else '#e67e22' if rc.exploitability=='conditional' else '#8e44ad' }};background:{{ bg.get(rc.exploitability,'#fff') }};">
+        <div class="rc-header">
+            <span class="rc-id">{{ icon.get(rc.exploitability, '?') }} {{ rc.id }}</span>
+            <span class="rc-title">{{ rc.component.split('.')[-1] }} ({{ rc.component_type }})</span>
+            <div class="rc-stats">
+                <span class="badge {{ rc.severity }}">{{ rc.exploitability }}</span>
+                <span class="badge" style="background:{{ '#27ae60' if rc.confidence >= 85 else '#f39c12' if rc.confidence >= 50 else '#95a5a6' }}">C{{ rc.confidence }}</span>
+                <span class="badge" style="background:#34495e;">🔧 {{ rc.trust_boundary.boundary_type }}</span>
+            </div>
+        </div>
+        <div class="rc-body">
+            <p>{{ rc.impact }}</p>
+            <p style="font-size:12px;color:#7f8c8d;"><strong>Boundary:</strong> {{ rc.trust_boundary.boundary_id }}
+            | <strong>Permission:</strong> {{ rc.trust_boundary.permission or 'none' }}
+            | <strong>Bypassable:</strong> {{ rc.trust_boundary.bypassable }}</p>
+            {% if rc.evidence %}
+            <div class="rc-evidence">
+                <details class="rc-evidence-summary" open>
+                    <summary>Evidence ({{ rc.evidence|length }} findings, total weight {{ rc.evidence|sum(attribute='signal_weight') }})</summary>
+                    <div class="rc-evidence-list">
+                        {% for ev in rc.evidence[:10] %}
+                        <div class="rc-evidence-item" style="border-left:3px solid #3498db;">
+                            <span class="eid">{{ ev.finding_id }}</span>
+                            <span style="color:#7f8c8d;font-size:11px;flex:1;">{{ ev.description[:60] }}</span>
+                            <span class="estatus"><span class="badge" style="background:#3498db;font-size:10px;">w={{ ev.signal_weight }}</span></span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </details>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    {% if system_chains %}
+    <h2 class="section-header">
+        🔗 v2.2 — Validated Escalation Chains
+        <span class="severity-count">Avg confidence: {{ (system_chains|sum(attribute='confidence') / system_chains|length)|round(0)|int if system_chains else 0 }}%</span>
+    </h2>
+    {% set validated_count = system_chains|selectattr('validated', 'equalto', true)|list|length %}
+    {% set total_chains = system_chains|length %}
+    {% set feasible_count = system_chains|selectattr('feasible', 'equalto', true)|list|length %}
+    {% set avg_conf = (system_chains|sum(attribute='confidence') / total_chains)|round(0)|int if total_chains > 0 else 0 %}
+
+    <!-- KPI Tier Summary -->
+    <div class="summary" style="margin-top:8px;">
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <div style="background:#27ae60;color:#fff;padding:6px 14px;border-radius:4px;font-weight:bold;font-size:13px;">
+                ✅ Tier 1: {{ validated_count }} Validated Chains
+            </div>
+            <div style="background:#2ecc71;color:#fff;padding:6px 14px;border-radius:4px;font-weight:bold;font-size:13px;">
+                🟢 Tier 2: {{ feasible_count }} Feasible Chains
+            </div>
+            <div style="background:#3498db;color:#fff;padding:6px 14px;border-radius:4px;font-weight:bold;font-size:13px;">
+                📊 Avg Confidence: {{ avg_conf }}%
+            </div>
+        </div>
+        {% if v22_kpis %}
+        <div style="margin-top:8px;font-size:12px;color:#7f8c8d;">
+            <span>Open RCs: {{ v22_kpis.tier2_open_root_causes }}</span>
+            &nbsp;|&nbsp;
+            <span>Validated RCs: {{ v22_kpis.tier3_validated_root_causes }}</span>
+            &nbsp;|&nbsp;
+            <span>Breakdown:
+                {% set breakdown = v22_kpis.status_breakdown %}
+                ✅{{ breakdown.validated }} ❌{{ breakdown.failed }} ⏭{{ breakdown.infeasible }} ⚠{{ breakdown.environment_unavailable }}
+            </span>
+        </div>
+        {% endif %}
+    </div>
+
+    {% for chain in system_chains %}
+    {% set status_icon = '✅' if chain.status.value == 'validated' else '❌' if chain.status.value == 'failed' else '⏭' if chain.status.value == 'infeasible' else '⚠' %}
+    {% set status_color = '#27ae60' if chain.status.value == 'validated' else '#e74c3c' if chain.status.value == 'failed' else '#95a5a6' if chain.status.value == 'infeasible' else '#f39c12' %}
+    <div class="rc-card {{ chain.status.value }}" style="border-left-color:{{ status_color }};">
+        <div class="rc-header">
+            <span class="rc-id">{{ chain.id }}</span>
+            <span class="rc-title">{{ status_icon }} {{ chain.start }} → {{ chain.pivot }} → {{ chain.target }}</span>
+            <div class="rc-stats">
+                <span class="badge" style="background:{{ status_color }};">C={{ chain.confidence }}%</span>
+                <span class="badge" style="background:{{ status_color }};">{{ chain.status.value.replace('_', ' ') }}</span>
+                {% if chain.feasible %}
+                <span class="badge" style="background:#2ecc71;">feasible</span>
+                {% else %}
+                <span class="badge" style="background:#95a5a6;">infeasible</span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="rc-body">
+            <p><strong>Component Path:</strong> <code>{{ chain.path }}</code></p>
+            <p><strong>Start:</strong> {{ chain.start }} | <strong>Pivot:</strong> {{ chain.pivot }} | <strong>Target:</strong> {{ chain.target }}</p>
+            <!-- chain graph visualization -->
+            <div style="margin:12px 0;overflow-x:auto;text-align:center;">
+            <svg width="100%" height="90" viewBox="0 0 600 90" style="max-width:600px;">
+                {% set nodes = [chain.start, chain.pivot, chain.target] %}
+                {% for n in nodes %}
+                {% set x = 50 + (loop.index0 * 250) %}
+                {% set is_validated = chain.status.value == 'validated' and loop.index <= (chain.step_results|length if chain.step_results else 1) %}
+                <rect x="{{ x - 45 }}" y="20" width="90" height="36" rx="6"
+                      fill="{% if is_validated %}#eafaf1{% else %}#f8f9fb{% endif %}"
+                      stroke="{% if is_validated %}#27ae60{% else %}#bdc3c7{% endif %}"
+                      stroke-width="2"/>
+                <text x="{{ x }}" y="43" text-anchor="middle"
+                      font-size="13" fill="#2c3e50"
+                      font-family="monospace">{{ n }}</text>
+                {% if not loop.last %}
+                {% set arrow_x = x + 45 %}
+                <line x1="{{ arrow_x }}" y1="38" x2="{{ arrow_x + 160 }}" y2="38"
+                      stroke="#bdc3c7" stroke-width="2" stroke-dasharray="5,3"/>
+                <polygon points="{{ arrow_x + 160 }},33 {{ arrow_x + 170 }},38 {{ arrow_x + 160 }},43"
+                         fill="#bdc3c7"/>
+                {% endif %}
+                {% endfor %}
+            </svg>
+            </div>
+            {% if chain.step_results %}
+            <div class="rc-evidence">
+                <details class="rc-evidence-summary" open>
+                    <summary>Validation Steps ({{ chain.step_results|length }})</summary>
+                    <div class="rc-evidence-list">
+                        {% for sr in chain.step_results %}
+                        <div class="rc-evidence-item" style="border-left:3px solid {{ '#27ae60' if sr.success else '#e74c3c' }};">
+                            <span class="eid">Step {{ sr.step_index + 1 }}</span>
+                            <span style="color:#7f8c8d;font-size:11px;flex:1;">
+                                {% if sr.success %}✓{% else %}✗{% endif %}
+                                {{ sr.action }} — <code>{{ sr.command[:60] }}{% if sr.command|length > 60 %}…{% endif %}</code>
+                            </span>
+                            <span class="estatus">
+                                {% if sr.success %}
+                                <span class="badge validated">✓</span>
+                                {% else %}
+                                <span class="badge" style="background:#e74c3c;">✗</span>
+                                {% endif %}
+                            </span>
+                        </div>
+                        {% if sr.error %}
+                        <div style="font-size:11px;color:#e74c3c;margin:0 0 4px 16px;">└─ {{ sr.error[:80] }}</div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </details>
+            </div>
+            {% endif %}
+            {% if chain.error %}
+            <p style="color:#e74c3c;font-size:12px;margin-top:6px;">Error: {{ chain.error }}</p>
+            {% endif %}
+            <div class="confidence-bar" style="margin-top:8px;">
+                <div class="fill c{{ chain.confidence }}" style="width:{{ chain.confidence }}%;background:{{ status_color }};"></div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- ====== APP INFO ====== -->
+    <div class="summary" style="margin-top:12px;">
+        <p><strong>APK:</strong> {{ apk_path }} &nbsp;|&nbsp; <strong>Package:</strong> {{ package_name }} &nbsp;|&nbsp; <strong>App:</strong> {{ app_name }}</p>
+    </div>
+
+    <!-- ====== ROOT CAUSE FIRST (DEDUP RESULTS) ====== -->
+    {% if dedup_results %}
+    <h2 class="section-header">
+        Root Cause Summary — Validated Attack Surface
+        <span class="severity-count">{{ dedup_summary.root_causes }} root causes ({{ dedup_summary.verified }} verified)</span>
+    </h2>
+
+    {% for rc in dedup_results %}
+    {% set card_class = 'validated' if rc.validated else ('partial' if rc.confidence >= 75 else '') %}
+    <div class="rc-card {{ rc.severity }} {{ card_class }}">
+        <div class="rc-header">
+            <span class="rc-id">{{ rc.id }}</span>
+            <span class="rc-title">{{ rc.title }}</span>
+            <div class="rc-stats">
+                <span class="badge {{ rc.severity }}">{{ rc.severity }}</span>
+                <span class="badge" style="background:{'#27ae60' if rc.confidence >= 85 else '#f39c12' if rc.confidence >= 70 else '#95a5a6'}">C{{ rc.confidence }}</span>
+                {% if rc.validated %}
+                <span class="badge validated">✅ Validated</span>
+                {% endif %}
+                <span class="rc-vector">🔧 {{ rc.exploit_vector }}</span>
+            </div>
+        </div>
+        <div class="rc-body">
+            <p>{{ rc.impact }}</p>
+
+            {% if rc.validated %}
+            {% set matched_validated = [] %}
+            {% for ev in rc.evidence %}
+                {% if ev in validated_ids %}
+                    {% set _ = matched_validated.append(ev) %}
+                {% endif %}
+            {% endfor %}
+            <p style="color:#27ae60;font-size:12px;font-weight:600;">✅ {{ matched_validated|length }}/{{ rc.finding_count }} findings validated</p>
+            {% endif %}
+
+            <div class="rc-evidence">
+                <details class="rc-evidence-summary" {% if not rc.validated %}open{% endif %}>
+                    <summary>Evidence ({{ rc.finding_count }} findings)</summary>
+                    <div class="rc-evidence-list">
+                        {% for ev in rc.evidence %}
+                        {% set is_validated = ev in validated_ids %}
+                        {% set finding = findings_by_id.get(ev, {}) %}
+                        <div class="rc-evidence-item" style="border-left:3px solid {% if is_validated %}#27ae60{% else %}#ddd{% endif %};">
+                            <span class="eid">{{ ev }}</span>
+                            <span style="color:#7f8c8d;font-size:11px;flex:1;">{{ finding.get('name', finding.get('description', ''))|truncate(80) }}</span>
+                            <span class="estatus">
+                                {% if is_validated %}
+                                <span class="badge validated">✅</span>
+                                {% else %}
+                                <span class="badge unvalidated">⚪</span>
+                                {% endif %}
+                            </span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </details>
+            </div>
+
+            {% if rc.validated %}
+            <!-- Validated exploits for this root cause -->
+            <div class="rc-evidence-block">
+                {% for er in exploit_results %}
+                {% if er.get("finding_id", "") in rc.evidence %}
+                    {% for vec, vdata in er.get("vectors", {}).items() %}
+                    {% set val = vdata.get("validation", {}) %}
+                    {% if val.get("validated") is true %}
+                    <div style="background:#f0faf5;padding:8px 12px;border-radius:4px;margin-top:6px;font-size:12px;">
+                        <strong>{{ er.finding_id }}:</strong> {{ er.finding_name|truncate(80) }}
+                        <div style="color:#27ae60;margin-top:2px;">
+                            ✅ {{ val.get("detail", "") }} ({{ val.get("confidence", "") }})
+                            {% if val.get("adb_cmd") %}
+                            <details style="margin-top:4px;">
+                                <summary style="cursor:pointer;color:#555;font-size:11px;">ADB Command</summary>
+                                <pre style="background:#1a1a2e;color:#e0e0e0;padding:6px;border-radius:4px;font-size:10px;overflow-x:auto;margin-top:4px;">{{ val.adb_cmd }}</pre>
+                            </details>
+                            {% endif %}
+                        </div>
+                        {% if val.get("screenshot_b64") %}
+                        <div class="screenshot-container" style="margin-top:4px;">
+                            <div class="shot">
+                                <img src="data:image/png;base64,{{ val.screenshot_b64 }}" alt="Screenshot">
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="confidence-bar">
+                <div class="fill c{{ rc.confidence }}" style="width:{{ rc.confidence }}%;"></div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- ====== RAW FINDINGS (COLLAPSIBLE) ====== -->
+    <details class="collapsible">
+        <summary>
+            📋 Raw Findings —
+            {{ manifest_findings|length + source_findings|length + phase2_summary.get('total', 0) }} total issues
+            <span style="font-size:11px;color:#7f8c8d;margin-left:8px;">(expand for detail)</span>
+        </summary>
+
+        {% if exploit_results and exploit_screenshots %}
+        <div class="summary" style="margin-top:12px;">
+            <h4 style="margin:0 0 8px 0;font-size:14px;">📸 ADB Exploit Validation — Before & After</h4>
+            {% set meta = exploit_screenshots.get('_meta', {}) %}
+            <p style="font-size:12px;color:#555;margin-bottom:6px;">
+                <strong>Package:</strong> {{ meta.get('package', '?') }} |
+                <strong>APK:</strong> {{ meta.get('apk', '?') }} |
+                <strong>Validated:</strong> {{ meta.get('validated', 0) }} / {{ meta.get('total_exploits', 0) }}
+            </p>
+            <div class="screenshot-container">
+                {% if exploit_screenshots.get('before_b64') %}
+                <div class="shot">
+                    <img src="data:image/png;base64,{{ exploit_screenshots.before_b64 }}" alt="Before">
+                    <div class="label">🔴 Before</div>
+                </div>
+                {% endif %}
+                {% if exploit_screenshots.get('after_b64') %}
+                <div class="shot">
+                    <img src="data:image/png;base64,{{ exploit_screenshots.after_b64 }}" alt="After">
+                    <div class="label">🟢 After</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if exploit_screenshots.get('emulator_before_after') %}
+        <div class="summary" style="margin-top:12px;">
+            <h4 style="margin:0 0 8px 0;font-size:14px;">📸 Emulator Exploit Validation — Before & After</h4>
+            {% set eba = exploit_screenshots.emulator_before_after %}
+            <p style="font-size:12px;color:#555;margin-bottom:6px;">
+                <strong>{{ eba|length }}</strong> findings with before/after screenshots
+            </p>
+            {% for finding_id, shots in eba.items() %}
+            <div style="margin-bottom:14px;padding:8px;background:#f8f9fa;border-radius:6px;">
+                <strong style="font-size:13px;color:#2c3e50;">{{ finding_id }}</strong>
+                <span style="font-size:11px;color:#7f8d8d;margin-left:6px;">
+                    {% if shots.get('cmd') %}<code>{{ shots.cmd[:60] }}</code>{% endif %}
+                </span>
+                <div class="screenshot-container" style="margin-top:6px;">
+                    {% if shots.get('before_b64') %}
+                    <div class="shot">
+                        <img src="data:image/png;base64,{{ shots.before_b64 }}" alt="Before {{ finding_id }}">
+                        <div class="label">🔴 Before</div>
+                    </div>
+                    {% endif %}
+                    {% if shots.get('after_b64') %}
+                    <div class="shot">
+                        <img src="data:image/png;base64,{{ shots.after_b64 }}" alt="After {{ finding_id }}">
+                        <div class="label">🟢 After</div>
+                    </div>
+                    {% endif %}
+                    {% if shots.get('video_b64') %}
+                    <div class="shot video-shot">
+                        <video controls preload="none" style="width:100%;max-width:320px;border:1px solid #ccc;border-radius:4px;">
+                            <source src="data:video/mp4;base64,{{ shots.video_b64 }}" type="video/mp4">
+                        </video>
+                        <div class="label">🎬 Screen Recording</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Phase 1 Manifest Findings -->
+        <h2 class="section-header" style="margin-top:18px;">
+            Manifest Findings
+            <span class="severity-count">{{ manifest_findings|length }} issues</span>
+        </h2>
+        {% if manifest_findings %}
+        {% for finding in manifest_findings %}
+        <div class="finding {{ finding.severity }}">
+            <h3>
+                {{ finding.name }}
+                <span class="badge {{ finding.severity }}">{{ finding.severity }}</span>
+                {% if finding.get('id') and finding.id in validated_ids %}
+                <span class="badge validated">✅</span>
+                {% endif %}
+            </h3>
+            <p>{{ finding.description }}</p>
+            {% if finding.recommendation %}<div class="recommendation">{{ finding.recommendation }}</div>{% endif %}
+            {% if finding.matches %}
+            <div class="match-block">
+                <div class="match-block-title">Affected Elements ({{ finding.matches|length }})</div>
+                <table class="match-table">
+                    {% for match in finding.matches %}
+                    {% set parts = match.split(' -> ', 1) %}
+                    <tr>
+                        <td class="line-num">{{ parts[0] if parts|length > 1 else '---' }}</td>
+                        <td class="line-code">{{ parts[1] if parts|length > 1 else match | e }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        {% else %}
+        <p class="empty-state">No manifest issues found.</p>
+        {% endif %}
+
+        <!-- Phase 1 Source Findings -->
+        <h2 class="section-header">
+            Source Code Findings
+            <span class="severity-count">{{ source_findings|length }} issues</span>
+        </h2>
+        {% if source_findings %}
+        {% for finding in source_findings %}
+        <div class="finding {{ finding.severity }}">
+            <h3>
+                {{ finding.name }}
+                <span class="badge {{ finding.severity }}">{{ finding.severity }}</span>
+                {% if finding.get('id') and finding.id in validated_ids %}
+                <span class="badge validated">✅</span>
+                {% endif %}
+            </h3>
+            <p>{{ finding.description }}</p>
+            {% if finding.recommendation %}<div class="recommendation">{{ finding.recommendation }}</div>{% endif %}
+            {% if finding._code_context %}
+            <div class="match-block">
+                <div class="match-block-title">Affected Code ({{ finding._code_context|length }} locations)</div>
+                {% for ctx in finding._code_context %}
+                <div style="margin-top:8px;font-size:11px;color:#7f8c8d;">
+                  📁 <code>{{ ctx.file }}:{{ ctx.line }}</code>
+                </div>
+                <div class="code-context">
+                    {% for c in ctx.before %}
+                    <div class="line-row surrounding">
+                        <span class="line-num">{{ c.num }}</span>
+                        <span class="line-code">{{ c.code | e }}</span>
+                    </div>
+                    {% endfor %}
+                    <div class="line-row affected">
+                        <span class="line-num">{{ ctx.line }}</span>
+                        <span class="line-code">{{ ctx.code | e }}</span>
+                    </div>
+                    {% for c in ctx.after %}
+                    <div class="line-row surrounding">
+                        <span class="line-num">{{ c.num }}</span>
+                        <span class="line-code">{{ c.code | e }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+            {% elif finding.matches %}
+            <div class="match-block">
+                <div class="match-block-title">Affected Elements ({{ finding.matches|length }})</div>
+                <table class="match-table">
+                    {% for match in finding.matches %}
+                    {% set parts = match.split(' -> ', 1) %}
+                    <tr>
+                        <td class="line-num">{{ parts[0] if parts|length > 1 else '---' }}</td>
+                        <td class="line-code">{{ parts[1] if parts|length > 1 else match | e }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        {% else %}
+        <p class="empty-state">No source code issues found.</p>
+        {% endif %}
+
+        <!-- Phase 2 Advanced Findings -->
+        {% if phase2_findings %}
+        <h2 class="section-header">
+            Advanced Static Analysis
+            <span class="severity-count">{{ phase2_summary.get('total', 0) }} issues</span>
+        </h2>
+        {% for group in phase2_findings %}
+        <div style="margin:20px 0 12px;padding:8px 14px;background:#f0f1f5;border-radius:5px;border-left:4px solid #8e44ad;font-weight:700;font-size:14px;color:#2c3e50;">
+            {{ group.category }}
+        </div>
+        {% for finding in group.rules %}
+        <div class="finding {{ finding.severity }}">
+            <h3>
+                <span class="phase2-badge">{{ finding.id }}</span>
+                {{ finding.name or finding.description }}
+                <span class="badge {{ finding.severity }}">{{ finding.severity }}</span>
+                {% if finding.get('id') and finding.id in validated_ids %}
+                <span class="badge validated">✅</span>
+                {% endif %}
+            </h3>
+            <p>{{ finding.description }}</p>
+            {% if finding.recommendation %}<div class="recommendation">{{ finding.recommendation }}</div>{% endif %}
+            {% if finding.matches %}
+            <div class="match-block">
+                <div class="match-block-title">Affected Elements</div>
+                <table class="match-table">
+                    {% for m in finding.matches %}
+                    <tr><td class="line-code">{{ m }}</td></tr>
+                    {% endfor %}
+                </table>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        {% endfor %}
+        {% endif %}
+
+        <!-- Exploit Details (collapsible within raw findings) -->
+        {% if exploit_results %}
+        <h2 class="section-header">
+            Exploitation &amp; Verification Details
+            <span class="severity-count">{{ exploit_results|length }} findings with PoCs</span>
+        </h2>
+        {% for exploit in exploit_results %}
+        <div class="finding {{ exploit.severity }}">
+            <h3>
+                <span class="phase2-badge">{{ exploit.finding_id }}</span>
+                {{ exploit.finding_name }}
+                <span class="badge {{ exploit.severity }}">{{ exploit.severity }}</span>
+                {% for vec, vdata in exploit.vectors.items() %}
+                    {% if vdata.get("validation", {}).get("validated") is true %}
+                    <span class="badge validated">✅</span>
+                    {% endif %}
+                {% endfor %}
+            </h3>
+            <p><strong>Type:</strong> {{ exploit.finding_type }} | <strong>Category:</strong> {{ exploit.category }}</p>
+            {% for vector_name, vdata in exploit.vectors.items() %}
+            <div style="margin-top:10px;padding:8px 12px;background:#f8f9fb;border-radius:4px;border-left:3px solid #3498db;">
+                <h4 style="margin:0 0 4px 0;font-size:12px;">{{ vector_name|upper }} Exploit</h4>
+                {% if vdata.summary %}<p style="font-size:12px;font-weight:600;">{{ vdata.summary }}</p>{% endif %}
+                {% set step_key = 'poc_steps' if 'poc_steps' in vdata else vector_name + '_commands' %}
+                {% if vdata.get(step_key) %}
+                <ol style="margin:6px 0 6px 16px;font-size:12px;">
+                    {% for step in vdata[step_key] %}
+                    <li><code>{{ step }}</code></li>
+                    {% endfor %}
+                </ol>
+                {% endif %}
+                {% if vdata.get('validation') %}
+                {% set val = vdata.validation %}
+                {% if val.get('validated') is true %}
+                <p style="font-size:12px;color:#27ae60;">✅ {{ val.get('detail', '') }} (confidence: {{ val.get('confidence', 'n/a') }})</p>
+                {% if val.get('adb_cmd') or val.get('adb_output') %}
+                <details style="margin:4px 0;font-size:11px;">
+                    <summary style="cursor:pointer;color:#555;">ADB Command & Output</summary>
+                    {% if val.get('adb_cmd') %}<p style="margin:2px 0;"><strong>Command:</strong> <code>{{ val.adb_cmd }}</code></p>{% endif %}
+                    {% if val.get('adb_output') %}<pre style="background:#1a1a2e;color:#e0e0e0;padding:6px;border-radius:4px;font-size:10px;max-height:80px;overflow:auto;white-space:pre-wrap;word-break:break-all;">{{ val.adb_output }}</pre>{% endif %}
+                </details>
+                {% endif %}
+                {% if val.get('screenshot_b64') %}
+                <div style="margin-top:4px;">
+                    <img src="data:image/png;base64,{{ val.screenshot_b64 }}" style="max-width:180px;border:1px solid #ddd;border-radius:4px;" alt="Screenshot">
+                </div>
+                {% endif %}
+                {% elif val.get('validated') is false %}
+                <p style="font-size:12px;color:#e74c3c;">❌ {{ val.get('detail', '') }} (confidence: {{ val.get('confidence', 'n/a') }})</p>
+                {% else %}
+                <p style="font-size:12px;color:#95a5a6;">? {{ val.get('detail', val.get('note', '')) }} (confidence: {{ val.get('confidence', 'n/a') }})</p>
+                {% endif %}
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <!-- Taint Analysis -->
+        {% if taint_findings %}
+        <h2 class="section-header">Taint Analysis <span class="severity-count">{{ taint_findings|length }} flows</span></h2>
+        {% for tf in taint_findings %}
+        <div class="finding critical">
+            <h3><span class="phase2-badge">{{ tf.get('id', 'TAIN-???') }}</span> {{ tf.get('name', tf.get('sink_type', 'Taint Flow')) }} <span class="badge critical">TAINT</span></h3>
+            <p><strong>Source:</strong> <code>{{ tf.get('source', '?') }}</code> → <strong>Sink:</strong> <code>{{ tf.get('sink', '?') }}</code></p>
+            {% if tf.get('taint_path') %}
+            <div class="match-block">
+                <div class="match-block-title">Taint Path ({{ tf.taint_path|length }} steps)</div>
+                <table class="match-table">{% for step in tf.taint_path %}<tr><td class="line-code">{{ step }}</td></tr>{% endfor %}</table>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <!-- Component Graph -->
+        {% if component_graph_findings %}
+        <h2 class="section-header">Component Attack Graph <span class="severity-count">{{ component_graph_findings|length }} findings</span></h2>
+        {% for f in component_graph_findings %}
+        <div class="finding {{ f.severity }}">
+            <h3><span class="phase2-badge">{{ f.id }}</span> {{ f.name }} <span class="badge {{ f.severity }}">{{ f.severity }}</span></h3>
+            <p>{{ f.description }}</p>
+            {% if f.get('attack_path') %}
+            <div class="match-block">
+                <div class="match-block-title">Attack Path</div>
+                <table class="match-table">{% for step in f.attack_path %}<tr><td class="line-code">{{ step }}</td></tr>{% endfor %}</table>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <!-- Dynamic Analysis -->
+        {% if dynamic_findings %}
+        <h2 class="section-header">Dynamic Analysis <span class="severity-count">{{ dynamic_findings|length }} findings</span></h2>
+        {% for f in dynamic_findings %}
+        <div class="finding {{ f.severity }}">
+            <h3>{{ f.name }} <span class="badge {{ f.severity }}">{{ f.severity }}</span></h3>
+            <p>{{ f.description }}</p>
+            {% if f.get('payload') %}<div class="match-block"><div class="match-block-title">Payload</div><table class="match-table"><tr><td class="line-code"><code>{{ f.payload }}</code></td></tr></table></div>{% endif %}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <!-- System App -->
+        {% if system_app_findings %}
+        <h2 class="section-header">System App Analysis <span class="severity-count">{{ system_app_findings|length }} findings</span></h2>
+        {% for f in system_app_findings %}
+        <div class="finding {{ f.severity }}">
+            <h3><span class="phase2-badge">{{ f.id }}</span> {{ f.name }} <span class="badge {{ f.severity }}">{{ f.severity }}</span></h3>
+            <p>{{ f.description }}</p>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <!-- Exploit Chains -->
+        {% if chain_findings %}
+        <h2 class="section-header">Exploit Chains <span class="severity-count">{{ chain_findings|length }} chains</span></h2>
+        {% for ch in chain_findings %}
+        <div class="finding {{ ch.severity }}">
+            <h3><span class="phase2-badge">{{ ch.id }}</span> {{ ch.name }} <span class="badge {{ ch.severity }}">{{ ch.severity }}</span></h3>
+            <p><strong>Score:</strong> {{ ch.get('score', '?') }}</p>
+            {% if ch.get('chain') %}
+            <div class="match-block">
+                <div class="match-block-title">Attack Chain</div>
+                <table class="match-table">{% for step in ch.chain %}<tr><td class="line-code">{{ step }}</td></tr>{% endfor %}</table>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        {% endif %}
+    </details>
+
+</body>
+</html>

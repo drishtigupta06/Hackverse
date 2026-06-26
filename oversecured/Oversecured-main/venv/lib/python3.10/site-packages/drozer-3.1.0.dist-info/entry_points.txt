@@ -1,0 +1,4 @@
+[console_scripts]
+drozer = drozer.main:main
+drozer-complete = drozer.autocomplete:main
+drozer-repository = drozer.repoman.main:main

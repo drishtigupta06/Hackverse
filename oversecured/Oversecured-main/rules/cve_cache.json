@@ -1,0 +1,2454 @@
+{
+  "CVE-2008-0985": {
+    "id": "CVE-2008-0985",
+    "summary": "Heap-based buffer overflow in the GIF library in the WebKit framework for Google Android SDK m3-rc37a and earlier allows remote attackers to execute arbitrary code via a crafted GIF file whose logical screen height and width are different than the actual height and width.",
+    "details": "Heap-based buffer overflow in the GIF library in the WebKit framework for Google Android SDK m3-rc37a and earlier allows remote attackers to execute arbitrary code via a crafted GIF file whose logical screen height and width are different than the actual height and width.",
+    "severity": "MEDIUM",
+    "published": "2008-03-06T00:44:00.000",
+    "lastModified": "2026-04-23T00:35:47.467",
+    "references": [
+      {
+        "url": "http://android-developers.blogspot.com/2008/03/android-sdk-update-m5-rc15-released.html",
+        "type": "Patch"
+      },
+      {
+        "url": "http://securityreason.com/securityalert/3727",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.coresecurity.com/?action=item&id=2148",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/archive/1/489135/100/0/threaded",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/28005",
+        "type": "Exploit"
+      },
+      {
+        "url": "https://exchange.xforce.ibmcloud.com/vulnerabilities/40998",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://android-developers.blogspot.com/2008/03/android-sdk-update-m5-rc15-released.html",
+        "type": "Patch"
+      },
+      {
+        "url": "http://securityreason.com/securityalert/3727",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.coresecurity.com/?action=item&id=2148",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/archive/1/489135/100/0/threaded",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/28005",
+        "type": "Exploit"
+      },
+      {
+        "url": "https://exchange.xforce.ibmcloud.com/vulnerabilities/40998",
+        "type": "Vendor Advisory"
+      }
+    ],
+    "affected": [],
+    "aliases": [
+      "CVE-2008-0985"
+    ],
+    "source": "NVD"
+  },
+  "CVE-2008-0986": {
+    "id": "CVE-2008-0986",
+    "summary": "Integer overflow in the BMP::readFromStream method in the libsgl.so library in Google Android SDK m3-rc37a and earlier, and m5-rc14, allows remote attackers to execute arbitrary code via a crafted BMP file with a header containing a negative offset field.",
+    "details": "Integer overflow in the BMP::readFromStream method in the libsgl.so library in Google Android SDK m3-rc37a and earlier, and m5-rc14, allows remote attackers to execute arbitrary code via a crafted BMP file with a header containing a negative offset field.",
+    "severity": "MEDIUM",
+    "published": "2008-03-06T00:44:00.000",
+    "lastModified": "2026-04-23T00:35:47.467",
+    "references": [
+      {
+        "url": "http://android-developers.blogspot.com/2008/03/android-sdk-update-m5-rc15-released.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://securityreason.com/securityalert/3727",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.coresecurity.com/?action=item&id=2148",
+        "type": "Exploit"
+      },
+      {
+        "url": "http://www.securityfocus.com/archive/1/489135/100/0/threaded",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/28006",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "https://exchange.xforce.ibmcloud.com/vulnerabilities/40999",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://android-developers.blogspot.com/2008/03/android-sdk-update-m5-rc15-released.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://securityreason.com/securityalert/3727",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.coresecurity.com/?action=item&id=2148",
+        "type": "Exploit"
+      },
+      {
+        "url": "http://www.securityfocus.com/archive/1/489135/100/0/threaded",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/28006",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "https://exchange.xforce.ibmcloud.com/vulnerabilities/40999",
+        "type": "Vendor Advisory"
+      }
+    ],
+    "affected": [],
+    "aliases": [
+      "CVE-2008-0986"
+    ],
+    "source": "NVD"
+  },
+  "CVE-2009-0606": {
+    "id": "CVE-2009-0606",
+    "summary": "The link_image function in linker/linker.c in the dynamic linker in Bionic in Open Handset Alliance Android 1.0 on the T-Mobile G1 phone does not properly handle file descriptors 0, 1, and 2 for a setgid program, which allows local users to create arbitrary files owned by certain groups, possibly a related issue to CVE-2002-0820.",
+    "details": "The link_image function in linker/linker.c in the dynamic linker in Bionic in Open Handset Alliance Android 1.0 on the T-Mobile G1 phone does not properly handle file descriptors 0, 1, and 2 for a setgid program, which allows local users to create arbitrary files owned by certain groups, possibly a related issue to CVE-2002-0820.",
+    "severity": "MEDIUM",
+    "published": "2009-02-17T17:30:05.953",
+    "lastModified": "2026-04-23T00:35:47.467",
+    "references": [
+      {
+        "url": "http://www.securityfocus.com/archive/1/500753/100/0/threaded",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/33695",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "https://exchange.xforce.ibmcloud.com/vulnerabilities/48840",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/archive/1/500753/100/0/threaded",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/33695",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "https://exchange.xforce.ibmcloud.com/vulnerabilities/48840",
+        "type": "Vendor Advisory"
+      }
+    ],
+    "affected": [],
+    "aliases": [
+      "CVE-2009-0606"
+    ],
+    "source": "NVD"
+  },
+  "CVE-2009-0607": {
+    "id": "CVE-2009-0607",
+    "summary": "Multiple integer overflows in malloc_leak.c in Bionic in Open Handset Alliance Android 1.0 have unknown impact and attack vectors, related to the (1) chk_calloc and (2) leak_calloc functions.",
+    "details": "Multiple integer overflows in malloc_leak.c in Bionic in Open Handset Alliance Android 1.0 have unknown impact and attack vectors, related to the (1) chk_calloc and (2) leak_calloc functions.",
+    "severity": "MEDIUM",
+    "published": "2009-02-17T17:30:05.967",
+    "lastModified": "2026-04-23T00:35:47.467",
+    "references": [
+      {
+        "url": "http://www.securityfocus.com/archive/1/500753/100/0/threaded",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/33695",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "https://exchange.xforce.ibmcloud.com/vulnerabilities/48841",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/archive/1/500753/100/0/threaded",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/33695",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "https://exchange.xforce.ibmcloud.com/vulnerabilities/48841",
+        "type": "Vendor Advisory"
+      }
+    ],
+    "affected": [],
+    "aliases": [
+      "CVE-2009-0607"
+    ],
+    "source": "NVD"
+  },
+  "CVE-2009-0608": {
+    "id": "CVE-2009-0608",
+    "summary": "Integer overflow in the showLog function in fake_log_device.c in liblog in Open Handset Alliance Android 1.0 allows attackers to trigger a buffer overflow and possibly have unspecified other impact by sending a large number of input lines.",
+    "details": "Integer overflow in the showLog function in fake_log_device.c in liblog in Open Handset Alliance Android 1.0 allows attackers to trigger a buffer overflow and possibly have unspecified other impact by sending a large number of input lines.",
+    "severity": "MEDIUM",
+    "published": "2009-02-17T17:30:05.983",
+    "lastModified": "2026-04-23T00:35:47.467",
+    "references": [
+      {
+        "url": "http://www.securityfocus.com/archive/1/500753/100/0/threaded",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/33695",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "https://exchange.xforce.ibmcloud.com/vulnerabilities/48842",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/archive/1/500753/100/0/threaded",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/33695",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "https://exchange.xforce.ibmcloud.com/vulnerabilities/48842",
+        "type": "Vendor Advisory"
+      }
+    ],
+    "affected": [],
+    "aliases": [
+      "CVE-2009-0608"
+    ],
+    "source": "NVD"
+  },
+  "CVE-2009-1442": {
+    "id": "CVE-2009-1442",
+    "summary": "Multiple integer overflows in Skia, as used in Google Chrome 1.x before 1.0.154.64 and 2.x, and possibly Android, might allow remote attackers to execute arbitrary code in the renderer process via a crafted (1) image or (2) canvas.",
+    "details": "Multiple integer overflows in Skia, as used in Google Chrome 1.x before 1.0.154.64 and 2.x, and possibly Android, might allow remote attackers to execute arbitrary code in the renderer process via a crafted (1) image or (2) canvas.",
+    "severity": "MEDIUM",
+    "published": "2009-05-07T17:30:04.797",
+    "lastModified": "2026-04-23T00:35:47.467",
+    "references": [
+      {
+        "url": "http://code.google.com/p/chromium/issues/detail?id=10736",
+        "type": "Exploit"
+      },
+      {
+        "url": "http://code.google.com/p/skia/source/detail?r=159",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://googlechromereleases.blogspot.com/2009/05/stable-update-security-fix.html",
+        "type": "Patch,Vendor Advisory"
+      },
+      {
+        "url": "http://osvdb.org/54248",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/35014",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/34859",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securitytracker.com/id?1022175",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2009/1266",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://code.google.com/p/chromium/issues/detail?id=10736",
+        "type": "Exploit"
+      },
+      {
+        "url": "http://code.google.com/p/skia/source/detail?r=159",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://googlechromereleases.blogspot.com/2009/05/stable-update-security-fix.html",
+        "type": "Patch,Vendor Advisory"
+      },
+      {
+        "url": "http://osvdb.org/54248",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/35014",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/34859",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securitytracker.com/id?1022175",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2009/1266",
+        "type": "Vendor Advisory"
+      }
+    ],
+    "affected": [],
+    "aliases": [
+      "CVE-2009-1442"
+    ],
+    "source": "NVD"
+  },
+  "CVE-2009-1754": {
+    "id": "CVE-2009-1754",
+    "summary": "The PackageManagerService class in services/java/com/android/server/PackageManagerService.java in Android 1.5 through 1.5 CRB42 does not properly check developer certificates during processing of sharedUserId requests at an application's installation time, which allows remote user-assisted attackers to access application data by creating a package that specifies a shared user ID with an arbitrary application.",
+    "details": "The PackageManagerService class in services/java/com/android/server/PackageManagerService.java in Android 1.5 through 1.5 CRB42 does not properly check developer certificates during processing of sharedUserId requests at an application's installation time, which allows remote user-assisted attackers to access application data by creating a package that specifies a shared user ID with an arbitrary application.",
+    "severity": "MEDIUM",
+    "published": "2009-05-26T15:30:05.377",
+    "lastModified": "2026-04-23T00:35:47.467",
+    "references": [
+      {
+        "url": "http://android.git.kernel.org/?p=platform/frameworks/base.git%3Ba=commit%3Bh=5d6d773fab559fdc12e553d60d789f3991ac552c",
+        "type": "Patch"
+      },
+      {
+        "url": "http://www.ocert.org/advisories/ocert-2009-006.html",
+        "type": "Patch"
+      },
+      {
+        "url": "http://www.openwall.com/lists/oss-security/2009/05/22/14",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/archive/1/503770",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/35090",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://android.git.kernel.org/?p=platform/frameworks/base.git%3Ba=commit%3Bh=5d6d773fab559fdc12e553d60d789f3991ac552c",
+        "type": "Patch"
+      },
+      {
+        "url": "http://www.ocert.org/advisories/ocert-2009-006.html",
+        "type": "Patch"
+      },
+      {
+        "url": "http://www.openwall.com/lists/oss-security/2009/05/22/14",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/archive/1/503770",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/35090",
+        "type": "Vendor Advisory"
+      }
+    ],
+    "affected": [],
+    "aliases": [
+      "CVE-2009-1754"
+    ],
+    "source": "NVD"
+  },
+  "CVE-2009-2348": {
+    "id": "CVE-2009-2348",
+    "summary": "Android 1.5 CRBxx allows local users to bypass the (1) Manifest.permission.CAMERA (aka android.permission.CAMERA) and (2) Manifest.permission.AUDIO_RECORD (aka android.permission.RECORD_AUDIO) configuration settings by installing and executing an application that does not make a permission request before using the camera or microphone.",
+    "details": "Android 1.5 CRBxx allows local users to bypass the (1) Manifest.permission.CAMERA (aka android.permission.CAMERA) and (2) Manifest.permission.AUDIO_RECORD (aka android.permission.RECORD_AUDIO) configuration settings by installing and executing an application that does not make a permission request before using the camera or microphone.",
+    "severity": "MEDIUM",
+    "published": "2009-07-17T16:30:00.953",
+    "lastModified": "2026-04-23T00:35:47.467",
+    "references": [
+      {
+        "url": "http://android.git.kernel.org/?p=platform/frameworks/base.git%3Ba=commit%3Bh=4d8adefd35efdea849611b8b02d61f9517e47760",
+        "type": "Patch"
+      },
+      {
+        "url": "http://android.git.kernel.org/?p=platform/frameworks/base.git%3Ba=commit%3Bh=7b7225c8fdbead25235c74811b30ff4ee690dc58",
+        "type": "Patch"
+      },
+      {
+        "url": "http://android.git.kernel.org/?p=platform/packages/apps/Camera.git%3Ba=commit%3Bh=e655d54160e5a56d4909f2459eeae9012e9f187f",
+        "type": "Patch"
+      },
+      {
+        "url": "http://www.ocert.org/advisories/ocert-2009-011.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.openwall.com/lists/oss-security/2009/07/16/4",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/archive/1/505012/100/0/threaded",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/35717",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "https://exchange.xforce.ibmcloud.com/vulnerabilities/51798",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://android.git.kernel.org/?p=platform/frameworks/base.git%3Ba=commit%3Bh=4d8adefd35efdea849611b8b02d61f9517e47760",
+        "type": "Patch"
+      },
+      {
+        "url": "http://android.git.kernel.org/?p=platform/frameworks/base.git%3Ba=commit%3Bh=7b7225c8fdbead25235c74811b30ff4ee690dc58",
+        "type": "Patch"
+      },
+      {
+        "url": "http://android.git.kernel.org/?p=platform/packages/apps/Camera.git%3Ba=commit%3Bh=e655d54160e5a56d4909f2459eeae9012e9f187f",
+        "type": "Patch"
+      },
+      {
+        "url": "http://www.ocert.org/advisories/ocert-2009-011.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.openwall.com/lists/oss-security/2009/07/16/4",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/archive/1/505012/100/0/threaded",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/35717",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "https://exchange.xforce.ibmcloud.com/vulnerabilities/51798",
+        "type": "Vendor Advisory"
+      }
+    ],
+    "affected": [],
+    "aliases": [
+      "CVE-2009-2348"
+    ],
+    "source": "NVD"
+  },
+  "CVE-2009-2656": {
+    "id": "CVE-2009-2656",
+    "summary": "Unspecified vulnerability in the com.android.phone process in Android 1.0, 1.1, and 1.5 allows remote attackers to cause a denial of service (network disconnection) via a crafted SMS message, as demonstrated by Collin Mulliner and Charlie Miller at Black Hat USA 2009.",
+    "details": "Unspecified vulnerability in the com.android.phone process in Android 1.0, 1.1, and 1.5 allows remote attackers to cause a denial of service (network disconnection) via a crafted SMS message, as demonstrated by Collin Mulliner and Charlie Miller at Black Hat USA 2009.",
+    "severity": "MEDIUM",
+    "published": "2009-08-03T18:30:00.360",
+    "lastModified": "2026-04-23T00:35:47.467",
+    "references": [
+      {
+        "url": "http://osvdb.org/56750",
+        "type": "Broken Link"
+      },
+      {
+        "url": "http://www.blackhat.com/presentations/bh-usa-09/MILLER/BHUSA09-Miller-FuzzingPhone-PAPER.pdf",
+        "type": "Exploit,Third Party Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/35886",
+        "type": "Third Party Advisory,VDB Entry"
+      },
+      {
+        "url": "http://osvdb.org/56750",
+        "type": "Broken Link"
+      },
+      {
+        "url": "http://www.blackhat.com/presentations/bh-usa-09/MILLER/BHUSA09-Miller-FuzzingPhone-PAPER.pdf",
+        "type": "Exploit,Third Party Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/35886",
+        "type": "Third Party Advisory,VDB Entry"
+      }
+    ],
+    "affected": [],
+    "aliases": [
+      "CVE-2009-2656"
+    ],
+    "source": "NVD"
+  },
+  "CVE-2009-2999": {
+    "id": "CVE-2009-2999",
+    "summary": "The com.android.phone process in Android 1.5 CRBxx allows remote attackers to cause a denial of service (application restart and network disconnection) via an SMS message containing a malformed WAP Push message that triggers an ArrayIndexOutOfBoundsException exception, possibly a related issue to CVE-2009-2656.",
+    "details": "The com.android.phone process in Android 1.5 CRBxx allows remote attackers to cause a denial of service (application restart and network disconnection) via an SMS message containing a malformed WAP Push message that triggers an ArrayIndexOutOfBoundsException exception, possibly a related issue to CVE-2009-2656.",
+    "severity": "MEDIUM",
+    "published": "2009-10-14T10:30:01.827",
+    "lastModified": "2026-04-23T00:35:47.467",
+    "references": [
+      {
+        "url": "http://android.git.kernel.org/?p=platform/frameworks/base.git%3Ba=commit%3Bh=46e23fe762d2143d60589ab6d39c4b47c2c754d1",
+        "type": "Patch"
+      },
+      {
+        "url": "http://securitytracker.com/id?1022986",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.ocert.org/advisories/ocert-2009-014.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/archive/1/506948/100/0/threaded",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "https://exchange.xforce.ibmcloud.com/vulnerabilities/53655",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://android.git.kernel.org/?p=platform/frameworks/base.git%3Ba=commit%3Bh=46e23fe762d2143d60589ab6d39c4b47c2c754d1",
+        "type": "Patch"
+      },
+      {
+        "url": "http://securitytracker.com/id?1022986",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.ocert.org/advisories/ocert-2009-014.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/archive/1/506948/100/0/threaded",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "https://exchange.xforce.ibmcloud.com/vulnerabilities/53655",
+        "type": "Vendor Advisory"
+      }
+    ],
+    "affected": [],
+    "aliases": [
+      "CVE-2009-2999"
+    ],
+    "source": "NVD"
+  },
+  "CVE-2009-3698": {
+    "id": "CVE-2009-3698",
+    "summary": "An unspecified function in the Dalvik API in Android 1.5 and earlier allows remote attackers to cause a denial of service (system process restart) via a crafted application, possibly a related issue to CVE-2009-2656.",
+    "details": "An unspecified function in the Dalvik API in Android 1.5 and earlier allows remote attackers to cause a denial of service (system process restart) via a crafted application, possibly a related issue to CVE-2009-2656.",
+    "severity": "MEDIUM",
+    "published": "2009-10-14T10:30:02.110",
+    "lastModified": "2026-04-23T00:35:47.467",
+    "references": [
+      {
+        "url": "http://android.git.kernel.org/?p=platform/frameworks/base.git%3Ba=commit%3Bh=cf4550c3198d6b3d92cdc52707fe70d7cc0caa9f",
+        "type": "Patch"
+      },
+      {
+        "url": "http://securitytracker.com/id?1022986",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.ocert.org/advisories/ocert-2009-014.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/archive/1/506948/100/0/threaded",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/36590",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "https://exchange.xforce.ibmcloud.com/vulnerabilities/53654",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://android.git.kernel.org/?p=platform/frameworks/base.git%3Ba=commit%3Bh=cf4550c3198d6b3d92cdc52707fe70d7cc0caa9f",
+        "type": "Patch"
+      },
+      {
+        "url": "http://securitytracker.com/id?1022986",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.ocert.org/advisories/ocert-2009-014.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/archive/1/506948/100/0/threaded",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/36590",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "https://exchange.xforce.ibmcloud.com/vulnerabilities/53654",
+        "type": "Vendor Advisory"
+      }
+    ],
+    "affected": [],
+    "aliases": [
+      "CVE-2009-3698"
+    ],
+    "source": "NVD"
+  },
+  "CVE-2010-1807": {
+    "id": "CVE-2010-1807",
+    "summary": "WebKit in Apple Safari 4.x before 4.1.2 and 5.x before 5.0.2; Android before 2.2; and webkitgtk before 1.2.6; does not properly validate floating-point data, which allows remote attackers to execute arbitrary code or cause a denial of service (application crash) via a crafted HTML document, related to non-standard NaN representation.",
+    "details": "WebKit in Apple Safari 4.x before 4.1.2 and 5.x before 5.0.2; Android before 2.2; and webkitgtk before 1.2.6; does not properly validate floating-point data, which allows remote attackers to execute arbitrary code or cause a denial of service (application crash) via a crafted HTML document, related to non-standard NaN representation.",
+    "severity": "MEDIUM",
+    "published": "2010-09-10T19:00:02.050",
+    "lastModified": "2026-04-29T01:13:23.040",
+    "references": [
+      {
+        "url": "http://lists.apple.com/archives/security-announce/2010//Nov/msg00003.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://lists.apple.com/archives/security-announce/2010//Sep/msg00001.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://lists.opensuse.org/opensuse-security-announce/2011-01/msg00006.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/41856",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42314",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/43068",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/43086",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://support.apple.com/kb/HT4333",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://support.apple.com/kb/HT4456",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://trac.webkit.org/changeset/64706",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.computerworld.com/s/article/9195058/Researcher_to_release_Web_based_Android_attack",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.mandriva.com/security/advisories?name=MDVSA-2011:039",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2011-0177.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/43047",
+        "type": "Patch"
+      },
+      {
+        "url": "http://www.ubuntu.com/usn/USN-1006-1",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2722",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/3046",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0212",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0216",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0552",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "https://bugzilla.redhat.com/show_bug.cgi?id=627703",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A11964",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://lists.apple.com/archives/security-announce/2010//Nov/msg00003.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://lists.apple.com/archives/security-announce/2010//Sep/msg00001.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://lists.opensuse.org/opensuse-security-announce/2011-01/msg00006.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/41856",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42314",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/43068",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/43086",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://support.apple.com/kb/HT4333",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://support.apple.com/kb/HT4456",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://trac.webkit.org/changeset/64706",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.computerworld.com/s/article/9195058/Researcher_to_release_Web_based_Android_attack",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.mandriva.com/security/advisories?name=MDVSA-2011:039",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2011-0177.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/43047",
+        "type": "Patch"
+      },
+      {
+        "url": "http://www.ubuntu.com/usn/USN-1006-1",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2722",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/3046",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0212",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0216",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0552",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "https://bugzilla.redhat.com/show_bug.cgi?id=627703",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A11964",
+        "type": "Vendor Advisory"
+      }
+    ],
+    "affected": [],
+    "aliases": [
+      "CVE-2010-1807"
+    ],
+    "source": "NVD"
+  },
+  "CVE-2010-2884": {
+    "id": "CVE-2010-2884",
+    "summary": "Adobe Flash Player 10.1.82.76 and earlier on Windows, Mac OS X, Linux, and Solaris and 10.1.92.10 on Android; authplay.dll in Adobe Reader and Acrobat 9.x before 9.4; and authplay.dll in Adobe Reader and Acrobat 8.x before 8.2.5 on Windows and Mac OS X allow remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via unspecified vectors, as exploited in the wild in September 2010.",
+    "details": "Adobe Flash Player 10.1.82.76 and earlier on Windows, Mac OS X, Linux, and Solaris and 10.1.92.10 on Android; authplay.dll in Adobe Reader and Acrobat 9.x before 9.4; and authplay.dll in Adobe Reader and Acrobat 8.x before 8.2.5 on Windows and Mac OS X allow remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via unspecified vectors, as exploited in the wild in September 2010.",
+    "severity": "MEDIUM",
+    "published": "2010-09-15T18:00:44.073",
+    "lastModified": "2026-04-29T01:13:23.040",
+    "references": [
+      {
+        "url": "http://lists.apple.com/archives/security-announce/2010//Nov/msg00000.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://lists.opensuse.org/opensuse-security-announce/2010-10/msg00001.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://lists.opensuse.org/opensuse-security-announce/2010-10/msg00006.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/41434",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/41435",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/41443",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/41526",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/43025",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/43026",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://security.gentoo.org/glsa/glsa-201101-08.xml",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://security.gentoo.org/glsa/glsa-201101-09.xml",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://support.apple.com/kb/HT4435",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.adobe.com/support/security/advisories/apsa10-03.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.adobe.com/support/security/bulletins/apsb10-21.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.adobe.com/support/security/bulletins/apsb10-22.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.kb.cert.org/vuls/id/275289",
+        "type": "US Government Resource"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0706.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0743.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.us-cert.gov/cas/techalerts/TA10-263A.html",
+        "type": "US Government Resource"
+      },
+      {
+        "url": "http://www.us-cert.gov/cas/techalerts/TA10-279A.html",
+        "type": "US Government Resource"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2348",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2349",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0191",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0192",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "https://exchange.xforce.ibmcloud.com/vulnerabilities/61771",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A6852",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://lists.apple.com/archives/security-announce/2010//Nov/msg00000.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://lists.opensuse.org/opensuse-security-announce/2010-10/msg00001.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://lists.opensuse.org/opensuse-security-announce/2010-10/msg00006.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/41434",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/41435",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/41443",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/41526",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/43025",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/43026",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://security.gentoo.org/glsa/glsa-201101-08.xml",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://security.gentoo.org/glsa/glsa-201101-09.xml",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://support.apple.com/kb/HT4435",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.adobe.com/support/security/advisories/apsa10-03.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.adobe.com/support/security/bulletins/apsb10-21.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.adobe.com/support/security/bulletins/apsb10-22.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.kb.cert.org/vuls/id/275289",
+        "type": "US Government Resource"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0706.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0743.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.us-cert.gov/cas/techalerts/TA10-263A.html",
+        "type": "US Government Resource"
+      },
+      {
+        "url": "http://www.us-cert.gov/cas/techalerts/TA10-279A.html",
+        "type": "US Government Resource"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2348",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2349",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0191",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0192",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "https://exchange.xforce.ibmcloud.com/vulnerabilities/61771",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A6852",
+        "type": "Vendor Advisory"
+      }
+    ],
+    "affected": [],
+    "aliases": [
+      "CVE-2010-2884"
+    ],
+    "source": "NVD"
+  },
+  "CVE-2010-3654": {
+    "id": "CVE-2010-3654",
+    "summary": "Adobe Flash Player before 9.0.289.0 and 10.x before 10.1.102.64 on Windows, Mac OS X, Linux, and Solaris and 10.1.95.1 on Android, and authplay.dll (aka AuthPlayLib.bundle or libauthplay.so.0.0.0) in Adobe Reader and Acrobat 9.x through 9.4, allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption and application crash) via crafted SWF content, as exploited in the wild in October 2010.",
+    "details": "Adobe Flash Player before 9.0.289.0 and 10.x before 10.1.102.64 on Windows, Mac OS X, Linux, and Solaris and 10.1.95.1 on Android, and authplay.dll (aka AuthPlayLib.bundle or libauthplay.so.0.0.0) in Adobe Reader and Acrobat 9.x through 9.4, allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption and application crash) via crafted SWF content, as exploited in the wild in October 2010.",
+    "severity": "MEDIUM",
+    "published": "2010-10-29T19:00:02.060",
+    "lastModified": "2026-04-29T01:13:23.040",
+    "references": [
+      {
+        "url": "http://blogs.sun.com/security/entry/multiple_vulnerabilities_in_adobe_flash1",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://contagiodump.blogspot.com/2010/10/potential-new-adobe-flash-player-zero.html",
+        "type": "Exploit"
+      },
+      {
+        "url": "http://lists.apple.com/archives/security-announce/2010//Nov/msg00000.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://lists.opensuse.org/opensuse-security-announce/2010-11/msg00002.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://lists.opensuse.org/opensuse-security-announce/2010-12/msg00001.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/41917",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42030",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42183",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42401",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42926",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/43025",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/43026",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://security.gentoo.org/glsa/glsa-201101-08.xml",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://security.gentoo.org/glsa/glsa-201101-09.xml",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://securityreason.com/securityalert/8210",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://support.apple.com/kb/HT4435",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.adobe.com/support/security/advisories/apsa10-05.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.adobe.com/support/security/bulletins/apsb10-26.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.adobe.com/support/security/bulletins/apsb10-28.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.kb.cert.org/vuls/id/298081",
+        "type": "US Government Resource"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0829.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0834.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0867.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0934.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/44504",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securitytracker.com/id?1024659",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securitytracker.com/id?1024660",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.turbolinux.co.jp/security/2011/TLSA-2011-2j.txt",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2903",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2906",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2918",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/3111",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0173",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0191",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0192",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0344",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A13294",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://blogs.sun.com/security/entry/multiple_vulnerabilities_in_adobe_flash1",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://contagiodump.blogspot.com/2010/10/potential-new-adobe-flash-player-zero.html",
+        "type": "Exploit"
+      },
+      {
+        "url": "http://lists.apple.com/archives/security-announce/2010//Nov/msg00000.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://lists.opensuse.org/opensuse-security-announce/2010-11/msg00002.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://lists.opensuse.org/opensuse-security-announce/2010-12/msg00001.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/41917",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42030",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42183",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42401",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42926",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/43025",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/43026",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://security.gentoo.org/glsa/glsa-201101-08.xml",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://security.gentoo.org/glsa/glsa-201101-09.xml",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://securityreason.com/securityalert/8210",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://support.apple.com/kb/HT4435",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.adobe.com/support/security/advisories/apsa10-05.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.adobe.com/support/security/bulletins/apsb10-26.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.adobe.com/support/security/bulletins/apsb10-28.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.kb.cert.org/vuls/id/298081",
+        "type": "US Government Resource"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0829.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0834.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0867.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0934.html",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/44504",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securitytracker.com/id?1024659",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.securitytracker.com/id?1024660",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.turbolinux.co.jp/security/2011/TLSA-2011-2j.txt",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2903",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2906",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2918",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/3111",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0173",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0191",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0192",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0344",
+        "type": "Vendor Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A13294",
+        "type": "Vendor Advisory"
+      }
+    ],
+    "affected": [],
+    "aliases": [
+      "CVE-2010-3654"
+    ],
+    "source": "NVD"
+  },
+  "CVE-2010-3636": {
+    "id": "CVE-2010-3636",
+    "summary": "Adobe Flash Player before 9.0.289.0 and 10.x before 10.1.102.64 on Windows, Mac OS X, Linux, and Solaris, and 10.1.95.1 on Android, does not properly handle unspecified encodings during the parsing of a cross-domain policy file, which allows remote web servers to bypass intended access restrictions via unknown vectors.",
+    "details": "Adobe Flash Player before 9.0.289.0 and 10.x before 10.1.102.64 on Windows, Mac OS X, Linux, and Solaris, and 10.1.95.1 on Android, does not properly handle unspecified encodings during the parsing of a cross-domain policy file, which allows remote web servers to bypass intended access restrictions via unknown vectors.",
+    "severity": "MEDIUM",
+    "published": "2010-11-07T22:00:01.863",
+    "lastModified": "2026-04-29T01:13:23.040",
+    "references": [
+      {
+        "url": "http://blogs.sun.com/security/entry/multiple_vulnerabilities_in_adobe_flash1",
+        "type": "Broken Link"
+      },
+      {
+        "url": "http://jvn.jp/en/jp/JVN48425028/index.html",
+        "type": "Third Party Advisory,VDB Entry"
+      },
+      {
+        "url": "http://jvndb.jvn.jp/ja/contents/2010/JVNDB-2010-000054.html",
+        "type": "Third Party Advisory,VDB Entry"
+      },
+      {
+        "url": "http://lists.apple.com/archives/security-announce/2010//Nov/msg00000.html",
+        "type": "Mailing List,Third Party Advisory"
+      },
+      {
+        "url": "http://lists.opensuse.org/opensuse-security-announce/2010-11/msg00002.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://marc.info/?l=bugtraq&m=130331642631603&w=2",
+        "type": "Mailing List,Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42183",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42926",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/43026",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://security.gentoo.org/glsa/glsa-201101-09.xml",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://support.apple.com/kb/HT4435",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.adobe.com/support/security/bulletins/apsb10-26.html",
+        "type": "Patch,Vendor Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0829.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0834.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0867.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/44691",
+        "type": "Third Party Advisory,VDB Entry"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2903",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2906",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2918",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0173",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0192",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A12142",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A15913",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://blogs.sun.com/security/entry/multiple_vulnerabilities_in_adobe_flash1",
+        "type": "Broken Link"
+      },
+      {
+        "url": "http://jvn.jp/en/jp/JVN48425028/index.html",
+        "type": "Third Party Advisory,VDB Entry"
+      },
+      {
+        "url": "http://jvndb.jvn.jp/ja/contents/2010/JVNDB-2010-000054.html",
+        "type": "Third Party Advisory,VDB Entry"
+      },
+      {
+        "url": "http://lists.apple.com/archives/security-announce/2010//Nov/msg00000.html",
+        "type": "Mailing List,Third Party Advisory"
+      },
+      {
+        "url": "http://lists.opensuse.org/opensuse-security-announce/2010-11/msg00002.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://marc.info/?l=bugtraq&m=130331642631603&w=2",
+        "type": "Mailing List,Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42183",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42926",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/43026",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://security.gentoo.org/glsa/glsa-201101-09.xml",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://support.apple.com/kb/HT4435",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.adobe.com/support/security/bulletins/apsb10-26.html",
+        "type": "Patch,Vendor Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0829.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0834.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0867.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/44691",
+        "type": "Third Party Advisory,VDB Entry"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2903",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2906",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2918",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0173",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0192",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A12142",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A15913",
+        "type": "Third Party Advisory"
+      }
+    ],
+    "affected": [],
+    "aliases": [
+      "CVE-2010-3636"
+    ],
+    "source": "NVD"
+  },
+  "CVE-2010-3639": {
+    "id": "CVE-2010-3639",
+    "summary": "Unspecified vulnerability in Adobe Flash Player before 9.0.289.0 and 10.x before 10.1.102.64 on Windows, Mac OS X, Linux, and Solaris, and 10.1.95.1 on Android, allows attackers to cause a denial of service or possibly execute arbitrary code via unknown vectors.",
+    "details": "Unspecified vulnerability in Adobe Flash Player before 9.0.289.0 and 10.x before 10.1.102.64 on Windows, Mac OS X, Linux, and Solaris, and 10.1.95.1 on Android, allows attackers to cause a denial of service or possibly execute arbitrary code via unknown vectors.",
+    "severity": "MEDIUM",
+    "published": "2010-11-07T22:00:01.987",
+    "lastModified": "2026-04-29T01:13:23.040",
+    "references": [
+      {
+        "url": "http://blogs.sun.com/security/entry/multiple_vulnerabilities_in_adobe_flash1",
+        "type": "Broken Link"
+      },
+      {
+        "url": "http://lists.apple.com/archives/security-announce/2010//Nov/msg00000.html",
+        "type": "Mailing List,Third Party Advisory"
+      },
+      {
+        "url": "http://lists.opensuse.org/opensuse-security-announce/2010-11/msg00002.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://marc.info/?l=bugtraq&m=130331642631603&w=2",
+        "type": "Mailing List,Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42183",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42926",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/43026",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://security.gentoo.org/glsa/glsa-201101-09.xml",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://support.apple.com/kb/HT4435",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.adobe.com/support/security/bulletins/apsb10-26.html",
+        "type": "Patch,Vendor Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0829.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0834.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0867.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/44692",
+        "type": "Third Party Advisory,VDB Entry"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2903",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2906",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2918",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0173",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0192",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A11310",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A12625",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://blogs.sun.com/security/entry/multiple_vulnerabilities_in_adobe_flash1",
+        "type": "Broken Link"
+      },
+      {
+        "url": "http://lists.apple.com/archives/security-announce/2010//Nov/msg00000.html",
+        "type": "Mailing List,Third Party Advisory"
+      },
+      {
+        "url": "http://lists.opensuse.org/opensuse-security-announce/2010-11/msg00002.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://marc.info/?l=bugtraq&m=130331642631603&w=2",
+        "type": "Mailing List,Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42183",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42926",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/43026",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://security.gentoo.org/glsa/glsa-201101-09.xml",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://support.apple.com/kb/HT4435",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.adobe.com/support/security/bulletins/apsb10-26.html",
+        "type": "Patch,Vendor Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0829.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0834.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0867.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/44692",
+        "type": "Third Party Advisory,VDB Entry"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2903",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2906",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2918",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0173",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0192",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A11310",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A12625",
+        "type": "Third Party Advisory"
+      }
+    ],
+    "affected": [],
+    "aliases": [
+      "CVE-2010-3639"
+    ],
+    "source": "NVD"
+  },
+  "CVE-2010-3640": {
+    "id": "CVE-2010-3640",
+    "summary": "Unspecified vulnerability in Adobe Flash Player before 9.0.289.0 and 10.x before 10.1.102.64 on Windows, Mac OS X, Linux, and Solaris, and 10.1.95.1 on Android, allows attackers to execute arbitrary code or cause a denial of service (memory corruption) via unknown vectors, a different vulnerability than CVE-2010-3641, CVE-2010-3642, CVE-2010-3643, CVE-2010-3644, CVE-2010-3645, CVE-2010-3646, CVE-2010-3647, CVE-2010-3648, CVE-2010-3649, CVE-2010-3650, and CVE-2010-3652.",
+    "details": "Unspecified vulnerability in Adobe Flash Player before 9.0.289.0 and 10.x before 10.1.102.64 on Windows, Mac OS X, Linux, and Solaris, and 10.1.95.1 on Android, allows attackers to execute arbitrary code or cause a denial of service (memory corruption) via unknown vectors, a different vulnerability than CVE-2010-3641, CVE-2010-3642, CVE-2010-3643, CVE-2010-3644, CVE-2010-3645, CVE-2010-3646, CVE-2010-3647, CVE-2010-3648, CVE-2010-3649, CVE-2010-3650, and CVE-2010-3652.",
+    "severity": "MEDIUM",
+    "published": "2010-11-07T22:00:02.037",
+    "lastModified": "2026-04-29T01:13:23.040",
+    "references": [
+      {
+        "url": "http://blogs.sun.com/security/entry/multiple_vulnerabilities_in_adobe_flash1",
+        "type": "Broken Link"
+      },
+      {
+        "url": "http://lists.apple.com/archives/security-announce/2010//Nov/msg00000.html",
+        "type": "Mailing List,Third Party Advisory"
+      },
+      {
+        "url": "http://lists.opensuse.org/opensuse-security-announce/2010-11/msg00002.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://marc.info/?l=bugtraq&m=130331642631603&w=2",
+        "type": "Mailing List,Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42183",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42926",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/43026",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://security.gentoo.org/glsa/glsa-201101-09.xml",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://support.apple.com/kb/HT4435",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.adobe.com/support/security/bulletins/apsb10-26.html",
+        "type": "Patch,Vendor Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0829.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0834.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0867.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/44675",
+        "type": "Third Party Advisory,VDB Entry"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2903",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2906",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2918",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0173",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0192",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A12179",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A16281",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://blogs.sun.com/security/entry/multiple_vulnerabilities_in_adobe_flash1",
+        "type": "Broken Link"
+      },
+      {
+        "url": "http://lists.apple.com/archives/security-announce/2010//Nov/msg00000.html",
+        "type": "Mailing List,Third Party Advisory"
+      },
+      {
+        "url": "http://lists.opensuse.org/opensuse-security-announce/2010-11/msg00002.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://marc.info/?l=bugtraq&m=130331642631603&w=2",
+        "type": "Mailing List,Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42183",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42926",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/43026",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://security.gentoo.org/glsa/glsa-201101-09.xml",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://support.apple.com/kb/HT4435",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.adobe.com/support/security/bulletins/apsb10-26.html",
+        "type": "Patch,Vendor Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0829.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0834.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0867.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/44675",
+        "type": "Third Party Advisory,VDB Entry"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2903",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2906",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2918",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0173",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0192",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A12179",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A16281",
+        "type": "Third Party Advisory"
+      }
+    ],
+    "affected": [],
+    "aliases": [
+      "CVE-2010-3640"
+    ],
+    "source": "NVD"
+  },
+  "CVE-2010-3641": {
+    "id": "CVE-2010-3641",
+    "summary": "Unspecified vulnerability in Adobe Flash Player before 9.0.289.0 and 10.x before 10.1.102.64 on Windows, Mac OS X, Linux, and Solaris, and 10.1.95.1 on Android, allows attackers to execute arbitrary code or cause a denial of service (memory corruption) via unknown vectors, a different vulnerability than CVE-2010-3640, CVE-2010-3642, CVE-2010-3643, CVE-2010-3644, CVE-2010-3645, CVE-2010-3646, CVE-2010-3647, CVE-2010-3648, CVE-2010-3649, CVE-2010-3650, and CVE-2010-3652.",
+    "details": "Unspecified vulnerability in Adobe Flash Player before 9.0.289.0 and 10.x before 10.1.102.64 on Windows, Mac OS X, Linux, and Solaris, and 10.1.95.1 on Android, allows attackers to execute arbitrary code or cause a denial of service (memory corruption) via unknown vectors, a different vulnerability than CVE-2010-3640, CVE-2010-3642, CVE-2010-3643, CVE-2010-3644, CVE-2010-3645, CVE-2010-3646, CVE-2010-3647, CVE-2010-3648, CVE-2010-3649, CVE-2010-3650, and CVE-2010-3652.",
+    "severity": "MEDIUM",
+    "published": "2010-11-07T22:00:02.080",
+    "lastModified": "2026-04-29T01:13:23.040",
+    "references": [
+      {
+        "url": "http://blogs.sun.com/security/entry/multiple_vulnerabilities_in_adobe_flash1",
+        "type": "Broken Link"
+      },
+      {
+        "url": "http://lists.apple.com/archives/security-announce/2010//Nov/msg00000.html",
+        "type": "Mailing List,Third Party Advisory"
+      },
+      {
+        "url": "http://lists.opensuse.org/opensuse-security-announce/2010-11/msg00002.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://marc.info/?l=bugtraq&m=130331642631603&w=2",
+        "type": "Mailing List,Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42183",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42926",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/43026",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://security.gentoo.org/glsa/glsa-201101-09.xml",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://support.apple.com/kb/HT4435",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.adobe.com/support/security/bulletins/apsb10-26.html",
+        "type": "Patch,Vendor Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0829.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0834.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0867.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/44677",
+        "type": "Third Party Advisory,VDB Entry"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2903",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2906",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2918",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0173",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0192",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A12154",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A16161",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://blogs.sun.com/security/entry/multiple_vulnerabilities_in_adobe_flash1",
+        "type": "Broken Link"
+      },
+      {
+        "url": "http://lists.apple.com/archives/security-announce/2010//Nov/msg00000.html",
+        "type": "Mailing List,Third Party Advisory"
+      },
+      {
+        "url": "http://lists.opensuse.org/opensuse-security-announce/2010-11/msg00002.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://marc.info/?l=bugtraq&m=130331642631603&w=2",
+        "type": "Mailing List,Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42183",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42926",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/43026",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://security.gentoo.org/glsa/glsa-201101-09.xml",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://support.apple.com/kb/HT4435",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.adobe.com/support/security/bulletins/apsb10-26.html",
+        "type": "Patch,Vendor Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0829.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0834.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0867.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/44677",
+        "type": "Third Party Advisory,VDB Entry"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2903",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2906",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2918",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0173",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0192",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A12154",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A16161",
+        "type": "Third Party Advisory"
+      }
+    ],
+    "affected": [],
+    "aliases": [
+      "CVE-2010-3641"
+    ],
+    "source": "NVD"
+  },
+  "CVE-2010-3642": {
+    "id": "CVE-2010-3642",
+    "summary": "Unspecified vulnerability in Adobe Flash Player before 9.0.289.0 and 10.x before 10.1.102.64 on Windows, Mac OS X, Linux, and Solaris, and 10.1.95.1 on Android, allows attackers to execute arbitrary code or cause a denial of service (memory corruption) via unknown vectors, a different vulnerability than CVE-2010-3640, CVE-2010-3641, CVE-2010-3643, CVE-2010-3644, CVE-2010-3645, CVE-2010-3646, CVE-2010-3647, CVE-2010-3648, CVE-2010-3649, CVE-2010-3650, and CVE-2010-3652.",
+    "details": "Unspecified vulnerability in Adobe Flash Player before 9.0.289.0 and 10.x before 10.1.102.64 on Windows, Mac OS X, Linux, and Solaris, and 10.1.95.1 on Android, allows attackers to execute arbitrary code or cause a denial of service (memory corruption) via unknown vectors, a different vulnerability than CVE-2010-3640, CVE-2010-3641, CVE-2010-3643, CVE-2010-3644, CVE-2010-3645, CVE-2010-3646, CVE-2010-3647, CVE-2010-3648, CVE-2010-3649, CVE-2010-3650, and CVE-2010-3652.",
+    "severity": "MEDIUM",
+    "published": "2010-11-07T22:00:02.127",
+    "lastModified": "2026-04-29T01:13:23.040",
+    "references": [
+      {
+        "url": "http://blogs.sun.com/security/entry/multiple_vulnerabilities_in_adobe_flash1",
+        "type": "Broken Link"
+      },
+      {
+        "url": "http://lists.apple.com/archives/security-announce/2010//Nov/msg00000.html",
+        "type": "Mailing List,Third Party Advisory"
+      },
+      {
+        "url": "http://lists.opensuse.org/opensuse-security-announce/2010-11/msg00002.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://marc.info/?l=bugtraq&m=130331642631603&w=2",
+        "type": "Mailing List,Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42183",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42926",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/43026",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://security.gentoo.org/glsa/glsa-201101-09.xml",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://support.apple.com/kb/HT4435",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.adobe.com/support/security/bulletins/apsb10-26.html",
+        "type": "Patch,Vendor Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0829.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0834.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0867.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/44678",
+        "type": "Third Party Advisory,VDB Entry"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2903",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2906",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2918",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0173",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0192",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A12065",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A16254",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://blogs.sun.com/security/entry/multiple_vulnerabilities_in_adobe_flash1",
+        "type": "Broken Link"
+      },
+      {
+        "url": "http://lists.apple.com/archives/security-announce/2010//Nov/msg00000.html",
+        "type": "Mailing List,Third Party Advisory"
+      },
+      {
+        "url": "http://lists.opensuse.org/opensuse-security-announce/2010-11/msg00002.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://marc.info/?l=bugtraq&m=130331642631603&w=2",
+        "type": "Mailing List,Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42183",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42926",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/43026",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://security.gentoo.org/glsa/glsa-201101-09.xml",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://support.apple.com/kb/HT4435",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.adobe.com/support/security/bulletins/apsb10-26.html",
+        "type": "Patch,Vendor Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0829.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0834.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0867.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/44678",
+        "type": "Third Party Advisory,VDB Entry"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2903",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2906",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2918",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0173",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0192",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A12065",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A16254",
+        "type": "Third Party Advisory"
+      }
+    ],
+    "affected": [],
+    "aliases": [
+      "CVE-2010-3642"
+    ],
+    "source": "NVD"
+  },
+  "CVE-2010-3643": {
+    "id": "CVE-2010-3643",
+    "summary": "Unspecified vulnerability in Adobe Flash Player before 9.0.289.0 and 10.x before 10.1.102.64 on Windows, Mac OS X, Linux, and Solaris, and 10.1.95.1 on Android, allows attackers to execute arbitrary code or cause a denial of service (memory corruption) via unknown vectors, a different vulnerability than CVE-2010-3640, CVE-2010-3641, CVE-2010-3642, CVE-2010-3644, CVE-2010-3645, CVE-2010-3646, CVE-2010-3647, CVE-2010-3648, CVE-2010-3649, CVE-2010-3650, and CVE-2010-3652.",
+    "details": "Unspecified vulnerability in Adobe Flash Player before 9.0.289.0 and 10.x before 10.1.102.64 on Windows, Mac OS X, Linux, and Solaris, and 10.1.95.1 on Android, allows attackers to execute arbitrary code or cause a denial of service (memory corruption) via unknown vectors, a different vulnerability than CVE-2010-3640, CVE-2010-3641, CVE-2010-3642, CVE-2010-3644, CVE-2010-3645, CVE-2010-3646, CVE-2010-3647, CVE-2010-3648, CVE-2010-3649, CVE-2010-3650, and CVE-2010-3652.",
+    "severity": "MEDIUM",
+    "published": "2010-11-07T22:00:02.177",
+    "lastModified": "2026-04-29T01:13:23.040",
+    "references": [
+      {
+        "url": "http://blogs.sun.com/security/entry/multiple_vulnerabilities_in_adobe_flash1",
+        "type": "Broken Link"
+      },
+      {
+        "url": "http://lists.apple.com/archives/security-announce/2010//Nov/msg00000.html",
+        "type": "Mailing List,Third Party Advisory"
+      },
+      {
+        "url": "http://lists.opensuse.org/opensuse-security-announce/2010-11/msg00002.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://marc.info/?l=bugtraq&m=130331642631603&w=2",
+        "type": "Mailing List,Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42183",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42926",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/43026",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://security.gentoo.org/glsa/glsa-201101-09.xml",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://support.apple.com/kb/HT4435",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.adobe.com/support/security/bulletins/apsb10-26.html",
+        "type": "Patch,Vendor Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0829.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0834.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0867.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/44679",
+        "type": "Third Party Advisory,VDB Entry"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2903",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2906",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2918",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0173",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0192",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A12151",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A16242",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://blogs.sun.com/security/entry/multiple_vulnerabilities_in_adobe_flash1",
+        "type": "Broken Link"
+      },
+      {
+        "url": "http://lists.apple.com/archives/security-announce/2010//Nov/msg00000.html",
+        "type": "Mailing List,Third Party Advisory"
+      },
+      {
+        "url": "http://lists.opensuse.org/opensuse-security-announce/2010-11/msg00002.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://marc.info/?l=bugtraq&m=130331642631603&w=2",
+        "type": "Mailing List,Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42183",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/42926",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://secunia.com/advisories/43026",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://security.gentoo.org/glsa/glsa-201101-09.xml",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://support.apple.com/kb/HT4435",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.adobe.com/support/security/bulletins/apsb10-26.html",
+        "type": "Patch,Vendor Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0829.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0834.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.redhat.com/support/errata/RHSA-2010-0867.html",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.securityfocus.com/bid/44679",
+        "type": "Third Party Advisory,VDB Entry"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2903",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2906",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2010/2918",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0173",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "http://www.vupen.com/english/advisories/2011/0192",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A12151",
+        "type": "Third Party Advisory"
+      },
+      {
+        "url": "https://oval.cisecurity.org/repository/search/definition/oval%3Aorg.mitre.oval%3Adef%3A16242",
+        "type": "Third Party Advisory"
+      }
+    ],
+    "affected": [],
+    "aliases": [
+      "CVE-2010-3643"
+    ],
+    "source": "NVD"
+  }
+}
