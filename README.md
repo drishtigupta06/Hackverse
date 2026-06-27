@@ -114,7 +114,7 @@ Built-in AI Red Team for Large Language Models.
 - Unsafe Tool Usage
 - Sensitive Information Disclosure
 
-Powered by **Garak** and custom security probes.
+Powered by **Cyberguard** and custom security probes.
 
 ---
 
